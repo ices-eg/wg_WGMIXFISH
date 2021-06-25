@@ -1,0 +1,233 @@
+---
+title: "CS - Data checks"
+author: "Paul Bouch"
+date: "6/21/2021"
+output: html_document
+---
+
+Code to examine differences between the input fleets object and the stock objects
+
+```{r}
+library(FLCore)
+library (dplyr)
+library(ggplot2)
+
+options (scipen = 9999999)
+
+stk.path <- file.path("results/clean_data/clean_stock_objects/CS_FLBiols_FLStocks.RData")
+
+## Load the stock objects
+stocks <- FLStocks(lapply(list.files(stk.path),function(x){
+  load(file.path(stk.path,x))
+  res <- get("stock")
+  name(res)<-gsub('.RData',"",x)
+  res}))
+
+## Load the fleets 
+load("results/clean_data/fleets.RData") ##### probably not the right location
+
+```
+
+
+
+```{r function to extract data from fleets}
+
+ get.slot.fleet <- function(fleets, slot.) {
+ slt. <- eval(parse("", text = slot.))
+ res <- lapply(fleets, function(x) {
+ mt. <- lapply(x@metiers, function(x1) {
+ res. <- as.data.frame(slt.(x1))
+ names(res.)[which(names(res.) == "data")] <- slot.
+ res.$fleet <- x@name
+ res.$metier <- x1@name
+ return(res.)
+ })
+ mt. <- do.call(rbind, mt.)
+ })
+ res <- do.call(rbind, res)
+ return(res)
+ }
+
+```
+
+
+
+```{r get catch weights from fleets object}
+
+ land.df <- get.slot.fleet(fleets, "landings")
+ catch.df <- get.slot.fleet(fleets, "catch")
+ discards.df <- get.slot.fleet(fleets, "discards")
+ 
+ colnames(land.df)[7] <- "data"
+ colnames(catch.df)[7] <- "data"
+ colnames(discards.df)[7] <- "data"
+ 
+ land.df$cat <- "landings"
+ catch.df$cat <- "catch" 
+ discards.df$cat <- "discards" 
+ 
+ flt.df <- rbind(land.df, catch.df, discards.df)
+ 
+ fltsum <- flt.df %>% group_by(year, qname, cat) %>% summarise (data = sum(data))
+ 
+ colnames(fltsum)[2]<- "stock"
+ fltsum$source <- "flt_obj"
+ 
+```
+
+
+
+```{r extract catch weights from stock objects}
+
+so.extract <- NULL
+
+for (i in names(stocks)){
+  
+  ct <- as.data.frame (stocks[[i]]@catch)
+  lan <- as.data.frame (stocks[[i]]@landings)
+  disc <- as.data.frame (stocks[[i]]@discards)
+    
+  ct$cat <- "catch"
+  lan$cat <- "landings"
+  disc$cat <- "discards"
+  
+  df <- rbind (ct, lan, disc)
+  
+  df <- df[, c(2, 7:8)]
+  df$stock <- i
+
+  so.extract <- rbind (so.extract, df)
+}
+
+so.extract$source <- "stock_objs"
+
+```
+
+Show years, stocks and catch cat where catch weights from the fleet object and stock objects differ significantly.
+
+```{r }
+## what percentage difference to extract from the data
+perc.diff.highlight <- 0.01
+
+so.extract$stock[so.extract$stock == "COD-CS"] <- "COD"
+so.extract$stock[so.extract$stock == "HAD-CS"] <- "HAD"
+so.extract$stock[so.extract$stock == "WHG-CS"] <- "WHG"
+
+comp_df_wide <- merge (fltsum, so.extract, by = c("year", "stock", "cat"))
+
+comp_df_wide$data.x[is.na(comp_df_wide$data.x)] <- 0
+comp_df_wide$data.y[is.na(comp_df_wide$data.y)] <- 0
+
+comp_df_wide$perc_diff = abs(((comp_df_wide$data.x - comp_df_wide$data.y)/ comp_df_wide$data.y)*100)                            
+
+comp_df_wide$perc_diff[is.na(comp_df_wide$perc_diff)] <- 0
+                            
+### percentage discrepancies between the stock object and fleet object (where greater than 0.01%)
+
+comp_df_wide[abs(comp_df_wide$perc_diff) > perc.diff.highlight,]
+
+
+```
+
+Look at catch, landings and discard numbers
+
+```{r extract catch numbers from fleets object}
+ land.n.df <- get.slot.fleet(fleets, "landings.n")
+ catch.n.df <- get.slot.fleet(fleets, "catch.n")
+ discards.n.df <- get.slot.fleet(fleets, "discards.n")
+ 
+ colnames(land.n.df)[7] <- "data"
+ colnames(catch.n.df)[7] <- "data"
+ colnames(discards.n.df)[7] <- "data"
+ 
+ land.n.df$cat <- "landings"
+ catch.n.df$cat <- "catch" 
+ discards.n.df$cat <- "discards" 
+ 
+ flt.n.df <- rbind(land.n.df, catch.n.df, discards.n.df)
+ 
+ flt.n.sum <- flt.n.df %>% group_by(year, qname, age, cat) %>% summarise (data = sum(data))
+ 
+ colnames(flt.n.sum)[2]<- "stock"
+ flt.n.sum$source <- "flt_obj"
+ 
+```
+
+
+```{r extract numbers from stock objects}
+
+so.n.extract <- NULL
+
+for (i in names(stocks)){
+  
+  ct <- as.data.frame (stocks[[i]]@catch.n)
+  lan <- as.data.frame (stocks[[i]]@landings.n)
+  disc <- as.data.frame (stocks[[i]]@discards.n)
+    
+  ct$cat <- "catch"
+  lan$cat <- "landings"
+  disc$cat <- "discards"
+  
+  df <- rbind (ct, lan, disc)
+  
+  df <- df[, c(1:2, 7:8)]
+  df$stock <- i
+
+  so.n.extract <- rbind (so.n.extract, df)
+}
+
+so.n.extract$source <- "stock_objs"
+
+```
+
+
+```{r}
+so.n.extract$stock[so.n.extract$stock == "COD-CS"] <- "COD"
+so.n.extract$stock[so.n.extract$stock == "HAD-CS"] <- "HAD"
+so.n.extract$stock[so.n.extract$stock == "WHG-CS"] <- "WHG"
+
+comp_n_wide <- merge (flt.n.sum, so.n.extract, by = c("year", "stock", "age", "cat"))
+
+comp_n_wide$data.x[is.na(comp_n_wide$data.x)] <- 0
+comp_n_wide$data.y[is.na(comp_n_wide$data.y)] <- 0
+
+comp_n_wide$perc_diff = abs(((comp_n_wide$data.x - comp_n_wide$data.y)/ comp_n_wide$data.y)*100)
+
+comp_n_wide$perc_diff[is.na(comp_n_wide$perc_diff)] <- 0
+
+
+### percentage discrepancies between the stock object and fleet object (where greater than 0.01%)
+print(comp_n_wide[abs(comp_n_wide$perc_diff) > 10,])
+
+```
+
+Plot the differences between the catch, landings and discards numbers
+
+```{r}
+comp_n <- rbind.data.frame(flt.n.sum, so.n.extract)
+
+# what year to look at
+year_to_plot <- 2017
+
+ggplot(comp_n[comp_n$year == year_to_plot, ], aes (x= age, y = data, colour = source))+
+  geom_line()+
+  facet_grid(vars(stock), vars(cat) , scales = "free")+
+  ylab("catch numbers")+
+  ggtitle(paste0("Difference between numbers in stock and fleet obects for ", year_to_plot))+
+  theme_bw()
+
+
+# so_test <- comp_n[comp_n$source == "stock_objs", ]
+# 
+# ggplot(so_test[so_test$year == year_to_plot, ], aes (x= age, y = data))+
+#   geom_line()+
+#   facet_grid(vars(stock), vars(cat) , scales = "free")
+# 
+# flt_test <- comp_n[comp_n$source == "flt_obj", ]
+# 
+# ggplot(flt_test[flt_test$year == year_to_plot, ], aes (x= age, y = data))+
+#   geom_line()+
+#   facet_grid(vars(stock), vars(cat) , scales = "free")
+
+```
+
