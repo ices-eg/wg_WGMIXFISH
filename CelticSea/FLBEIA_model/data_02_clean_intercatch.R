@@ -108,6 +108,8 @@ saveRDS(new_intercatch3,file=file.path(Data_path,"data/ices_intercatch/2019 06 2
 
 rm(list=ls()[!ls() %in% c("Data_path","Data_path_out")])
 gc()
+Data_path <- "CelticSea/bootstrap"
+Data_path_out <- "CelticSea/Results"
 #You should be able to run from here if you have done the above
 intercatch_with_dist <- readRDS(file.path(Data_path,"data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with AGE dist WG 2002 2019.Rdata"))
 
@@ -175,11 +177,13 @@ whg
 
 
 # Write out intercatch summary ####
-write.taf(Inter_stock_summary,file.path(Data_path_out,"Intermediate_products/intercatch_summary.csv"))
+write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_summary.csv"))
 
 
 rm(list=ls()[!ls() %in% c("Data_path","Data_path_out")])
 gc()
+Data_path <- "CelticSea/bootstrap"
+Data_path_out <- "CelticSea/Results"
 # Just the age distribution -----------------------------------------------
 intercatch_with_Age_dist <- readRDS(file.path(Data_path,"data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with AGE dist WG 2002 2019.Rdata"))
 
@@ -219,19 +223,26 @@ Inter_stock_summary2 <- Inter_stock_summary %>%  group_by_at(vars(-SOP,-No_At_Ag
 
 ## I am going to hazard a guess a say these are IC extraction artifacts 
 Inter_stock_summary_INF_MISSING <- Inter_stock_summary2 %>% filter(diff%in% c("Inf","NaN"),No_At_Age == 0)
+write.taf(Inter_stock_summary_INF_MISSING,file.path(Data_path_out,"Intermediate_products/Inf_NaN_Zeros_age.csv"))
+
 
 Inter_stock_summary2 <- Inter_stock_summary2 %>% filter(!diff %in% c("Inf","NaN"),No_At_Age != 0)
 
 
-Inter_stock_summary2 <- Inter_stock_summary2 %>% mutate(SOP2=SOP*diff,No_At_Age_ADJ=No_At_Age*diff) %>% mutate(SOP3=(No_At_Age_ADJ*as.numeric(MeanWeight_in_g))/1000,prop_weight=SOP2/CATON_in_kg)
+Inter_stock_summary2 <- Inter_stock_summary2 %>% mutate(SOP2=SOP*diff,No_At_Age_ADJ=No_At_Age*diff) %>% mutate(SOP3=(No_At_Age_ADJ*as.numeric(MeanWeight_in_g))/1000)
+
+
+Inter_stock_summary3 <- Inter_stock_summary2 %>% select(Year,Stock,Country,Fleet,CatchCat,lvl4,Area,species,Age,CATON_in_kg,No_At_Age_ADJ,MeanWeight_in_g,SOP3) %>%  group_by_at(vars(-No_At_Age_ADJ,-SOP3,-CATON_in_kg)) %>% summarise(CATON_in_kg=sum(CATON_in_kg,na.rm=T),No_At_Age_ADJ=sum(No_At_Age_ADJ,na.rm = T),SOP3=sum(SOP3,na.rm = T)) %>% mutate(prop_weight=SOP3/CATON_in_kg) %>% ungroup()
+
+
 
 ###Reduce to final coloumns of interest
-names(Inter_stock_summary2)
-Inter_stock_summary <- Inter_stock_summary2 %>% select(Year,Stock,Country,Fleet,CatchCat,lvl4,Area,species,Age,No_At_Age_ADJ,MeanWeight_in_g,prop_weight)
+names(Inter_stock_summary3)
+Inter_stock_summary <- Inter_stock_summary3 %>% select(Year,Stock,Country,Fleet,CatchCat,lvl4,Area,species,Age,CATON_in_kg,No_At_Age_ADJ,MeanWeight_in_g,SOP3,prop_weight)
 
 
 # 07 _ Write out intercatch summary ####
-write.taf(Inter_stock_summary,file.path(Data_path_out,"Intermediate_products/intercatch_summary_Age.csv"))
+write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_summary_Age.csv"))
 
 
 
