@@ -108,7 +108,7 @@ names(accessions_landings) <-  c("Country", "Year", "Quarter", "Metier", "Vessel
 
 # 04 _ Subset for Celtic Seas Areas ####
 accessions_landings$Area <- as.character(accessions_landings$Area)
-accessions_landings_new<- accessions_landings[substr(accessions_landings$Area, 1,4) %in% c("27.3", "27.4", "27.6", "27.7", "27.8"),]
+accessions_landings_new<- accessions_landings[substr(accessions_landings$Area, 1,4) %in% c("27.7"   , "27.7.b" , "27.7.c" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j" , "27.7.k" ),]
 unique(accessions_landings_new$Area)
 
 # back to accessions_landings -----------------------------------------
@@ -374,7 +374,7 @@ Bad_accessions_effort_areas <- accessions_effort %>% filter(Area %in%c("-1","NUL
 write.taf(Bad_accessions_effort_areas,file = file.path(Data_path_out,"Intermediate_products/bad_effort_area.csv"))
 #filter areas
 accessions_effort <- accessions_effort %>% filter(!Area %in%c("-1","NULL"))
-accessions_effort <- accessions_effort[substr(accessions_effort$Area, 1,4) %in% c("27.3", "27.4", "27.6", "27.7", "27.8"),]
+accessions_effort <- accessions_effort[substr(accessions_effort$Area, 1,4) %in% c("27.7"   , "27.7.b" , "27.7.c" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j" , "27.7.k" ),]
 
 ## remove exstra col
 accessions_effort <- accessions_effort %>% select(-Standard,-ICES_mix_correct, -ICES_FU,-species_mix_FU)

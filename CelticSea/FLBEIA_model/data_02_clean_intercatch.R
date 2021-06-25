@@ -25,10 +25,10 @@ taf.unzip("CelticSea/bootstrap/initial/ices_intercatch/2019 06 22 WGMIXFISH CANU
 intercatch_with_dist <-  read.csv(file = file.path(Data_path,"data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 #intercatch_with_dist_0 <- intercatch_with_dist
 
-intercatch_with_dist2 <- intercatch_with_dist %>% filter(Area %in% c("27.7"  ,  "27.7.a" , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
+intercatch_with_dist2 <- intercatch_with_dist %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
 
 #check for missing areas
-check <- intercatch_with_dist %>% filter(!Area %in% c("27.7"  ,  "27.7.a" , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
+check <- intercatch_with_dist %>% filter(!Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
 unique(check$Area)
 rm(check)
 
