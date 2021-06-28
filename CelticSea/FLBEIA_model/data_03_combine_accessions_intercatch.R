@@ -1,4 +1,4 @@
-gc
+gc()
 #THERE IS AN RM HERE 
 ##
 rm(list=ls())
@@ -20,12 +20,13 @@ library(Hmisc)
 # Datapaths ----------------------------------------------------------------
 Data_path <- "CelticSea/Results"
 LookupPath <- "CelticSea/FLBEIA_model"
-
+BootstrapPath <- "CelticSea/bootstrap"
 # #1.2 Set parameters -----------------------------------------------------
 Yearwg<-2020
 # MR change to last three Year
 Year<-(Yearwg-3):(Yearwg-1)
 PERCENTAGE <- "0.01"
+FLEET_PERCENTAGE <- "0.01"
 ## NOTE: Have these read from Reproduce the advice output
 # Nephrops setting.... T for including Nephrops, else F
 nep <- TRUE
@@ -135,11 +136,20 @@ Area.Names<-c("CS") # This cab be removed
 #actual data
 InterCatch <- read.csv(file.path(Data_path,"clean_data/intercatch_summary.csv"))
 InterCatch_age <- read.csv(file.path(Data_path,"clean_data/intercatch_summary_Age.csv"))
-catch_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_landings.csv"))
-effort_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_effort.csv"))
+## Data that has been matched 
+### data has also been filterede to Yearwg-3 and summarise so yes it is smaller 
+## this is all done at the end of data_01
+catch_start <-read.csv(file.path(Data_path,"clean_data/MATCHED_clean_accessions_landings.csv"))
+effort_start <-read.csv(file.path(Data_path,"clean_data/MATCHED_clean_accessions_effort.csv"))
+##Can also read in the data that could not be matched but need to decide wht to do with it
+
+
+# # all data including unmatched
+# catch_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_landings.csv"))
+# effort_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_effort.csv"))
 #stock data
 Stock_Lookup <- read.csv(file.path(LookupPath,"/lookup/Stock_lookup.csv"))
-
+nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv"))
 
 #allows us to keep the orignal object in GE for specific checks 
 catch <- catch_start
@@ -166,98 +176,9 @@ effort2 <- effort2 %>% group_by_at(vars(-kw_days,-Days_at_sea,-No_vessels)) %>% 
 
 catch2 <- catch2 %>% mutate(check=1:nrow(catch2))
 
-
-# Issue with catch  for NA ------------------------------------------------
-#problem that are going to effect the catch and the effort need to be dealt
-#with before joing the data together as catch and effort need to be summarised properly.
-#Spain
-
-catch2$Vessel_length[catch2$Country=="ES"& catch2$Year==2017 & catch2$metier=="LLS_DEF"] <- "all"
-effort2$Vessel_length[effort2$Country=="ES"& effort2$Year==2017 & effort2$metier=="LLS_DEF"] <- "all"
-
-#UKN (catch issue)
-catch2$Quarter[catch2$Country=="UKN"& catch2$Year %in% c(2017,2018,2019) & catch2$Quarter ==1] <- "Q1"
-catch2$Quarter[catch2$Country=="UKN"& catch2$Year %in% c(2017,2018,2019) & catch2$Quarter ==2] <- "Q2"
-catch2$Quarter[catch2$Country=="UKN"& catch2$Year %in% c(2017,2018,2019) & catch2$Quarter ==3] <- "Q3"
-catch2$Quarter[catch2$Country=="UKN"& catch2$Year %in% c(2017,2018,2019) & catch2$Quarter ==4] <- "Q4"
-
-catch2$Vessel_length[catch2$Country=="UKN"& catch2$Year %in% c(2017,2018,2019) & catch2$Vessel_length =="24<40"] <- "24<40m"
-
-
-# 2017 fixes to effort data -----------------------------------------------
-#Spain
-#Seems to be issues in how LLS_DEF vessele lengthes are being handles
-#lots of entrys are simply all and some are inclduing a specific vessel length
-#I think there is a bit of crosslableing of vessel length going on here judging by
-#what is failing to match
-
-#france
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2017 & effort2$Metier =="DRB_all"] <- "DRB_MOL"
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2017 & effort2$Metier =="PS_SPF_"] <- "OTB_SPF"
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2017 & effort2$Metier =="OTT-DEF"] <- "OTT_DEF"
-
-#scotland
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2017 & effort2$Metier =="FPO_CRU"] <- "<10m"
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2017 & effort2$Metier =="GNS_DEF"] <- "<10m"
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2017 & effort2$Metier =="LLS_FIF"] <- "<10m"
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2017 & effort2$Metier =="MIS_MIS"] <- "<10m"
-
-
-# 2018 fixes to effort data  ----------------------------------------------
-#NOTE iam fixing effort to catch (have to assume one is correct)
-#ES 2018 vessel lenth should be ALL as individual effort not supplied in effort DF 
-#Spain
-effort2$Vessel_length[effort2$Country=="ES"& effort2$Year == 2018] <- "all"
-effort2$Vessel_length[effort2$Country=="ES"& effort2$Year == 2018 & effort2$Metier =="GNS_DEF"] <- "all"
-effort2$Vessel_length[effort2$Country=="ES"& effort2$Year == 2018 & effort2$Metier =="LLS_DEF" & effort2$Vessel_length == "-9" ] <- "all"
-
-effort2$Metier[effort2$Country=="ES"& effort2$Year == 2018 & effort2$Metier %in%c("OTB_MPD","PTB_MBT")] <- "OTB_DEF" #OTB with pelagic doors
-effort2$Metier[effort2$Country=="ES"& effort2$Year == 2018 & effort2$Metier %in%c("LTL_LPL","LHP_LPF")] <- "LLS_DEF" 
-#France
-
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2018 & effort2$Metier =="DRB_all"] <- "DRB_MOL"
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2018 & effort2$Metier =="PS_SPF_"] <- "OTB_SPF"
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2018 & effort2$Metier =="OTT-DEF"] <- "OTT_DEF"
-
-#scotland
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2018 & effort2$Metier =="FPO_CRU"] <- "<10m"
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2018 & effort2$Metier =="GNS_DEF"] <- "<10m"
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2018 & effort2$Metier =="LLS_FIF"] <- "<10m"
-effort2$Vessel_length[effort2$Country=="UKS"& effort2$Year == 2018 & effort2$Metier =="MIS_MIS"] <- "<10m"
-
-#UKN
-effort2$Metier[effort2$Country=="UKN"& effort2$Year == 2018 & effort2$Metier =="FPO_NA_"] <- "FPO_CRU"
-
-#IE
-effort2$Metier[effort2$Country=="IE"& effort2$Year == 2018 & effort2$Metier =="PTM_LPF"] <- "PTM_SPF"
-
-
-# 2019 effort fixes -------------------------------------------------------
-
-
-#France
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2019 & effort2$Metier =="DRB_all"] <- "DRB_MOL"
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2019 & effort2$Metier =="PS_SPF_"] <- "OTB_SPF"
-effort2$Metier[effort2$Country=="FRA"& effort2$Year == 2019 & effort2$Metier =="OTT-DEF"] <- "OTT_DEF"
-
-
-#UKE
-effort2$Metier[effort2$Country=="UKE"& effort2$Year == 2019 & effort2$Metier =="SDN_all"] <- "SDN_DE"
-
-#Poland
-effort2$Metier[effort2$Country=="POL"& effort2$Year == 2019 & effort2$Metier =="Pel free"] <- "LLD_LPF"
-
-#Poland
-effort2$Metier[effort2$Country=="NL"& effort2$Year == 2019 & effort2$Metier =="SDN_all"] <- "SDN_DEF"
-
-
-
 # Processing catch data ---------------------------------------------------
-
 Catch3 <- catch2
 effort3 <- effort2
-
-
 
 # #1.5 Clean species names ------------------------------------------------
 Catch3 <-subset(Catch3,Species %in% Sps)
@@ -283,9 +204,6 @@ Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE"
 
 Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]*0.88
 Catch3$Species[Catch3$Species %in% c("ANK","ANF","MNZ")]<- "MON"
-
-
-
 
 
 # #1.10 Add discards from InterCatch3 file when missing in the Stoc --------
@@ -325,7 +243,7 @@ Catch3$DR[is.na(Catch3$DR)] <- 0 # this
 
 # Join stock ID to Catch3 --------------------------------------------------
 dim(Catch3)
-Catch3 <- left_join(Catch3,Stock_fix, by = c("Area", "Species"))
+Catch3 <- left_join(Catch3,Stock_Lookup, by = c("Area", "Species"))
 dim(Catch3)
 
 # #subset out lines without stock -----------------------------------------
@@ -369,15 +287,13 @@ summa <- Catch3 %>% select(Landings,Country,Year,Stock) %>% group_by_at(vars(-La
 
 summa<-summa[,c(3,2,1,4)]
 summafleet<-aggregate(list(Landings=Catch3$Landings),by=list(Discard_ID=Catch3$Discard_ID, Year=Catch3$Year,   Stock=Catch3$Stock),sum)
-write.csv(summa,file=paste("results/quality/catch_per_country_",Run.nameFC, options,".csv"))
+write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per_country_", options,".csv")))
 
 ####```
-
-
 #Adding in the NEP discard rates... On the advice sheet it is just a blanket discard rate, so that is what we will apply. THese rates are taken from Jennifer and Mikels sheet
 ####```{r}
 #read in the table supplied by Jennider.
-nep_data <- read.csv("bootstrap/data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv")
+
 #We need to apply the discard rate by weight - discard.rate.wgt
 
 # In 2019 we did it manually due to time constriants
@@ -441,47 +357,12 @@ Catch4<- Catch3 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter,Spec
             "Value" = sum(Value, na.rm=T)) %>% ungroup()
 
 # Now aggregate to make sure
-effort3 <- effort2 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter) %>%dplyr::summarise("kw_days"=sum(kw_days,na.rm=T),
-                                                                                                    "Days_at_sea"=sum(Days_at_sea,na.rm=T)) %>% ungroup()
+effort3 <- effort2 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter) %>%dplyr::summarise("kw_days"=sum(kw_days,na.rm=T),"Days_at_sea"=sum(Days_at_sea,na.rm=T)) %>% ungroup()
 
+# Section off the above for checking  -------------------------------------
+Effort_FIN <- effort3
 
-# Create Catch_effort -----------------------------------------------------
-effort3 <- effort3 %>% mutate(effort_check=1:nrow(effort3))
-
-dim(Catch4)
-Catch_effort <- left_join(Catch4,effort3)
-dim(Catch_effort)
-
-Catch_effort_NA <- filter(Catch_effort,is.na(kw_days)==T)
-Effort_Na <-effort3 %>% filter(!effort_check %in% Catch_effort$effort_check)
-Effort_MATCH <-effort3 %>% filter(effort_check %in% Catch_effort$effort_check)
-
-table(Effort_Na$Fleet)
-
-##good matches
-Catch_effort_2 <- filter(Catch_effort,is.na(kw_days)==F)
-
-sum(Catch3$Landings)-(sum(Catch_effort_2$Landings)+sum(Catch_effort_NA$Landings))
-
-sum(effort3$kw_days)
-sum(Catch_effort_2$kw_days)
-
-#summarise data
-### Okay so we have macthec the catch and effort data, but this cant be used
-### becuse of the duplication of effort when joining to data still split by species
-### so we take off the effort data and use the effort match DF 
-### to select the effort we know matches directly from the effort file
-Catch_FIN <- select(Catch_effort_2 ,Fleet,Metier, Vessel_length, Year,Species,Stock,Landings,Discards,Value) %>% 
-  group_by(Fleet,Metier, Vessel_length, Year,Species,Stock) %>%  #2019 CM added Stock
-  summarise("Landings"=sum(Landings,na.rm=T),
-            "Discards"=sum(Discards,na.rm=T),
-            "Value" = sum(Value, na.rm=T)) %>% ungroup()
-
-Effort_FIN <- Effort_MATCH
-
-### keep eye on this
-sum(Catch_FIN$Landings)
-sum(Catch4$Landings)
+Catch_FIN <- Catch4
 
 # year cons ---------------------------------------------------------------
 
@@ -491,7 +372,7 @@ ca_agg<- Catch_FIN %>% select(Stock,Year,Landings) %>% group_by_at(vars(-Landing
 ca_agg <- ca_agg %>% filter(Year==yr.cons)
 
 ### ok so this is createing a value == to 1% of the landings for a fleet in a year.
-ca_agg$pc<-as.numeric(0.01)*ca_agg$Landings
+ca_agg$pc<-as.numeric(as.numeric(FLEET_PERCENTAGE))*ca_agg$Landings
 
 
 ## by fleet
@@ -549,10 +430,6 @@ effort <- Effort_FIN %>%ungroup() %>%  select(kw_days,Fleet,Metier,Year) %>%
 sort(unique(catch$Fleet))
 sort(unique(effort$Fleet))
 
-sum(Effort_MATCH$kw_days)
-sum(effort$kw_days)
-sum(Catch_FIN$Landings)
-sum(catch$Landings)
+write.taf(catch,file = file.path(Data_path,"clean_data/Catch_4_Makefleets.csv"))
+write.taf(effort,file = file.path(Data_path,"clean_data/Effort_4_Makefleets.csv"))
 
-catch <- as.data.frame(catch)
-effort <- as.data.frame(effort)

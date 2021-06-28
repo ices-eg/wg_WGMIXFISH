@@ -544,12 +544,20 @@ effort3 <- effort2
 Catch4$Metier <- substr(Catch4$Metier, 1,7)
 effort3$Metier <- substr(effort3$Metier, 1,7)
 effort3 <- effort3 %>% mutate(effort_check=1:nrow(effort3))
+Catch4 <- Catch4 %>% mutate(catch_check=1:nrow(Catch4))
+
 
 dim(Catch4)
 Catch_effort <- left_join(Catch4,effort3)
 dim(Catch_effort)
 
-Catch_effort_NA <- filter(Catch_effort,is.na(kw_days)==T)
+
+Catch_effort_NA <- filter(Catch_effort,is.na(effort_check)==T)
+Catch_MATCH <-filter(Catch_effort,is.na(effort_check)==F)
+dim(Catch_effort)[1]-(dim(Catch_effort_NA)[1]+dim(Catch_Match)[1])
+
+
+
 Effort_Na <-effort3 %>% filter(!effort_check %in% Catch_effort$effort_check)
 Effort_MATCH <-effort3 %>% filter(effort_check %in% Catch_effort$effort_check)
 
@@ -559,4 +567,10 @@ table(Effort_Na$Metier)
 
 write.taf(Catch_effort_NA,file.path(Data_path_out,"Intermediate_products/NA_Catch.csv"))
 write.taf(Effort_Na,file.path(Data_path_out,"Intermediate_products/NA_Effort.csv"))
+
+##
+write.taf(Catch_Match,file.path(Data_path_out,"clean_data/Matched_clean_accessions_landings.csv"))
+write.taf(Effort_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_effort.csv"))
+
+
 
