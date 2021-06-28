@@ -53,10 +53,10 @@ FLBobj<-function(stock,yearsfwd=2) {
 }
 
 # Loading sam_to_FLStock function to Convert SAM to FLStock / Author: Simon Fisher
-  sourceTAF("bootstrap/software/functions/sam_to_FLStock.R")
+  sourceTAF("./funcs/sam_to_FLStock.R")
 
 # Loading QC_FLStock function to check the stock objects / Author: Paul Dolder
-  sourceTAF("bootstrap/software/functions/QC_FLStock.R")
+  sourceTAF("./funcs/QC_FLStock.R")
   
 
 
