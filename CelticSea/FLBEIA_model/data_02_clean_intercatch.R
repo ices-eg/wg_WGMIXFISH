@@ -161,19 +161,8 @@ Inter_stock_summary$DR<-Inter_stock_summary$Discards/Inter_stock_summary$Catch
 Inter_stock_summary<-rbind(Inter_stock_summary,IC_sum)
 
 
-
-#Sanity plots of what is in there
-
-had <- ggplot(Inter_stock_summary[Inter_stock_summary$Year %in% c(2017, 2018, 2019) & Inter_stock_summary$Stock == "had.27.7b-k",], aes(lvl4, DR)) + geom_bar(stat= "identity") +
-  facet_wrap(~Year) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-had
-#according to the 2019 advice sheet the discard rate in 2016 was 10337/17931, 2017 7975/16072 and in 2018 5436/12545
-
-whg <- ggplot(Inter_stock_summary[Inter_stock_summary$Year %in% c(2017, 2018, 2019) & Inter_stock_summary$Stock == "whg.27.7b-ce-k",], aes(lvl4, DR)) + geom_bar(stat= "identity") +
-  facet_wrap(~Year) +theme(axis.text.x = element_text(angle = 90, hjust = 1))
-whg
-#according to the 2019 advice sheet the discard rate in 2016 was 7278/(15179+7278), 2017 4505/(11693 +4505) and in 2018 1495/(8773+1495)
-
+# Adjustments and corrections to DR  --------------------------------------
+### currently blank but may fill up in time 
 
 
 # Write out intercatch summary ####

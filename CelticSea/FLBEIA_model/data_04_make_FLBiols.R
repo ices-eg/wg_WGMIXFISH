@@ -24,6 +24,10 @@ library(R.utils)
 library(reshape2)
 
 
+# file paths --------------------------------------------------------------
+Data_path <- "CelticSea/bootstrap"
+Data_path_out <- "CelticSea/Results"
+
 #################################################
 # Load other functions
 #################################################
@@ -53,10 +57,10 @@ FLBobj<-function(stock,yearsfwd=2) {
 }
 
 # Loading sam_to_FLStock function to Convert SAM to FLStock / Author: Simon Fisher
-  sourceTAF("bootstrap/software/functions/sam_to_FLStock.R")
+  sourceTAF(file.path(Data_path,"software/functions/sam_to_FLStock.R"))
 
 # Loading QC_FLStock function to check the stock objects / Author: Paul Dolder
-  sourceTAF("bootstrap/software/functions/QC_FLStock.R")
+  sourceTAF(file.path(Data_path,"software/functions/QC_FLStock.R"))
   
 
 
@@ -82,7 +86,7 @@ List_stock<-NULL
 
 
 ####### cod.27.7e-k #######
-load("bootstrap/data/submitted_stock_objects/WGCSE/cod.27.7e-k/Cod_7ek_WGCSE2020/run/model.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGCSE/cod.27.7e-k/Cod_7ek_WGCSE2020/run/model.RData"))
 stock <- sam_to_FLStock(fit)
 plot(stock)
 stock@name <- "cod.27.7e-k"
@@ -98,13 +102,13 @@ plot(computeStock(stock))
 # forecast <- sam2flr(FC)
 # QC_FLStock(stock)
 COD<-FLBobj(stock)  
-save(stock, COD,file="results/clean_data/clean_stock_objects/cod.27.7e-k.RData")
+save(stock, COD,file=file.path(Data_path_out,"clean_stock_objects/cod.27.7e-k.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(fit, stock)
 
 
 ####### whg.27.7b-ce-k #######
-load("bootstrap/data/submitted_stock_objects/WGCSE/whg.27.7b-ce-k/whg.7b-ce-k_WGCSE_II/run/model.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGCSE/whg.27.7b-ce-k/whg.7b-ce-k_WGCSE_II/run/model.RData"))
 stock <- sam_to_FLStock(fit)
 plot(stock)
 stock@name <- "whg.27.7b-ce-k"
@@ -121,14 +125,14 @@ plot(computeCatch(stock))
 # forecast <- sam2flr(FC)
 # QC_FLStock(stock)
 WHG<-FLBobj(stock)  
-save(stock, WHG, file="results/clean_data/clean_stock_objects/whg.7b-ce-k.RData")
+save(stock, WHG, file=file.path(Data_path_out,"clean_stock_objects/whg.27.7b-ce-k.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(fit, stock)
 
 
 
 ####### had.27.7b-k #######
-load("bootstrap/data/submitted_stock_objects/WGCSE/had.27.b-k/HAD7bk_2020_Assessment/run/model.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGCSE/had.27.b-k/HAD7bk_2020_Assessment/run/model.RData"))
 stock <- sam_to_FLStock(fit)
 plot(stock)
 stock@name <- "had.27.7b-k"
@@ -146,7 +150,7 @@ plot(computeCatch(stock))
 #forcast <- sam2flr(FC)
 # QC_FLStock(stock)
 HAD<-FLBobj(stock)  
-save(stock, HAD, file="results/clean_data/clean_stock_objects/had.27.7b-k.RData")
+save(stock, HAD, file=file.path(Data_path_out,"clean_stock_objects/had.27.7b-k.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(fit, stock)
 
@@ -158,7 +162,7 @@ rm(fit, stock)
 
 
 ####### meg.27.7b-k8abd #######
-load("bootstrap/data/submitted_stock_objects/WGBIE/meg.27.7b-k8abd/MEG_wg2020.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGBIE/meg.27.7b-k8abd/MEG_wg2020.RData"))
 stock <- meg
 units(stock@harvest) <- "f"
 plot(stock)
@@ -177,14 +181,14 @@ QC_FLStock(stock)
 # meg.stf
 #save out
 MEG<-FLBobj(stock)  
-save(stock, MEG, file="results/clean_data/clean_stock_objects/meg.27.7b-k8abd.RData")
+save(stock, MEG, file=file.path(Data_path_out,"clean_stock_objects/meg.27.7b-k8abd.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(Fsq,i,meg,meg.stf,slot.names,stock)
 
 
 
 ####### hke.27.3a46-8abd ######
-load("bootstrap/data/submitted_stock_objects/WGBIE/hke.27.3a46-8abd/nhke_FLStock.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGBIE/hke.27.3a46-8abd/nhke_FLStock.RData"))
 stock <- stk_norepl
 #stock slot not filled:
 stock@stock <- computeStock(stock)
@@ -197,14 +201,14 @@ plot(stock@harvest)
 plot(computeHarvest(stock))
 QC_FLStock(stock)
 HKE<-FLBobj(stock)
-save(stock, HKE, file="results/clean_data/clean_stock_objects/hke.27.3a46-8abd.RData")
+save(stock, HKE, file=file.path(Data_path_out,"clean_stock_objects/hke.27.3a46-8abd.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(stk,stk_norepl,stock)
 
 
 
 ####### mon.27.78abd #######
-load("bootstrap/data/submitted_stock_objects/WGBIE/mon.27.78abd/mon78_a4a.Rdata")
+load(file.path(Data_path,"data/submitted_stock_objects/WGBIE/mon.27.78abd/mon78_a4a.Rdata"))
 stock <- stock+fit1
 plot(stock)
 stock@discards.wt[is.na(stock@discards.wt)] <- 0
@@ -217,7 +221,7 @@ stock@name <- "mon.27.78abd"
 stock@desc <- "mon.27.78abd, WGBIE, 2020"
 QC_FLStock(stock)
 MON<-FLBobj(stock)  
-save(stock, MON, file="results/clean_data/clean_stock_objects/mon.27.78abd.RData")
+save(stock, MON, file=file.path(Data_path_out,"clean_stock_objects/mon.27.78abd.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(fit1,stock,tun.sel)
 
@@ -227,7 +231,7 @@ rm(fit1,stock,tun.sel)
 
 ####### sol.27.7e #######
 # Model outputs and stf
-load("bootstrap/data/submitted_stock_objects/WGCSE/sol.27.7e/2020_sol.27.7e_assessment-master/model/stock.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGCSE/sol.27.7e/2020_sol.27.7e_assessment-master/model/stock.RData"))
 stock <- stk_new
 plot(stock)
 stock@stock <- computeStock(stock)
@@ -241,7 +245,7 @@ plot(stock@landings)
 plot(computeLandings(stock))
 QC_FLStock(stock)
 SOL7E<-FLBobj(stock)  
-save(stock, SOL7E,file="results/clean_data/clean_stock_objects/sol.27.7e.RData")
+save(stock, SOL7E,file=file.path(Data_path_out,"clean_stock_objects/sol.27.7e.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(stk_new,stock)
 
@@ -249,7 +253,7 @@ rm(stk_new,stock)
 
 ####### sol.27.7.fg #######
 # Model outputs and stf
-load("bootstrap/data/submitted_stock_objects/WGCSE/sol.27.7fg/WGCSE2020_Sol.27.7fg_Assessment/OUTPUT/SAM_fit_sol_7fg.RData")
+load(file.path(Data_path,"data/submitted_stock_objects/WGCSE/sol.27.7fg/WGCSE2020_Sol.27.7fg_Assessment/OUTPUT/SAM_fit_sol_7fg.RData"))
 stock <- sam_to_FLStock(SAM_fit_sol_7fg)
 plot(stock)
 stock@name <- "sol.27.7fg"
@@ -261,7 +265,7 @@ plot(computeCatch(stock))
 stock@range[['plusgroup']][] <- 10
 # QC_FLStock(stock)
 SOL7FG<-FLBobj(stock)  
-save(stock,SOL7FG, file="results/clean_data/clean_stock_objects/sol.27.7fg.RData")
+save(stock,SOL7FG, file=file.path(Data_path_out,"clean_stock_objects/sol.27.7fg.RData"))
 List_stock<-c(List_stock, stock@name)
 rm(SAM_fit_sol_7fg,stock)
 
@@ -274,7 +278,7 @@ rm(SAM_fit_sol_7fg,stock)
 
 # Used North Sea FU6 as example to mimic the stock objects
 # First we work up the .csv file for all nep.all
-nep.wide <- read.csv("bootstrap/data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv")
+nep.wide <- read.csv(file.path(Data_path,"data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv"))
 nep.all <- nep.wide
 nep.all$harvest.rate <- nep.all$harvest.rate/100 # hr is coming as percentage
 # a fix for building the fleet object
@@ -308,7 +312,7 @@ nep.all$catch.wt <- with(nep.all, (landings.wt_0*landings.n/(landings.n_0+discar
 # Dead discard rate and Survival rates will be setup when running the script: model_01_Reproduce_the_advice_Celtic_Sea_2019.Rmd
 # Save them in data folder for later
 nep.dead.disc.surv.rate <- cbind(nep.all[,c("fu", "year", "discard.rate.n", "discard.rate.wgt", "dead.disc.rate.n", "survival.rate")])
-write.csv(nep.dead.disc.surv.rate, "bootstrap/data/submitted_stock_objects/WGCSE/nep.all/other.dicard.rates.csv", row.names = F)
+write.csv(nep.dead.disc.surv.rate,file.path(Data_path_out,"intermediate_products/other.dicard.rates.csv"), row.names = F)
 
 # Select columns for stock object
 nep.all <- nep.all[,c("fu", "year", "stock.n", "landings.n", "discards.n", "catch.n", "harvest", "landings",
@@ -348,7 +352,7 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP16<-FLBobj(stock)  
 List_stock<-c(List_stock, stock@name)
-save(stock, NEP16, file=paste0("results/clean_data/clean_stock_objects/", stock@name, ".RData"))
+save(stock, NEP16, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
 rm(stock, nep.data)
 
 
@@ -372,7 +376,7 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP17<-FLBobj(stock)  
 List_stock<-c(List_stock, stock@name)
-save(stock, NEP17, file=paste0("results/clean_data/clean_stock_objects/", stock@name, ".RData"))
+save(stock, NEP17, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
 rm(stock, nep.data)
 
 
@@ -397,7 +401,7 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP19<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
-save(stock, NEP19, file=paste0("results/clean_data/clean_stock_objects/", stock@name, ".RData"))
+save(stock, NEP19, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
 rm(stock, nep.data)
 
 
@@ -420,7 +424,7 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP2021<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
-save(stock, NEP2021,file=paste0("results/clean_data/clean_stock_objects/", stock@name, ".RData"))
+save(stock, NEP2021,file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
 rm(stock, nep.data)
 
 
@@ -443,7 +447,7 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP22<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
-save(stock, NEP22, file=paste0("results/clean_data/clean_stock_objects/", stock@name, ".RData"))
+save(stock, NEP22, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
 rm(stock, nep.data)
 
 
@@ -472,7 +476,7 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEPOUT7<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
-save(stock, NEPOUT7, file=paste0("results/clean_data/clean_stock_objects/", stock@name, ".RData"))
+save(stock, NEPOUT7, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
 rm(stock, nep.data)
 
 
@@ -481,7 +485,7 @@ rm(stock, nep.data)
 
 
 for (stk in List_stock) {
-	load(file=paste0("results/clean_data/clean_stock_objects/", stk, ".RData"))
+	load(file=file.path(Data_path_out,paste0("clean_stock_objects/", stk, ".RData")))
 	switch(stk,
 	"cod.27.7e-k"=CODs<-stock,
 	"whg.27.7b-ce-k"=WHGs<-stock,
@@ -504,4 +508,4 @@ for (stk in List_stock) {
 CS_Biols <- FLBiols(COD,WHG,HAD,HKE,MON,MEG,SOL7FG,SOL7E,NEP16,NEP17,NEP19,NEP2021,NEP22,NEPOUT7)
 CS_Stocks <- FLStocks(COD=CODs,WHG=WHGs,HAD=HADs,HKE=HKEs,MON=MONs,MEG=MEGs,SOL7FG=SOL7FGs,SOL7E=SOL7Es,NEP16=NEP16s,NEP17=NEP17s,NEP19=NEP19s,NEP2021=NEP2021s,NEP22=NEP22s,NEPOUT7=NEPOUT7s)
 
-save(CS_Biols, CS_Stocks, file=paste0("results/clean_data/clean_stock_objects/CS_FLBiols_FLStocks.RData"))
+save(CS_Biols, CS_Stocks, file=file.path(Data_path_out,paste0("clean_stock_objects/CS_FLBiols_FLStocks.RData")))

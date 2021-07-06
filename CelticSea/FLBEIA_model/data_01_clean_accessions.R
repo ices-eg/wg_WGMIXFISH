@@ -137,6 +137,10 @@ accessions_landings$Species[accessions_landings$Species %in% c("LEZ","LDB")]<- "
 accessions_landings$Species[accessions_landings$Species %in% c("ANK","ANF", "MNZ")]<- "MON"
 #
 
+
+# Adjustments and corrections ---------------------------------------------
+
+
 # Clean Metier Naming ####
 names(lvl4_Lookup)[1] <- "Metier"
 
@@ -225,6 +229,7 @@ sum(accessions_landings$Landings)/1000
 
 q <- ggplot(accessions_landings[accessions_landings$Year %in% c(2019) & accessions_landings$Species %in% c("COD", "HAD", "WHG")& accessions_landings$Area %in% c("27.7.b" ,"27.7.c" ,  "27.7.d", "27.7.e","27.7.f" ,  "27.7.g" ,  "27.7.h" ,"27.7.j" ,  "27.7.k"),], aes(Country, Landings)) + geom_bar(stat="identity") + facet_wrap(~Species)
 q
+
 
 
 # Fix for odd nep issues
@@ -420,7 +425,7 @@ Quarter_Lookup$Quarter <- as.character(Quarter_Lookup$Quarter)
 
 dim(accessions_effort3)
 accessions_effort4 <- left_join(accessions_effort3,Quarter_Lookup)
-dim(accessions_landings3)[1]-dim(accessions_effort4)[1]
+dim(accessions_effort3)[1]-dim(accessions_effort4)[1]
 
 accessions_effort4$Quarter[is.na(accessions_effort4$Correct_Quarter)==F] <- accessions_effort4$Correct_Quarter[is.na(accessions_effort4$Correct_Quarter)==F]
 accessions_effort4 <- accessions_effort4 %>% select(-Correct_Quarter)
@@ -525,8 +530,8 @@ effort <- effort[substr(effort$Area, 1,4) %in% c( "27.7"),]
 
 # #1.4 Clean Country Names ------------------------------------------------
 # select the last three Year
-effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
-catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
+# effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
+# catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
 
 # Combine catch and effort ------------------------------------------------
 catch2 <- catch
@@ -537,8 +542,39 @@ effort2 <- effort2 %>% group_by_at(vars(-kw_days,-Days_at_sea,-No_vessels)) %>% 
 
 catch2 <- catch2 %>% mutate(check=1:nrow(catch2))
 
+
+# Adjustments and corrections ---------------------------------------------
+Catch3 <- catch2
+# fix to exclude SOL 7.E in 2020
+# currently filtering sol in 27.7.e 
+Catch3[Catch3$Species =="SOL" & Catch3$Area == "27.7.e",]
+Catch3 <- Catch3[Catch3$Species !="SOL" & Catch3$Area != "27.7.e",]
+
+ 
+
+
+##### propotion of megrim based on split established by WG
+Catch3$Landings[Catch3$Species=="LDB"]<-Catch3$Landings[Catch3$Species=="LDB"]*(1-0.052)
+Catch3$Landings[Catch3$Species=="LEZ"]<-Catch3$Landings[Catch3$Species=="LEZ"]*(1-0.052)
+Catch3$Landings[Catch3$Species=="MEG"]<-Catch3$Landings[Catch3$Species=="MEG"]*(1-0.052)
+Catch3$Species[Catch3$Species %in% c("LEZ","LDB")]<- "MEG"
+
+########### propotion of anglers and monk based on  known split
+# we only care about 1 stock and thes especies are landined as spp so
+#  a value is used to proportion what we want by stock (Expert knowledge?! you would hope...)
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("ES","ES-AZTI"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("ES","ES-AZTI"))]*0.57
+
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="FRA")]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="FRA")]*0.82
+
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE")]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE")]*0.78
+
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]*0.88
+Catch3$Species[Catch3$Species %in% c("ANK","ANF","MNZ")]<- "MON"
+
+
+
 # Processing catch data ---------------------------------------------------
-Catch4 <- catch2
+Catch4 <- Catch3
 effort3 <- effort2
 
 Catch4$Metier <- substr(Catch4$Metier, 1,7)
@@ -554,7 +590,7 @@ dim(Catch_effort)
 
 Catch_effort_NA <- filter(Catch_effort,is.na(effort_check)==T)
 Catch_MATCH <-filter(Catch_effort,is.na(effort_check)==F)
-dim(Catch_effort)[1]-(dim(Catch_effort_NA)[1]+dim(Catch_Match)[1])
+dim(Catch_effort)[1]-(dim(Catch_effort_NA)[1]+dim(Catch_MATCH)[1])
 
 
 
@@ -569,7 +605,7 @@ write.taf(Catch_effort_NA,file.path(Data_path_out,"Intermediate_products/NA_Catc
 write.taf(Effort_Na,file.path(Data_path_out,"Intermediate_products/NA_Effort.csv"))
 
 ##
-write.taf(Catch_Match,file.path(Data_path_out,"clean_data/Matched_clean_accessions_landings.csv"))
+write.taf(Catch_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_landings.csv"))
 write.taf(Effort_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_effort.csv"))
 
 
