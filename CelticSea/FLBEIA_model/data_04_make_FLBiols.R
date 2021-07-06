@@ -57,10 +57,17 @@ FLBobj<-function(stock,yearsfwd=2) {
 }
 
 # Loading sam_to_FLStock function to Convert SAM to FLStock / Author: Simon Fisher
+<<<<<<< HEAD
   sourceTAF(file.path(Data_path,"software/functions/sam_to_FLStock.R"))
 
 # Loading QC_FLStock function to check the stock objects / Author: Paul Dolder
   sourceTAF(file.path(Data_path,"software/functions/QC_FLStock.R"))
+=======
+  sourceTAF("./funcs/sam_to_FLStock.R")
+
+# Loading QC_FLStock function to check the stock objects / Author: Paul Dolder
+  sourceTAF("./funcs/QC_FLStock.R")
+>>>>>>> 28f6c333ca42728488a65bbd084f1dd8e7dd2702
   
 
 
@@ -80,7 +87,7 @@ FLBobj<-function(stock,yearsfwd=2) {
 # But the other slots must be filled also
 
 List_stock<-NULL
-
+List_FLBiol<-NULL
 
 # CS Tier 1 SPP:  cod, had and whg ----
 
@@ -104,6 +111,7 @@ plot(computeStock(stock))
 COD<-FLBobj(stock)  
 save(stock, COD,file=file.path(Data_path_out,"clean_stock_objects/cod.27.7e-k.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"COD")
 rm(fit, stock)
 
 
@@ -127,6 +135,7 @@ plot(computeCatch(stock))
 WHG<-FLBobj(stock)  
 save(stock, WHG, file=file.path(Data_path_out,"clean_stock_objects/whg.27.7b-ce-k.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"WHG")
 rm(fit, stock)
 
 
@@ -152,6 +161,7 @@ plot(computeCatch(stock))
 HAD<-FLBobj(stock)  
 save(stock, HAD, file=file.path(Data_path_out,"clean_stock_objects/had.27.7b-k.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"HAD")
 rm(fit, stock)
 
 
@@ -183,6 +193,7 @@ QC_FLStock(stock)
 MEG<-FLBobj(stock)  
 save(stock, MEG, file=file.path(Data_path_out,"clean_stock_objects/meg.27.7b-k8abd.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"MEG")
 rm(Fsq,i,meg,meg.stf,slot.names,stock)
 
 
@@ -203,6 +214,7 @@ QC_FLStock(stock)
 HKE<-FLBobj(stock)
 save(stock, HKE, file=file.path(Data_path_out,"clean_stock_objects/hke.27.3a46-8abd.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"HKE")
 rm(stk,stk_norepl,stock)
 
 
@@ -223,6 +235,7 @@ QC_FLStock(stock)
 MON<-FLBobj(stock)  
 save(stock, MON, file=file.path(Data_path_out,"clean_stock_objects/mon.27.78abd.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"MON")
 rm(fit1,stock,tun.sel)
 
 
@@ -247,6 +260,7 @@ QC_FLStock(stock)
 SOL7E<-FLBobj(stock)  
 save(stock, SOL7E,file=file.path(Data_path_out,"clean_stock_objects/sol.27.7e.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"SOL7E")
 rm(stk_new,stock)
 
 
@@ -267,6 +281,7 @@ stock@range[['plusgroup']][] <- 10
 SOL7FG<-FLBobj(stock)  
 save(stock,SOL7FG, file=file.path(Data_path_out,"clean_stock_objects/sol.27.7fg.RData"))
 List_stock<-c(List_stock, stock@name)
+List_FLBiol<-c(List_FLBiol,"SOL7FG")
 rm(SAM_fit_sol_7fg,stock)
 
 
@@ -352,7 +367,11 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP16<-FLBobj(stock)  
 List_stock<-c(List_stock, stock@name)
+
 save(stock, NEP16, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
+
+List_FLBiol<-c(List_FLBiol,"NEP16")
+
 rm(stock, nep.data)
 
 
@@ -376,7 +395,11 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP17<-FLBobj(stock)  
 List_stock<-c(List_stock, stock@name)
+
 save(stock, NEP17, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
+
+List_FLBiol<-c(List_FLBiol,"NEP17")
+
 rm(stock, nep.data)
 
 
@@ -401,7 +424,11 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP19<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
+
 save(stock, NEP19, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
+
+List_FLBiol<-c(List_FLBiol,"NEP19")
+
 rm(stock, nep.data)
 
 
@@ -424,7 +451,11 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP2021<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
+
 save(stock, NEP2021,file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
+
+List_FLBiol<-c(List_FLBiol,"NEP2021")
+
 rm(stock, nep.data)
 
 
@@ -447,7 +478,11 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEP22<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
+
 save(stock, NEP22, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
+
+List_FLBiol<-c(List_FLBiol,"NEP22")
+
 rm(stock, nep.data)
 
 
@@ -476,11 +511,17 @@ catch.n(stock) == landings.n(stock) + discards.n(stock) # Landings + Dead & Surv
 catch.wt(stock) - ((landings.wt(stock) * landings.n(stock)/(landings.n(stock)+discards.n(stock))) + (discards.wt(stock) * discards.n(stock)/(landings.n(stock)+discards.n(stock))))
 NEPOUT7<-FLBobj(stock)
 List_stock<-c(List_stock, stock@name)
+
 save(stock, NEPOUT7, file=file.path(Data_path_out,paste0("clean_stock_objects/", stock@name, ".RData")))
+
+List_FLBiol<-c(List_FLBiol,"NEPOUT7")
+
 rm(stock, nep.data)
 
 
 
+# Wrapping up variables in FLBiols and FLStocks objects
+CS_Biols<- FLBiols(lapply(List_FLBiol, get))
 
 
 
@@ -507,5 +548,13 @@ for (stk in List_stock) {
 
 CS_Biols <- FLBiols(COD,WHG,HAD,HKE,MON,MEG,SOL7FG,SOL7E,NEP16,NEP17,NEP19,NEP2021,NEP22,NEPOUT7)
 CS_Stocks <- FLStocks(COD=CODs,WHG=WHGs,HAD=HADs,HKE=HKEs,MON=MONs,MEG=MEGs,SOL7FG=SOL7FGs,SOL7E=SOL7Es,NEP16=NEP16s,NEP17=NEP17s,NEP19=NEP19s,NEP2021=NEP2021s,NEP22=NEP22s,NEPOUT7=NEPOUT7s)
+
+CS_Stocks <- lapply(List_stock, function(x) {
+        load(paste(file.path('results/clean_data/clean_stock_objects'), "/", x,'.RData', sep=""))
+        res <- get("stock")
+        name(res) <- tolower(x)
+        print(x)
+        res})
+
 
 save(CS_Biols, CS_Stocks, file=file.path(Data_path_out,paste0("clean_stock_objects/CS_FLBiols_FLStocks.RData")))
