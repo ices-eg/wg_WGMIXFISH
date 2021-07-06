@@ -183,44 +183,9 @@ effort3 <- effort2
 # #1.5 Clean species names ------------------------------------------------
 Catch3 <-subset(Catch3,Species %in% Sps)
 
-# fix to exclude SOL 7.E in 2020
-Catch3 <- Catch3[Catch3$Species !="SOL" | Catch3$Area != "27.7.e",]
-
-
-##### propotion of megrim based on split established by WG
-Catch3$Landings[Catch3$Species=="LDB"]<-Catch3$Landings[Catch3$Species=="LDB"]*(1-0.052)
-Catch3$Landings[Catch3$Species=="LEZ"]<-Catch3$Landings[Catch3$Species=="LEZ"]*(1-0.052)
-Catch3$Landings[Catch3$Species=="MEG"]<-Catch3$Landings[Catch3$Species=="MEG"]*(1-0.052)
-Catch3$Species[Catch3$Species %in% c("LEZ","LDB")]<- "MEG"
-
-########### propotion of anglers and monk based on  known split
-# we only care about 1 stock and thes especies are landined as spp so
-#  a value is used to proportion what we want by stock (Expert knowledge?! you would hope...)
-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("ES","ES-AZTI"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("ES","ES-AZTI"))]*0.57
-
-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="FRA")]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="FRA")]*0.82
-
-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE")]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE")]*0.78
-
-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]*0.88
-Catch3$Species[Catch3$Species %in% c("ANK","ANF","MNZ")]<- "MON"
-
-
-# #1.10 Add discards from InterCatch3 file when missing in the Stoc --------
-#Note we dont handle the unknown in the discard process!!!
-InterCatch<-InterCatch[is.na(InterCatch$DR)==F,]
-#THis is to remove any issues with
-InterCatch<-InterCatch[!InterCatch$DR>0.98,] 
-
-
 InterCatch <- InterCatch[InterCatch$Stock %in% tolower(sp.lst),]
 InterCatch$Species <- toupper(substr(InterCatch$Stock, 1, 3))
 InterCatch$Species <- ifelse(InterCatch$Species =="NEP", toupper(InterCatch$Stock),InterCatch$Species)
-
-#2019 fixes for HAD and WHG for some reason BEL only have discard data for OTB but catchs in OTT
-# So I have to put all OTT as OTB for belgium in the catch file
-#catch$Metier[catch$Country == "BEL" & grepl(catch$Metier == "OTT")]
-
 
 # ##Create discard ID in catch and effrot ---------------------------------
 
@@ -234,7 +199,9 @@ discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( "DR" = 
 # Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
 
+dim(Catch3)
 Catch3 <- left_join(Catch3, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
+dim(Catch3)
 
 sum(Catch3$Landings)-sum(Catch3$Landings)
 
@@ -250,38 +217,6 @@ dim(Catch3)
 Catch3<- Catch3[!is.na(Catch3$Stock),]
 
 
-# Split based on somehting DR rate? ---------------------------------------
-#John as paul (John)
-# COD
-Catch3$DR[Catch3$Stock == "cod.27.7e-k"&Catch3$DR==0&Catch3$Year==2019] <- 300/1351
-Catch3$DR[Catch3$Stock == "cod.27.7e-k"&Catch3$DR==0&Catch3$Year==2018] <- 180/1565
-Catch3$DR[Catch3$Stock == "cod.27.7e-k"&Catch3$DR==0&Catch3$Year==2017] <- 117/2354
-
-# SOL7fg
-Catch3$DR[Catch3$Stock == "sol.27.7fg"&Catch3$DR==0&Catch3$Year==2019] <- 145/1213
-Catch3$DR[Catch3$Stock == "sol.27.7fg"&Catch3$DR==0&Catch3$Year==2018] <- 147/997
-Catch3$DR[Catch3$Stock == "sol.27.7fg"&Catch3$DR==0&Catch3$Year==2017] <- 42/818
-
-# SOL7e #exlcuded for reasons 
-#Catch3$DR[Catch3$Stock == "sol.27.7e"&Catch3$DR==0 ] <- 0.0032
-
-# HAD
-Catch3$DR[Catch3$Stock == "had.27.7b-k"&Catch3$DR==0&Catch3$Year==2017 ] <- 7975/16072
-Catch3$DR[Catch3$Stock == "had.27.7b-k"&Catch3$DR==0&Catch3$Year==2018 ] <- 5436/12545
-Catch3$DR[Catch3$Stock == "had.27.7b-k"&Catch3$DR==0&Catch3$Year==2019 ] <- 3603/11259
-
-# monkfish
-Catch3$DR[Catch3$Stock == "mon.27.78abd"&Catch3$DR==0&Catch3$Year==2019] <- 1396/23767 #duplicated in adv 2020 from adv 2019
-Catch3$DR[Catch3$Stock == "mon.27.78abd"&Catch3$DR==0&Catch3$Year==2018] <- 1396/23797
-Catch3$DR[Catch3$Stock == "mon.27.78abd"&Catch3$DR==0&Catch3$Year==2017] <- 2202/27836
-
-# megrim
-Catch3$DR[Catch3$Stock == "meg.27.7b-k8abd"&Catch3$DR==0&Catch3$Year==2019] <- 1854/14133 #duplicated in adv 2020 from adv 2019
-Catch3$DR[Catch3$Stock == "meg.27.7b-k8abd"&Catch3$DR==0&Catch3$Year==2018] <- 1854/14133
-Catch3$DR[Catch3$Stock == "meg.27.7b-k8abd"&Catch3$DR==0&Catch3$Year==2017] <- 2445/13992
-
-
-
 # Produce Catch3 by country from Catch3 df-------------------------------------------------------------
 summa <- Catch3 %>% select(Landings,Country,Year,Stock) %>% group_by_at(vars(-Landings)) %>% summarise(Landings=sum(Landings,na.rm = T)) %>% ungroup()
 
@@ -289,69 +224,36 @@ summa<-summa[,c(3,2,1,4)]
 summafleet<-aggregate(list(Landings=Catch3$Landings),by=list(Discard_ID=Catch3$Discard_ID, Year=Catch3$Year,   Stock=Catch3$Stock),sum)
 write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per_country_", options,".csv")))
 
-####```
-#Adding in the NEP discard rates... On the advice sheet it is just a blanket discard rate, so that is what we will apply. THese rates are taken from Jennifer and Mikels sheet
-####```{r}
-#read in the table supplied by Jennider.
-
-#We need to apply the discard rate by weight - discard.rate.wgt
-
-# In 2019 we did it manually due to time constriants
-## NEP
-
-
-Catch3$DR[Catch3$Stock == "nep.fu.16"] <- 0 # No discard estimates in this stock
-
-Catch3$DR[Catch3$Stock == "nep.fu.17" & Catch3$Year ==2019] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.17" & nep_data$year ==2019]
-Catch3$DR[Catch3$Stock == "nep.fu.17" & Catch3$Year ==2018] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.17" & nep_data$year ==2018]
-Catch3$DR[Catch3$Stock == "nep.fu.17" & Catch3$Year ==2017] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.17" & nep_data$year ==2017]
-
-Catch3$DR[Catch3$Stock == "nep.fu.19" & Catch3$Year ==2019] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.19" & nep_data$year ==2019]
-Catch3$DR[Catch3$Stock == "nep.fu.19" & Catch3$Year ==2018] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.19" & nep_data$year ==2018]
-Catch3$DR[Catch3$Stock == "nep.fu.19" & Catch3$Year ==2017] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.19" & nep_data$year ==2017]
-
-Catch3$DR[Catch3$Stock == "nep.fu.2021" & Catch3$Year ==2019] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.2021" & nep_data$year ==2019]
-Catch3$DR[Catch3$Stock == "nep.fu.2021" & Catch3$Year ==2018] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.2021" & nep_data$year ==2018]
-Catch3$DR[Catch3$Stock == "nep.fu.2021" & Catch3$Year ==2017] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.2021" & nep_data$year ==2017]
-
-Catch3$DR[Catch3$Stock == "nep.fu.22" & Catch3$Year ==2019] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.22" & nep_data$year ==2019]
-Catch3$DR[Catch3$Stock == "nep.fu.22" & Catch3$Year ==2018] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.22" & nep_data$year ==2018]
-Catch3$DR[Catch3$Stock == "nep.fu.22" & Catch3$Year ==2017] <- nep_data$discard.rate.wgt[nep_data$fu == "fu.22" & nep_data$year ==2017]
-
-Catch3$DR[Catch3$Stock == "nep.out.7"] <- 0 # No discard estimates in this stock
-
 
 Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
 
 
 # #Assigning a fleet ------------------------------------------------------
 
-Catch3$shit_list <- substr(Catch3$Metier, 1,3)
+Catch3$Potential_fleets <- substr(Catch3$Metier, 1,3)
 Catch3$GeneralGrouping <- NA
-Catch3$GeneralGrouping <- ifelse(Catch3$shit_list %in% c("LLS", "LHP", "GNS", "FPO", "GTR", "GNC", "LHM", "LLD", "LTL", "GND", "GTN"), "Static", Catch3$GeneralGrouping)
-Catch3$GeneralGrouping <- ifelse(Catch3$shit_list %in% c("TBB"), "Beam", Catch3$GeneralGrouping)
-Catch3$GeneralGrouping <- ifelse(Catch3$shit_list %in% c("SSC", "PTM", "PTB", "SDN", "OTT", "OTM", "OTB"), "Otter", Catch3$GeneralGrouping)
-Catch3$GeneralGrouping <- ifelse(Catch3$shit_list %in% c("DRB", "PS" ,"PS_", "MIS", "HMD", "SPR"), "Other", Catch3$GeneralGrouping)
+Catch3$GeneralGrouping <- ifelse(Catch3$Potential_fleets %in% c("LLS", "LHP", "GNS", "FPO", "GTR", "GNC", "LHM", "LLD", "LTL", "GND", "GTN"), "Static", Catch3$GeneralGrouping)
+Catch3$GeneralGrouping <- ifelse(Catch3$Potential_fleets %in% c("TBB"), "Beam", Catch3$GeneralGrouping)
+Catch3$GeneralGrouping <- ifelse(Catch3$Potential_fleets %in% c("SSC", "PTM", "PTB", "SDN", "OTT", "OTM", "OTB"), "Otter", Catch3$GeneralGrouping)
+Catch3$GeneralGrouping <- ifelse(Catch3$Potential_fleets %in% c("DRB", "PS" ,"PS_", "MIS", "HMD", "SPR"), "Other", Catch3$GeneralGrouping)
 
-effort2$shit_list <- substr(effort2$Metier, 1,3)
+effort2$Potential_fleets <- substr(effort2$Metier, 1,3)
 effort2$GeneralGrouping <- NA
-effort2$GeneralGrouping <- ifelse(effort2$shit_list %in% c("LLS", "LHP", "GNS", "FPO", "GTR", "GNC", "LHM", "LLD", "LTL", "GND", "GTN"), "Static", effort2$GeneralGrouping)
-effort2$GeneralGrouping <- ifelse(effort2$shit_list %in% c("TBB"), "Beam", effort2$GeneralGrouping)
-effort2$GeneralGrouping <- ifelse(effort2$shit_list %in% c("SSC", "PTM", "PTB", "SDN", "OTT", "OTM", "OTB"), "Otter", effort2$GeneralGrouping)
-effort2$GeneralGrouping <- ifelse(effort2$shit_list %in% c("DRB", "PS" ,"PS_", "MIS", "HMD", "SPR"), "Other", effort2$GeneralGrouping)
+effort2$GeneralGrouping <- ifelse(effort2$Potential_fleets %in% c("LLS", "LHP", "GNS", "FPO", "GTR", "GNC", "LHM", "LLD", "LTL", "GND", "GTN"), "Static", effort2$GeneralGrouping)
+effort2$GeneralGrouping <- ifelse(effort2$Potential_fleets %in% c("TBB"), "Beam", effort2$GeneralGrouping)
+effort2$GeneralGrouping <- ifelse(effort2$Potential_fleets %in% c("SSC", "PTM", "PTB", "SDN", "OTT", "OTM", "OTB"), "Otter", effort2$GeneralGrouping)
+effort2$GeneralGrouping <- ifelse(effort2$Potential_fleets %in% c("DRB", "PS" ,"PS_", "MIS", "HMD", "SPR"), "Other", effort2$GeneralGrouping)
 
 
 # #Creates country specific fleet -----------------------------------------
-Catch3$Fleet<-paste(Catch3$Country,Catch3$GeneralGrouping,Catch3$Vessel_length,sep="_") # Used in FCube
-Catch3$Metier <- paste(Catch3$Metier, Catch3$Area, sep= "_") # Used in FCube
+Catch3$Fleet<-paste(Catch3$Country,Catch3$GeneralGrouping,Catch3$Vessel_length,sep="_") 
+Catch3$Metier <- paste(Catch3$Metier, Catch3$Area, sep= "_") 
 
-
-
-effort2$Fleet<-paste(effort2$Country,effort2$GeneralGrouping,effort2$Vessel_length,sep="_") # Used in FCube
-effort2$Metier <- paste(effort2$Metier, effort2$Area, sep= "_") # Used in FCube
+effort2$Fleet<-paste(effort2$Country,effort2$GeneralGrouping,effort2$Vessel_length,sep="_") 
+effort2$Metier <- paste(effort2$Metier, effort2$Area, sep= "_") 
 
 # Now aggregate to make sure
-Catch4<- Catch3 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter,Species,Stock) %>%  #2019 CM added Stock
+Catch4<- Catch3 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter,Species,Stock) %>%  
   summarise("Landings"=sum(Landings,na.rm=T),
             "Discards"=sum(Discards,na.rm=T),
             "Value" = sum(Value, na.rm=T)) %>% ungroup()

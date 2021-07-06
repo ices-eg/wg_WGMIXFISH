@@ -25,17 +25,18 @@ Data_path_out <- "CelticSea/Results"
 # 02 _ Read in data ####
 load(file.path(Data_path,"/initial/wgmixfish_accessions/catch_2020.Rdata"))
 load(file.path(Data_path,"initial/wgmixfish_accessions/catchHAD.Rdata"))
+
+# lookup tables -----------------------------------------------------------
 area_spp_fix <- read.csv("CelticSea/FLBEIA_model/lookup/Area_lookup.csv")
 lvl4_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Metier_lvl4_lookup.xlsx")
 Vessel_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Vessel_length_lookup.xlsx")
 Quarter_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Quarter_lookup.xlsx")
+Stock_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
+#provision for adding fleets
+#Fleet_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
 
 
-
-# lookup tables -----------------------------------------------------------
-
-
-
+### Need detailed explanation on what is going on here
 # Adding French CS had French fix for had
 catch_new <- catch
 catch_new$spp_FR <- paste0(catch_new$Species, catch_new$Country)
@@ -72,7 +73,8 @@ accessions_landings$Species <- as.character(accessions_landings$Species)
 
 # 03 _ Clean Area and Species ####
 #read in table of areas and species to change
-
+#this section is applying the areas and species fix
+#from the lookup tables Does nep still need an adjustment?
 ##Apply area fix
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
 
@@ -86,22 +88,16 @@ dim(new_accession_landings)
 ##Check for NA values for the coloums added by area_spp_fix
 table(is.na(new_accession_landings$species_mix_FU[new_accession_landings$Species =="NEP"]))
 #### why just nep? becuse the area_spp_fix currently only targts neps
-
 # #make columes for cleaning
 new_accession_landings$Area_keep <- new_accession_landings$ICES_mix_correct
 new_accession_landings$Area_keep <- ifelse(new_accession_landings$Species=="NEP",new_accession_landings$Area_keep,new_accession_landings$Area)
-
 new_accession_landings$species_mix_FU <- as.character(new_accession_landings$species_mix_FU)
 new_accession_landings$Species_keep <- ifelse(new_accession_landings$Species=="NEP",new_accession_landings$species_mix_FU,new_accession_landings$Species)
-
-
-
-
 
 #new_accession_landings$Species_keep <- ifelse(new_accession_landings$Species=="NEP", new_accession_landings$species_mix_FU,new_accession_landings$Species)
 
 #final usable dataset
-accessions_landings <- new_accession_landings%>% select( Country, Year, Quarter, Metier, Vessel_length,  Area_keep, Species, Landings, Value)
+accessions_landings <- new_accession_landings%>% select( Country, Year, Quarter, Metier, Vessel_length,  Area_keep, Species_keep, Landings, Value)
 names(accessions_landings) <-  c("Country", "Year", "Quarter", "Metier", "Vessel_length", "Area", "Species", "Landings", "Value")
 
 
@@ -291,8 +287,21 @@ aggregate(Landings ~ Species,
 
 
 
+# add stock data ----------------------------------------------------------
+dim(accessions_landings)
+accessions_landings_Stock <- left_join(accessions_landings,Stock_lockup)
+dim(accessions_landings)[1]-dim(accessions_landings_Stock)[1]
+
+
+# #add fleets -------------------------------------------------------------
+
+#provision for adding fleets 
+# dim(accessions_landings)
+# accessions_landings_fin <- left_join(accessions_landings_Stock,Fleet_lockup)
+# dim(accessions_landings_Stock)[1]-dim(accessions_landings_fin)[1]
+
 #  Write out clean data
-write.taf(accessions_landings, file = file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
+write.taf(accessions_landings_fin, file = file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
 
 print(unique(accessions_landings$Vessel_length))
 
