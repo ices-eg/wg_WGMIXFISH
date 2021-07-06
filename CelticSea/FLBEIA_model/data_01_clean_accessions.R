@@ -25,17 +25,18 @@ Data_path_out <- "CelticSea/Results"
 # 02 _ Read in data ####
 load(file.path(Data_path,"/initial/wgmixfish_accessions/catch_2020.Rdata"))
 load(file.path(Data_path,"initial/wgmixfish_accessions/catchHAD.Rdata"))
+
+# lookup tables -----------------------------------------------------------
 area_spp_fix <- read.csv("CelticSea/FLBEIA_model/lookup/Area_lookup.csv")
 lvl4_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Metier_lvl4_lookup.xlsx")
 Vessel_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Vessel_length_lookup.xlsx")
 Quarter_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Quarter_lookup.xlsx")
+Stock_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
+#provision for adding fleets
+#Fleet_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
 
 
-
-# lookup tables -----------------------------------------------------------
-
-
-
+### Need detailed explanation on what is going on here
 # Adding French CS had French fix for had
 catch_new <- catch
 catch_new$spp_FR <- paste0(catch_new$Species, catch_new$Country)
@@ -72,7 +73,8 @@ accessions_landings$Species <- as.character(accessions_landings$Species)
 
 # 03 _ Clean Area and Species ####
 #read in table of areas and species to change
-
+#this section is applying the areas and species fix
+#from the lookup tables Does nep still need an adjustment?
 ##Apply area fix
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
 
@@ -86,29 +88,23 @@ dim(new_accession_landings)
 ##Check for NA values for the coloums added by area_spp_fix
 table(is.na(new_accession_landings$species_mix_FU[new_accession_landings$Species =="NEP"]))
 #### why just nep? becuse the area_spp_fix currently only targts neps
-
 # #make columes for cleaning
 new_accession_landings$Area_keep <- new_accession_landings$ICES_mix_correct
 new_accession_landings$Area_keep <- ifelse(new_accession_landings$Species=="NEP",new_accession_landings$Area_keep,new_accession_landings$Area)
-
 new_accession_landings$species_mix_FU <- as.character(new_accession_landings$species_mix_FU)
 new_accession_landings$Species_keep <- ifelse(new_accession_landings$Species=="NEP",new_accession_landings$species_mix_FU,new_accession_landings$Species)
-
-
-
-
 
 #new_accession_landings$Species_keep <- ifelse(new_accession_landings$Species=="NEP", new_accession_landings$species_mix_FU,new_accession_landings$Species)
 
 #final usable dataset
-accessions_landings <- new_accession_landings%>% select( Country, Year, Quarter, Metier, Vessel_length,  Area_keep, Species, Landings, Value)
+accessions_landings <- new_accession_landings%>% select( Country, Year, Quarter, Metier, Vessel_length,  Area_keep, Species_keep, Landings, Value)
 names(accessions_landings) <-  c("Country", "Year", "Quarter", "Metier", "Vessel_length", "Area", "Species", "Landings", "Value")
 
 
 
 # 04 _ Subset for Celtic Seas Areas ####
 accessions_landings$Area <- as.character(accessions_landings$Area)
-accessions_landings_new<- accessions_landings[substr(accessions_landings$Area, 1,4) %in% c("27.3", "27.4", "27.6", "27.7", "27.8"),]
+accessions_landings_new<- accessions_landings[substr(accessions_landings$Area, 1,4) %in% c("27.7"   , "27.7.b" , "27.7.c" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j" , "27.7.k" ),]
 unique(accessions_landings_new$Area)
 
 # back to accessions_landings -----------------------------------------
@@ -136,6 +132,10 @@ q
 accessions_landings$Species[accessions_landings$Species %in% c("LEZ","LDB")]<- "MEG" # what are teh implications of doing this after the above caluclation
 accessions_landings$Species[accessions_landings$Species %in% c("ANK","ANF", "MNZ")]<- "MON"
 #
+
+
+# Adjustments and corrections ---------------------------------------------
+
 
 # Clean Metier Naming ####
 names(lvl4_Lookup)[1] <- "Metier"
@@ -227,6 +227,7 @@ q <- ggplot(accessions_landings[accessions_landings$Year %in% c(2019) & accessio
 q
 
 
+
 # Fix for odd nep issues
 # accessions_landings$Species[ accessions_landings$Species == "NEP.FU.20.21"] <-  "NEP.FU.2021"
 # accessions_landings$Species[ accessions_landings$Species == "NEP.FU20-21"] <-  "NEP.FU.2021"
@@ -286,8 +287,21 @@ aggregate(Landings ~ Species,
 
 
 
+# add stock data ----------------------------------------------------------
+dim(accessions_landings)
+accessions_landings_Stock <- left_join(accessions_landings,Stock_lockup)
+dim(accessions_landings)[1]-dim(accessions_landings_Stock)[1]
+
+
+# #add fleets -------------------------------------------------------------
+
+#provision for adding fleets 
+# dim(accessions_landings)
+# accessions_landings_fin <- left_join(accessions_landings_Stock,Fleet_lockup)
+# dim(accessions_landings_Stock)[1]-dim(accessions_landings_fin)[1]
+
 #  Write out clean data
-write.taf(accessions_landings, file = file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
+write.taf(accessions_landings_fin, file = file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
 
 print(unique(accessions_landings$Vessel_length))
 
@@ -374,7 +388,7 @@ Bad_accessions_effort_areas <- accessions_effort %>% filter(Area %in%c("-1","NUL
 write.taf(Bad_accessions_effort_areas,file = file.path(Data_path_out,"Intermediate_products/bad_effort_area.csv"))
 #filter areas
 accessions_effort <- accessions_effort %>% filter(!Area %in%c("-1","NULL"))
-accessions_effort <- accessions_effort[substr(accessions_effort$Area, 1,4) %in% c("27.3", "27.4", "27.6", "27.7", "27.8"),]
+accessions_effort <- accessions_effort[substr(accessions_effort$Area, 1,4) %in% c("27.7"   , "27.7.b" , "27.7.c" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j" , "27.7.k" ),]
 
 ## remove exstra col
 accessions_effort <- accessions_effort %>% select(-Standard,-ICES_mix_correct, -ICES_FU,-species_mix_FU)
@@ -420,7 +434,7 @@ Quarter_Lookup$Quarter <- as.character(Quarter_Lookup$Quarter)
 
 dim(accessions_effort3)
 accessions_effort4 <- left_join(accessions_effort3,Quarter_Lookup)
-dim(accessions_landings3)[1]-dim(accessions_effort4)[1]
+dim(accessions_effort3)[1]-dim(accessions_effort4)[1]
 
 accessions_effort4$Quarter[is.na(accessions_effort4$Correct_Quarter)==F] <- accessions_effort4$Correct_Quarter[is.na(accessions_effort4$Correct_Quarter)==F]
 accessions_effort4 <- accessions_effort4 %>% select(-Correct_Quarter)
@@ -525,8 +539,8 @@ effort <- effort[substr(effort$Area, 1,4) %in% c( "27.7"),]
 
 # #1.4 Clean Country Names ------------------------------------------------
 # select the last three Year
-effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
-catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
+# effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
+# catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
 
 # Combine catch and effort ------------------------------------------------
 catch2 <- catch
@@ -537,19 +551,58 @@ effort2 <- effort2 %>% group_by_at(vars(-kw_days,-Days_at_sea,-No_vessels)) %>% 
 
 catch2 <- catch2 %>% mutate(check=1:nrow(catch2))
 
+
+# Adjustments and corrections ---------------------------------------------
+Catch3 <- catch2
+# fix to exclude SOL 7.E in 2020
+# currently filtering sol in 27.7.e 
+Catch3[Catch3$Species =="SOL" & Catch3$Area == "27.7.e",]
+Catch3 <- Catch3[Catch3$Species !="SOL" & Catch3$Area != "27.7.e",]
+
+ 
+
+
+##### propotion of megrim based on split established by WG
+Catch3$Landings[Catch3$Species=="LDB"]<-Catch3$Landings[Catch3$Species=="LDB"]*(1-0.052)
+Catch3$Landings[Catch3$Species=="LEZ"]<-Catch3$Landings[Catch3$Species=="LEZ"]*(1-0.052)
+Catch3$Landings[Catch3$Species=="MEG"]<-Catch3$Landings[Catch3$Species=="MEG"]*(1-0.052)
+Catch3$Species[Catch3$Species %in% c("LEZ","LDB")]<- "MEG"
+
+########### propotion of anglers and monk based on  known split
+# we only care about 1 stock and thes especies are landined as spp so
+#  a value is used to proportion what we want by stock (Expert knowledge?! you would hope...)
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("ES","ES-AZTI"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("ES","ES-AZTI"))]*0.57
+
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="FRA")]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="FRA")]*0.82
+
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE")]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country=="IE")]*0.78
+
+Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]<-Catch3$Landings[(Catch3$Species %in% c("ANK","ANF","MON"))&(Catch3$Country %in% c("IM","JE","UKE","UKN","UKS"))]*0.88
+Catch3$Species[Catch3$Species %in% c("ANK","ANF","MNZ")]<- "MON"
+
+
+
 # Processing catch data ---------------------------------------------------
-Catch4 <- catch2
+Catch4 <- Catch3
 effort3 <- effort2
 
 Catch4$Metier <- substr(Catch4$Metier, 1,7)
 effort3$Metier <- substr(effort3$Metier, 1,7)
 effort3 <- effort3 %>% mutate(effort_check=1:nrow(effort3))
+Catch4 <- Catch4 %>% mutate(catch_check=1:nrow(Catch4))
+
 
 dim(Catch4)
 Catch_effort <- left_join(Catch4,effort3)
 dim(Catch_effort)
 
-Catch_effort_NA <- filter(Catch_effort,is.na(kw_days)==T)
+
+Catch_effort_NA <- filter(Catch_effort,is.na(effort_check)==T)
+Catch_MATCH <-filter(Catch_effort,is.na(effort_check)==F)
+dim(Catch_effort)[1]-(dim(Catch_effort_NA)[1]+dim(Catch_MATCH)[1])
+
+
+
 Effort_Na <-effort3 %>% filter(!effort_check %in% Catch_effort$effort_check)
 Effort_MATCH <-effort3 %>% filter(effort_check %in% Catch_effort$effort_check)
 
@@ -559,4 +612,10 @@ table(Effort_Na$Metier)
 
 write.taf(Catch_effort_NA,file.path(Data_path_out,"Intermediate_products/NA_Catch.csv"))
 write.taf(Effort_Na,file.path(Data_path_out,"Intermediate_products/NA_Effort.csv"))
+
+##
+write.taf(Catch_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_landings.csv"))
+write.taf(Effort_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_effort.csv"))
+
+
 
