@@ -4,7 +4,10 @@
 ## Before: InterCatch extraction, data raised external to InterCatch, and ALK's
 ## After:  Discards rates and age structure 
 
-# Notes: User must make sure that:  1 - factors are turned to characters, 2- dim of dataframe does not change shape during cleaning process
+# Notes: User must make sure that:  
+# 1 - factors are turned to characters, 
+# 2 - dim of data frame does not change shape during cleaning process
+
 
 # Setup ####
 gc()
@@ -15,20 +18,35 @@ library(dplyr)
 library(icesTAF)
 library(ggplot2)
 
-# Calculating discard rates ####
-# This is only done for fish stocks, nep is calculated later as it does not appear to be in the Intercatch file provided
+# Calculating Discard Rates ####
+# Data sources vary per stock: 
+#       - InterCatch CATON with distribution: meg.27.7b-k8abd, sol.27.7fg
+#       - InterCatch CATON without distribution: mon.27.78abd
+#       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, 
+#       - Supplied by NEP expert: nep.fu.16, nep.fu.17, nep.fu.19, nep.fu.2021, nep.fu.22, nep.out.7
 
-# 01 - Reading in Caton ####
+
+# 01 - InterCatch CATON ####
+
+# with distributions 
 taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON Stocks with distributions all WG 2002  2019.zip", files="2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
 intercatch_caton <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+
+# without distributions 
+taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.zip", files="2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
+#NB gitignore this file as it is too big
+intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+names(intercatch_caton_no_dist) <- names(intercatch_caton)
+
+intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
+
 #subset for case study area
 intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
-intercatch_caton_saftey_check <- intercatch_caton
+intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
 
-# 02 - Preparing Caton ####
 
-# ~ Area ####
+# ~ Area fix ####
 area_spp_fix <- read.csv("bootstrap/data/supporting_files/Area_lookup.csv")
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
 intercatch_caton <- left_join(intercatch_caton,area_spp_fix, by = "Area" )
@@ -36,17 +54,17 @@ dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - d
 intercatch_caton$Area <- intercatch_caton$ICES_mix_correct
 intercatch_caton <- intercatch_caton[-c(13,14,15,16)]
 
-# ~ Country ####
+# ~ Country fix  ####
 Country_Lookup <- read_xlsx("bootstrap/data/supporting_files/Country_lookup.xlsx")
 intercatch_caton <- left_join(intercatch_caton,Country_Lookup)
 dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
 intercatch_caton$Country <- intercatch_caton$CorrectCountry
 intercatch_caton <- intercatch_caton[-c(13)]
 
-# ~ Species #### 
+# ~ Species fix #### 
 intercatch_caton$Species <- toupper(substr(intercatch_caton$Stock,1,3))
 
-# ~ Métier level 4 ####
+# ~ Métier level 4 fix ####
 intercatch_caton$lvl4 <- substr(intercatch_caton$fleet,1,7)
 lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
 intercatch_caton <- left_join(intercatch_caton,lvl4_Lookup)
@@ -55,36 +73,28 @@ intercatch_caton$lvl4_new <- ifelse(is.na(intercatch_caton$Correct_lvl4),interca
 intercatch_caton$lvl4 <- intercatch_caton$lvl4_new 
 intercatch_caton <- intercatch_caton[-c(15,16,17)]
 
-# ~ Remove unwanted data  
+# ~ Remove unwanted data ####  
 intercatch_caton <-intercatch_caton [!intercatch_caton$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
 intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
 names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
+intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WHG", "HAD"),] #added in below!
 
-# 03 - Merge CATON raised outside InterCatch ####
-caton_cod <-  read.csv("data/ices_intercatch/caton_WG_COD_summary.csv")
-caton_had <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_HAD_summary.csv"))
-caton_whg <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_WHG_summary.csv"))
-caton_mon
-
-
-IC_cod$Stock<-"cod.27.7e-k"
-IC_had$Stock<-"had.27.7b-k"
-IC_whg$Stock<-"whg.27.7b-ce-k"
-IC_rep<-rbind(IC_cod,IC_had,IC_whg)
-IC_rep$em1<-NA
-IC_rep$em2<-NA
-colnames(IC_rep)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock","BMS landing","Logbook Registered Discard")
-IC_rep$Catch<-IC_rep$Landings+IC_rep$Discards
-IC_rep$lvl4<-substr(IC_rep$lvl4,1,7)
-IC_rep$Area<-substr(IC_rep$Area,1,6)
-
+# 02 - CATON raised outside InterCatch ####
+caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
+caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
+caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
+caton_cod$Stock<-"cod.27.7e-k"
+caton_had$Stock<-"had.27.7b-k"
+caton_whg$Stock<-"whg.27.7b-ce-k"
+other_caton<-rbind(caton_cod,caton_had,caton_whg)
+names(other_caton)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
+other_caton$Catch<-other_caton$Landings+other_caton$Discards
+other_caton$lvl4<-substr(other_caton$lvl4,1,7)
 
 IC_sum<-aggregate(list(BMS=NA,Catch=IC_rep$Catch,Discards=IC_rep$Discards,Landings=IC_rep$Landings,REP=NA),by=list(Stock=IC_rep$Stock,Country=IC_rep$Country,lvl4=IC_rep$lvl4,Area=IC_rep$Area,Year=IC_rep$Year),sum,na.rm=T)
-IC_sum$BMS<-NA
-IC_sum$REP<-NA
-colnames(IC_sum)[6]<-"BMS landing"
-colnames(IC_sum)[10]<-"Logbook Registered Discard"
 IC_sum$DR<-IC_sum$Discards/IC_sum$Catch
+
+
 
 # Summarise the discard table
 # Discard summary by lvl4
