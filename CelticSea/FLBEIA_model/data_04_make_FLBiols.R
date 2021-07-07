@@ -25,8 +25,8 @@ library(reshape2)
 
 
 # file paths --------------------------------------------------------------
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+Data_path <- "CelticSea/FLBEIA_model/bootstrap"
+Data_path_out <- "CelticSea/FLBEIA_model/results"
 
 #################################################
 # Load other functions
@@ -57,18 +57,10 @@ FLBobj<-function(stock,yearsfwd=2) {
 }
 
 # Loading sam_to_FLStock function to Convert SAM to FLStock / Author: Simon Fisher
-<<<<<<< HEAD
   sourceTAF(file.path(Data_path,"software/functions/sam_to_FLStock.R"))
 
 # Loading QC_FLStock function to check the stock objects / Author: Paul Dolder
   sourceTAF(file.path(Data_path,"software/functions/QC_FLStock.R"))
-=======
-  sourceTAF("./funcs/sam_to_FLStock.R")
-
-# Loading QC_FLStock function to check the stock objects / Author: Paul Dolder
-  sourceTAF("./funcs/QC_FLStock.R")
->>>>>>> 28f6c333ca42728488a65bbd084f1dd8e7dd2702
-  
 
 
 
