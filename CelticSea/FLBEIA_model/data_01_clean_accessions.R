@@ -289,7 +289,7 @@ aggregate(Landings ~ Species,
 
 # add stock data ----------------------------------------------------------
 dim(accessions_landings)
-accessions_landings_Stock <- left_join(accessions_landings,Stock_lockup)
+accessions_landings_Stock <- left_join(accessions_landings,Stock_lookup)
 dim(accessions_landings)[1]-dim(accessions_landings_Stock)[1]
 
 
