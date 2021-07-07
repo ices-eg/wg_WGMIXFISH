@@ -44,14 +44,14 @@ intercatch_canum <- intercatch_canum[-c(25)]
 # ~ Species fix #### 
 intercatch_canum$Species <- toupper(substr(intercatch_canum$Stock,1,3))
 
-# ~ Métier level 4 fix #### - CM you are here!
-intercatch_canum$lvl4 <- substr(intercatch_canum$fleet,1,7)
+# ~ Métier level 4 fix #### 
+intercatch_canum$lvl4 <- substr(intercatch_canum$Fleet,1,7)
 lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
 intercatch_canum <- left_join(intercatch_canum,lvl4_Lookup)
 dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - dims should match
 intercatch_canum$lvl4_new <- ifelse(is.na(intercatch_canum$Correct_lvl4),intercatch_canum$lvl4, intercatch_canum$Correct_lvl4)
 intercatch_canum$lvl4 <- intercatch_canum$lvl4_new 
-intercatch_canum <- intercatch_canum[-c(15,16,17)]
+intercatch_canum <- intercatch_canum[-c(25,26,27)]
 
 # ~ Remove unwanted data ####  
 intercatch_canum <-intercatch_canum [!intercatch_canum$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
@@ -59,17 +59,6 @@ intercatch_canum<- intercatch_canum%>% select("DataYear" ,"Stock" ,"Country" ,"f
 names(intercatch_canum) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
 intercatch_canum <- intercatch_canum[!intercatch_canum$Species %in% c("COD", "WHG", "HAD"),] #added in below!
 
-
-# ~ Calculating discard rates #### 
-
-# Summarise the discard table
-# Discard summary by lvl4
-Inter_stock_summary<- intercatch_with_dist %>%  group_by(Year,Stock,Country,Area,lvl4,CatchCat) %>%
-  dplyr::summarise(CATON_in_kg=sum(CATON_in_kg, na.rm=TRUE))%>% group_by(Stock,Country,lvl4,Area,Year,CatchCat) %>%
-  dplyr::summarise(CATON_in_kg=sum(CATON_in_kg)) %>% ungroup() %>%
-  tidyr::spread(CatchCat,CATON_in_kg)
-Inter_stock_summary$Catch<-rowSums(Inter_stock_summary[c("Discards","Landings")],na.rm=T)
-Inter_stock_summary$DR<-Inter_stock_summary$Discards/Inter_stock_summary$Catch
 
 # 02 - CATON raised outside InterCatch ####
 caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
@@ -131,7 +120,7 @@ Inter_stock_summary<-intercatch_with_Age_dist2
 
 unique(Inter_stock_summary$Fleet)
 
-# Scaleing the distirbution to Caton_kg -----------------------------------
+# Scaling the distirbution to Caton_kg -----------------------------------
 Inter_stock_summary2 <- Inter_stock_summary %>%  group_by_at(vars(-SOP,-No_At_Age,-MeanWeight_in_g,-Age)) %>% mutate(SOP_SUM=sum(SOP)) %>% ungroup() %>% mutate(diff=CATON_in_kg/SOP_SUM)
 
 ## I am going to hazard a guess a say these are IC extraction artifacts 
