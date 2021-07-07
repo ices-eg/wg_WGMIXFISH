@@ -59,37 +59,20 @@ intercatch_canum<- intercatch_canum%>% select("DataYear" ,"Stock" ,"Country" ,"f
 names(intercatch_canum) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
 intercatch_canum <- intercatch_canum[!intercatch_canum$Species %in% c("COD", "WHG", "HAD"),] #added in below!
 
-
-# 02 - CATON raised outside InterCatch ####
-caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
-caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
-caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
+# 02 - CANUM raised outside InterCatch ####
+canum_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
+canum_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
+canum_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
 
 # ~ Fix and merge ####
-caton_cod$Stock<-"cod.27.7e-k"
-caton_had$Stock<-"had.27.7b-k"
-caton_whg$Stock<-"whg.27.7b-ce-k"
-caton_other<-rbind(caton_cod,caton_had,caton_whg)
-names(caton_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
-caton_other$lvl4<-substr(caton_other$lvl4,1,7)
+canum_cod$Stock<-"cod.27.7e-k"
+canum_had$Stock<-"had.27.7b-k"
+canum_whg$Stock<-"whg.27.7b-ce-k"
+canum_other<-rbind(canum_cod,canum_had,canum_whg)
+names(canum_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
+canum_other$lvl4<-substr(canum_other$lvl4,1,7)
 
-# ~ Calculating discard rates #### 
-caton_other <- caton_other %>% group_by(Year, Country, Area, lvl4, Stock) %>% 
-  summarise("Landings" = sum(Landings, na.rm=T), "Discards" = sum(Discards, na.rm=T))
-caton_other$Catch <- caton_other$Discards +caton_other$Landings
-caton_other$DR <- caton_other$Discards/caton_other$Catch
-
-# 03 - Merge data sources and write out
-
-Inter_stock_summary<-rbind(Inter_stock_summary,IC_sum)
-
-write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_summary.csv"))
-
-
-# Just the age distribution -----------------------------------------------
-intercatch_with_Age_dist <- readRDS(file.path(Data_path,"data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with AGE dist WG 2002 2019.Rdata"))
-
-intercatch_with_Age_dist <- intercatch_with_Age_dist %>% filter(CANUMType=="Age")
+Inter_canum<-rbind(intercatch_canum,IC_sum)
 
 
 #final usable dataset # pick teh columes that you want to keep 
