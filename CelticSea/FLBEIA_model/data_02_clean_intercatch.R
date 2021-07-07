@@ -4,7 +4,9 @@
 ## Before: InterCatch extraction, data raised external to InterCatch, and ALK's
 ## After:  Discards rates and age structure 
 
-# 00 - Setup ####
+# Notes: User must make sure that:  1 - factors are turned to characters, 2- dim of dataframe does not change shape during cleaning process
+
+# Setup ####
 gc()
 rm(list = ls())
 library(readxl)
@@ -13,99 +15,56 @@ library(dplyr)
 library(icesTAF)
 library(ggplot2)
 
+# Calculating discard rates ####
+# This is only done for fish stocks, nep is calculated later as it does not appear to be in the Intercatch file provided
 
-# 01 - Calculating discard rates ####
-#taf.unzip("bootstrap/data/ices_intercatch/bootstrap/initial/ices_intercatch/2020 06 22 WGMIXFISH CATON Stocks with distributions all WG 2002  2019.zip", files="2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
+# 01 - Reading in Caton ####
+taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON Stocks with distributions all WG 2002  2019.zip", files="2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
-intercatch_with_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+intercatch_caton <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+#subset for case study area
+intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
+intercatch_caton_saftey_check <- intercatch_caton
 
-intercatch_with_dist2 <- intercatch_with_dist %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
-
-# 02 - Clean data ####
+# 02 - Preparing Caton ####
 
 # ~ Area ####
-check <- intercatch_with_dist %>% filter(!Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
-unique(check$Area)
-rm(check)
-area_spp_fix <- read.csv("lookup/Area_lookup.csv")
-
+area_spp_fix <- read.csv("bootstrap/data/supporting_files/Area_lookup.csv")
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
-area_spp_fix$Area <- as.character(area_spp_fix$Area)
-area_spp_fix <- area_spp_fix %>% filter(is.na(area_spp_fix$species_mix_FU)==F)
-intercatch_with_dist$Area <- as.character(intercatch_with_dist$Area)
-
-
-
-dim(intercatch_with_dist)
-new_intercatch <- left_join(intercatch_with_dist,area_spp_fix, by = "Area" )
-dim(intercatch_with_dist)[1]-dim(new_intercatch)[1]
+intercatch_caton <- left_join(intercatch_caton,area_spp_fix, by = "Area" )
+dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
+intercatch_caton$Area <- intercatch_caton$ICES_mix_correct
+intercatch_caton <- intercatch_caton[-c(13,14,15,16)]
 
 # ~ Country ####
-Country_Lookup <- read_xlsx("lookup/Country_lookup.xlsx")
-table(intercatch_with_dist2$Country)
-###CHECK THIS EACH YEAR (you have been warned)
-intercatch_with_dist <- intercatch_with_dist2
+Country_Lookup <- read_xlsx("bootstrap/data/supporting_files/Country_lookup.xlsx")
+intercatch_caton <- left_join(intercatch_caton,Country_Lookup)
+dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
+intercatch_caton$Country <- intercatch_caton$CorrectCountry
+intercatch_caton <- intercatch_caton[-c(13)]
 
 # ~ Species #### 
-intercatch_with_dist$Species <- toupper(substr(intercatch_with_dist$Stock,1,3))
+intercatch_caton$Species <- toupper(substr(intercatch_caton$Stock,1,3))
 
 # ~ Métier level 4 ####
-lvl4_Lookup <- read_xlsx("lookup/Metier_lvl4_lookup.xlsx")
-intercatch_with_dist$lvl4 <- substr(intercatch_with_dist$Fleet,1,7)
+intercatch_caton$lvl4 <- substr(intercatch_caton$fleet,1,7)
+lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
+intercatch_caton <- left_join(intercatch_caton,lvl4_Lookup)
+dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
+intercatch_caton$lvl4_new <- ifelse(is.na(intercatch_caton$Correct_lvl4),intercatch_caton$lvl4, intercatch_caton$Correct_lvl4)
+intercatch_caton$lvl4 <- intercatch_caton$lvl4_new 
+intercatch_caton <- intercatch_caton[-c(15,16,17)]
 
+# ~ Remove unwanted data  
+intercatch_caton <-intercatch_caton [!intercatch_caton$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
+intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
+names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
 
-
-
-
-
-
-##Check for NA values for the coloums added by area_spp_fix
-table(is.na(new_intercatch$species_mix_FU[new_intercatch$Species =="NEP"]))
-#### why just nep? becuse the area_spp_fix currently only targts neps
-
-# #make columes for cleaning
-new_intercatch$Area_keep <- new_intercatch$ICES_mix_correct
-new_intercatch$Area_keep <- ifelse(new_intercatch$Species=="NEP",new_intercatch$Area_keep,new_intercatch$Area)
-
-new_intercatch$species_mix_FU <- as.character(new_intercatch$species_mix_FU)
-new_intercatch$Species_keep <- ifelse(new_intercatch$Species=="NEP",new_intercatch$species_mix_FU,new_intercatch$Species)
-
-#### apply level 4 fix
-names(new_intercatch)
-names(lvl4_Lookup)
-dim(new_intercatch)
-new_intercatch2 <- left_join(new_intercatch,lvl4_Lookup)
-dim(new_intercatch2)[1]-dim(new_intercatch)[1]
-new_intercatch2$lvl4[is.na(new_intercatch2$Correct_lvl4)==F] <- new_intercatch2$Correct_lvl4[is.na(new_intercatch2$Correct_lvl4)==F]
-new_intercatch2 <- new_intercatch2 %>% select(-Correct_lvl4)
-table(new_intercatch2$lvl4)
-##dims should match
-
-table(new_intercatch2$lvl4)
-dim(new_intercatch2)
-new_intercatch3 <- left_join(new_intercatch2,Country_Lookup)
-dim(new_intercatch3)-dim(new_intercatch3)
-#dims should match
-
-new_intercatch3$Country[is.na(new_intercatch3$CorrectCountry)==F] <- new_intercatch3$CorrectCountry[is.na(new_intercatch3$CorrectCountry)==F]
-new_intercatch3 <- new_intercatch3 %>% select(-CorrectCountry)
-table(new_intercatch3$Country)
-
-
-intercatch_with_dist <-intercatch_with_dist %>%  filter(CANUMType =="Lngt")
-
-intercatch_with_dist<- intercatch_with_dist%>% select("Datayear" ,"Stock" ,"Country" ,"Fleet" ,"CatchCat","CANUMType" ,"CATON_in_kg","Effort","UnitEffort","DataUsedInAssessment", "lvl4", "Area_keep"  ,"Species_keep")
-
-
-names(intercatch_with_dist) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CANUMType" ,"CATON_in_kg","Effort" , "UnitEffort" , "DataUsedInAssessment","lvl4", "Area" , "Species")
-
-# 03 - Merge data raised outside InterCatch ####
-
-#addtional data not provided as part of IC FILE 
-IC_cod <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_COD_summary.csv"))
-IC_had <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_HAD_summary.csv"))
-IC_whg <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_WHG_summary.csv"))
-# add in MON
+# 03 - Merge CATON raised outside InterCatch ####
+caton_cod <-  read.csv("data/ices_intercatch/caton_WG_COD_summary.csv")
+caton_had <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_HAD_summary.csv"))
+caton_whg <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_WHG_summary.csv"))
+caton_mon
 
 
 IC_cod$Stock<-"cod.27.7e-k"
