@@ -20,47 +20,44 @@ library(icesTAF)
 library(ggplot2)
 
 # 01 - InterCatch CANUM ####
-# with distributions 
 taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
-#NB gitignore this file as it is too big
-intercatch_caton <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
-
+intercatch_canum <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 #subset for case study area
-intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
-intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
+intercatch_canum <- intercatch_canum %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
+intercatch_canum_saftey_check <- intercatch_canum #save for sanity checking later
 
 # ~ Area fix ####
 area_spp_fix <- read.csv("bootstrap/data/supporting_files/Area_lookup.csv")
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
-intercatch_caton <- left_join(intercatch_caton,area_spp_fix, by = "Area" )
-dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
-intercatch_caton$Area <- intercatch_caton$ICES_mix_correct
-intercatch_caton <- intercatch_caton[-c(13,14,15,16)]
+intercatch_canum <- left_join(intercatch_canum,area_spp_fix, by = "Area" )
+dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - dims should match
+intercatch_canum$Area <- intercatch_canum$ICES_mix_correct
+intercatch_canum <- intercatch_canum[-c(22,23,24,25)]
 
 # ~ Country fix  ####
 Country_Lookup <- read_xlsx("bootstrap/data/supporting_files/Country_lookup.xlsx")
-intercatch_caton <- left_join(intercatch_caton,Country_Lookup)
-dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
-intercatch_caton$Country <- intercatch_caton$CorrectCountry
-intercatch_caton <- intercatch_caton[-c(13)]
+intercatch_canum <- left_join(intercatch_canum,Country_Lookup)
+dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - dims should match
+intercatch_canum$Country <- intercatch_canum$CorrectCountry
+intercatch_canum <- intercatch_canum[-c(25)]
 
 # ~ Species fix #### 
-intercatch_caton$Species <- toupper(substr(intercatch_caton$Stock,1,3))
+intercatch_canum$Species <- toupper(substr(intercatch_canum$Stock,1,3))
 
-# ~ Métier level 4 fix ####
-intercatch_caton$lvl4 <- substr(intercatch_caton$fleet,1,7)
+# ~ Métier level 4 fix #### - CM you are here!
+intercatch_canum$lvl4 <- substr(intercatch_canum$fleet,1,7)
 lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
-intercatch_caton <- left_join(intercatch_caton,lvl4_Lookup)
-dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - dims should match
-intercatch_caton$lvl4_new <- ifelse(is.na(intercatch_caton$Correct_lvl4),intercatch_caton$lvl4, intercatch_caton$Correct_lvl4)
-intercatch_caton$lvl4 <- intercatch_caton$lvl4_new 
-intercatch_caton <- intercatch_caton[-c(15,16,17)]
+intercatch_canum <- left_join(intercatch_canum,lvl4_Lookup)
+dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - dims should match
+intercatch_canum$lvl4_new <- ifelse(is.na(intercatch_canum$Correct_lvl4),intercatch_canum$lvl4, intercatch_canum$Correct_lvl4)
+intercatch_canum$lvl4 <- intercatch_canum$lvl4_new 
+intercatch_canum <- intercatch_canum[-c(15,16,17)]
 
 # ~ Remove unwanted data ####  
-intercatch_caton <-intercatch_caton [!intercatch_caton$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
-intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
-names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
-intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WHG", "HAD"),] #added in below!
+intercatch_canum <-intercatch_canum [!intercatch_canum$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
+intercatch_canum<- intercatch_canum%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
+names(intercatch_canum) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
+intercatch_canum <- intercatch_canum[!intercatch_canum$Species %in% c("COD", "WHG", "HAD"),] #added in below!
 
 
 # ~ Calculating discard rates #### 
