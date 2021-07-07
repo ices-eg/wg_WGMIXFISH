@@ -1,0 +1,1 @@
+This folder contains tables (csv format) required by advice sheets, reports and stock annexes.
