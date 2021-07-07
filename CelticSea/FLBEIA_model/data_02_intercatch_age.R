@@ -54,15 +54,15 @@ intercatch_canum$lvl4 <- intercatch_canum$lvl4_new
 intercatch_canum <- intercatch_canum[-c(25,26,27)]
 
 # ~ Remove unwanted data ####  
-intercatch_canum <-intercatch_canum [!intercatch_canum$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
-intercatch_canum<- intercatch_canum%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
-names(intercatch_canum) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
-intercatch_canum <- intercatch_canum[!intercatch_canum$Species %in% c("COD", "WHG", "HAD"),] #added in below!
+# intercatch_canum <-intercatch_canum [!intercatch_canum$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
+# intercatch_canum<- intercatch_canum%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
+# names(intercatch_canum) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
+# intercatch_canum <- intercatch_canum[!intercatch_canum$Species %in% c("COD", "WHG", "HAD"),] #added in below!
 
 # 02 - CANUM raised outside InterCatch ####
-canum_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
-canum_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
-canum_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
+canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
+canum_had <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_HAD_summary.csv")
+canum_whg <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_WHG_summary.csv")
 
 # ~ Fix and merge ####
 canum_cod$Stock<-"cod.27.7e-k"
@@ -72,7 +72,7 @@ canum_other<-rbind(canum_cod,canum_had,canum_whg)
 names(canum_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
 canum_other$lvl4<-substr(canum_other$lvl4,1,7)
 
-Inter_canum<-rbind(intercatch_canum,IC_sum)
+Inter_canum<-rbind(intercatch_canum,canum_other)
 
 
 #final usable dataset # pick teh columes that you want to keep 
@@ -127,5 +127,5 @@ Inter_stock_summary <- Inter_stock_summary3 %>% select(Year,Stock,Country,Fleet,
 
 
 # 07 _ Write out intercatch summary ####
-write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_summary_Age.csv"))
+write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_canum_summary.csv"))
 
