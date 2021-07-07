@@ -13,10 +13,11 @@ library(dplyr)
 library(icesTAF)
 library(ggplot2)
 
-# 01 - Read in data ####
-#taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
+
+# 01 - Calculating discard rates ####
+#taf.unzip("bootstrap/data/ices_intercatch/bootstrap/initial/ices_intercatch/2020 06 22 WGMIXFISH CATON Stocks with distributions all WG 2002  2019.zip", files="2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
-intercatch_with_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+intercatch_with_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 
 intercatch_with_dist2 <- intercatch_with_dist %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
 
@@ -98,11 +99,13 @@ intercatch_with_dist<- intercatch_with_dist%>% select("Datayear" ,"Stock" ,"Coun
 
 names(intercatch_with_dist) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CANUMType" ,"CATON_in_kg","Effort" , "UnitEffort" , "DataUsedInAssessment","lvl4", "Area" , "Species")
 
+# 03 - Merge data raised outside InterCatch ####
 
 #addtional data not provided as part of IC FILE 
 IC_cod <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_COD_summary.csv"))
 IC_had <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_HAD_summary.csv"))
 IC_whg <-  read.csv(file.path(Data_path,"data/ices_intercatch/caton_WG_WHG_summary.csv"))
+# add in MON
 
 
 IC_cod$Stock<-"cod.27.7e-k"
@@ -135,7 +138,7 @@ Inter_stock_summary$DR<-Inter_stock_summary$Discards/Inter_stock_summary$Catch
 
 Inter_stock_summary<-rbind(Inter_stock_summary,IC_sum)
 
-
+# 05   Creating Discard Rates ####
 # Adjustments and corrections to DR  --------------------------------------
 ### currently blank but may fill up in time 
 
