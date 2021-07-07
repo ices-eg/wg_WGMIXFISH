@@ -2,7 +2,7 @@
 # Preprocess data,
 
 ## Before: InterCatch extraction, data raised external to InterCatch, and ALK's
-## After:  Discards rates and age structure 
+## After:  Age structure from InterCatch 
 
 # Notes: User must make sure that:  
 # 1 - factors are turned to characters, 
@@ -18,7 +18,7 @@ library(dplyr)
 library(icesTAF)
 library(ggplot2)
 
-# Calculating Discard Rates ####
+# Merging age data ####
 # Data sources vary per stock: 
 #       - InterCatch CATON with distribution: meg.27.7b-k8abd, sol.27.7fg
 #       - InterCatch CATON without distribution: mon.27.78abd
@@ -77,24 +77,8 @@ intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"f
 names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
 intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WHG", "HAD"),] #added in below!
 
-# 02 - CATON raised outside InterCatch ####
-caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
-caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
-caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
 
-# ~ fix and merge ####
-caton_cod$Stock<-"cod.27.7e-k"
-caton_had$Stock<-"had.27.7b-k"
-caton_whg$Stock<-"whg.27.7b-ce-k"
-caton_other<-rbind(caton_cod,caton_had,caton_whg)
-names(caton_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
-caton_other$lvl4<-substr(caton_other$lvl4,1,7)
-
-# ~ calculating discard rates #### 
-caton_other <- caton_other %>% group_by(Year, Country, Area, lvl4, Stock) %>% 
-  summarise("Landings" = sum(Landings, na.rm=T), "Discards" = sum(Discards, na.rm=T))
-caton_other$Catch <- caton_other$Discards +caton_other$Landings
-caton_other$DR <- caton_other$Discards/caton_other$Catch
+# ~ Calculating discard rates #### 
 
 # Summarise the discard table
 # Discard summary by lvl4
@@ -105,21 +89,30 @@ Inter_stock_summary<- intercatch_with_dist %>%  group_by(Year,Stock,Country,Area
 Inter_stock_summary$Catch<-rowSums(Inter_stock_summary[c("Discards","Landings")],na.rm=T)
 Inter_stock_summary$DR<-Inter_stock_summary$Discards/Inter_stock_summary$Catch
 
+# 02 - CATON raised outside InterCatch ####
+caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
+caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
+caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
+
+# ~ Fix and merge ####
+caton_cod$Stock<-"cod.27.7e-k"
+caton_had$Stock<-"had.27.7b-k"
+caton_whg$Stock<-"whg.27.7b-ce-k"
+caton_other<-rbind(caton_cod,caton_had,caton_whg)
+names(caton_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
+caton_other$lvl4<-substr(caton_other$lvl4,1,7)
+
+# ~ Calculating discard rates #### 
+caton_other <- caton_other %>% group_by(Year, Country, Area, lvl4, Stock) %>% 
+  summarise("Landings" = sum(Landings, na.rm=T), "Discards" = sum(Discards, na.rm=T))
+caton_other$Catch <- caton_other$Discards +caton_other$Landings
+caton_other$DR <- caton_other$Discards/caton_other$Catch
+
+# 03 - Merge data sources and write out
+
 Inter_stock_summary<-rbind(Inter_stock_summary,IC_sum)
 
-# 05   Creating Discard Rates ####
-# Adjustments and corrections to DR  --------------------------------------
-### currently blank but may fill up in time 
-
-
-# Write out intercatch summary ####
 write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_summary.csv"))
-
-
-rm(list=ls()[!ls() %in% c("Data_path","Data_path_out")])
-gc()
-
-
 
 
 # Just the age distribution -----------------------------------------------
@@ -130,8 +123,8 @@ intercatch_with_Age_dist <- intercatch_with_Age_dist %>% filter(CANUMType=="Age"
 
 #final usable dataset # pick teh columes that you want to keep 
 intercatch_with_Age_dist2<- intercatch_with_Age_dist%>% select(Datayear ,Stock ,Country ,Fleet ,CatchCat ,
-                                                     AgeOrLengthDistribution ,CATON_in_kg,Effort,UnitEffort,
-                                                     DataUsedInAssessment, lvl4, Area_keep  ,Species_keep,ageorlength,CANUM,MeanWeight_in_g)
+                                                               AgeOrLengthDistribution ,CATON_in_kg,Effort,UnitEffort,
+                                                               DataUsedInAssessment, lvl4, Area_keep  ,Species_keep,ageorlength,CANUM,MeanWeight_in_g)
 
 
 
