@@ -19,19 +19,19 @@ library(icesTAF)
 
 # 01 _ Notes ####
 # This script is to clean the final year of the "old accessions" data
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+Data_path <- "CelticSea/FLBEIA_model/bootstrap"
+Data_path_out <- "CelticSea/FLBEIA_model/results/"
 
 # 02 _ Read in data ####
 load(file.path(Data_path,"/initial/wgmixfish_accessions/catch_2020.Rdata"))
 load(file.path(Data_path,"initial/wgmixfish_accessions/catchHAD.Rdata"))
 
 # lookup tables -----------------------------------------------------------
-area_spp_fix <- read.csv("CelticSea/FLBEIA_model/lookup/Area_lookup.csv")
-lvl4_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Metier_lvl4_lookup.xlsx")
-Vessel_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Vessel_length_lookup.xlsx")
-Quarter_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Quarter_lookup.xlsx")
-Stock_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
+area_spp_fix <- read.csv(file.path(Data_path,"data/supporting_files/Area_lookup.csv"))
+lvl4_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Metier_lvl4_lookup.xlsx"))
+Vessel_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Vessel_length_lookup.xlsx"))
+Quarter_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Quarter_lookup.xlsx"))
+Stock_lookup <- read.csv(file.path(Data_path,"data/supporting_files/Stock_lookup.csv"))
 #provision for adding fleets
 #Fleet_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
 
@@ -324,8 +324,8 @@ library(icesTAF)
 #library(dplyr)
 #library(tidyr)
 
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+Data_path <- "CelticSea/FLBEIA_model/bootstrap"
+Data_path_out <- "CelticSea/FLBEIA_model/results/"
 
 # 02 _ Read in data ####
 load(file.path(Data_path,"initial/wgmixfish_accessions/effort_2020.Rdata"))
@@ -515,8 +515,8 @@ rm(list=ls())
 
 Yearwg<-2020
 
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+Data_path <- "CelticSea/FLBEIA_model/bootstrap"
+Data_path_out <- "CelticSea/FLBEIA_model/results/"
 
 catch_start <-read.csv(file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
 effort_start <-read.csv(file.path(Data_path_out,"clean_data/clean_accessions_effort.csv"))

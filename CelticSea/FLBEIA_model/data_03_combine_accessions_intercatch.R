@@ -18,9 +18,9 @@ library(Hmisc)
 
 
 # Datapaths ----------------------------------------------------------------
-Data_path <- "CelticSea/Results"
-LookupPath <- "CelticSea/FLBEIA_model"
-BootstrapPath <- "CelticSea/bootstrap"
+Data_path <- "CelticSea/FLBEIA_model/results"
+LookupPath <- "CelticSea/FLBEIA_model/bootstrap"
+BootstrapPath <- "CelticSea/FLBEIA_model/bootstrap"
 # #1.2 Set parameters -----------------------------------------------------
 Yearwg<-2020
 # MR change to last three Year
@@ -148,7 +148,7 @@ effort_start <-read.csv(file.path(Data_path,"clean_data/MATCHED_clean_accessions
 # catch_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_landings.csv"))
 # effort_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_effort.csv"))
 #stock data
-Stock_Lookup <- read.csv(file.path(LookupPath,"/lookup/Stock_lookup.csv"))
+Stock_lookup <- read.csv(file.path(Data_path,"data/supporting_files/Stock_lookup.csv"))
 nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv"))
 
 #allows us to keep the orignal object in GE for specific checks 
