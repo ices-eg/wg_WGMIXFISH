@@ -1,0 +1,1 @@
+This folder contains figures(png format) required by advice sheets, reports and stock annexes.
