@@ -4,7 +4,6 @@
 ## Before: Intercatch
 ## After:  Fillin and save out accessions_catch.csv (data)
 
-
 # 00_Setup ####
 gc()
 rm(list = ls())
@@ -14,16 +13,10 @@ library(tidyr)
 library(dplyr)
 library(icesTAF)
 library(ggplot2)
-# Data_path <- "CelticSea/bootstrap"
-# Data_path_out <- "CelticSea/Results"
 
-# taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip",
-#           files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv",
-#            exdir="CelticSea/bootstrap/data/ices_intercatch")
-
+#taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
-intercatch_with_dist <-  read.csv(file = file.path(Data_path,"data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
-#intercatch_with_dist_0 <- intercatch_with_dist
+intercatch_with_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 
 intercatch_with_dist2 <- intercatch_with_dist %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
 
@@ -32,37 +25,29 @@ check <- intercatch_with_dist %>% filter(!Area %in% c("27.7"  , "27.7.b" , "27.7
 unique(check$Area)
 rm(check)
 
-
 # Apply universal fixed from Lookup tabel ---------------------------------
 table(intercatch_with_dist2$Country)
 ###CHECK THIS EACH YEAR (you have been warned)
 intercatch_with_dist <- intercatch_with_dist2
 
 # Create species adn LVL4 metier ---------------------------------------------------------
-
 intercatch_with_dist$Species <- toupper(substr(intercatch_with_dist$Stock,1,3))
 #create an extra colum for lvl4
 intercatch_with_dist$lvl4 <- substr(intercatch_with_dist$Fleet,1,7)
 
 # Load in Lookups ---------------------------------------------------------
-
-Country_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Country_lookup.xlsx")
-lvl4_Lookup <- read_xlsx("CelticSea/FLBEIA_model/lookup/Metier_lvl4_lookup.xlsx")
-area_spp_fix <- read.csv("CelticSea/FLBEIA_model/lookup/Area_lookup.csv")
-
+Country_Lookup <- read_xlsx("lookup/Country_lookup.xlsx")
+lvl4_Lookup <- read_xlsx("lookup/Metier_lvl4_lookup.xlsx")
+area_spp_fix <- read.csv("lookup/Area_lookup.csv")
 
 ##Apply area fix
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
 area_spp_fix$Area <- as.character(area_spp_fix$Area)
-
 area_spp_fix <- area_spp_fix %>% filter(is.na(area_spp_fix$species_mix_FU)==F)
-
 intercatch_with_dist$Area <- as.character(intercatch_with_dist$Area)
 
 
-
 dim(intercatch_with_dist)
-
 new_intercatch <- left_join(intercatch_with_dist,area_spp_fix, by = "Area" )
 dim(intercatch_with_dist)[1]-dim(new_intercatch)[1]
 
@@ -83,7 +68,6 @@ names(lvl4_Lookup)
 dim(new_intercatch)
 new_intercatch2 <- left_join(new_intercatch,lvl4_Lookup)
 dim(new_intercatch2)[1]-dim(new_intercatch)[1]
-
 new_intercatch2$lvl4[is.na(new_intercatch2$Correct_lvl4)==F] <- new_intercatch2$Correct_lvl4[is.na(new_intercatch2$Correct_lvl4)==F]
 new_intercatch2 <- new_intercatch2 %>% select(-Correct_lvl4)
 table(new_intercatch2$lvl4)
@@ -101,17 +85,13 @@ table(new_intercatch3$Country)
 
 
 # Save fixed file when done -----------------------------------------------
-saveRDS(new_intercatch3,file=file.path(Data_path,"data/ices_intercatch/2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.Rdata"))
-
-
-
-
-rm(list=ls()[!ls() %in% c("Data_path","Data_path_out")])
-gc()
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+#saveRDS(new_intercatch3,file=file.path(Data_path,"data/ices_intercatch/2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.Rdata"))
+# CM - data products should be saved to the data folder, never save to bootstrap
+# 
+# Data_path <- "CelticSea/bootstrap"
+# Data_path_out <- "CelticSea/Results"
 #You should be able to run from here if you have done the above
-intercatch_with_dist <- readRDS(file.path(Data_path,"data/ices_intercatch/2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.Rdata"))
+#intercatch_with_dist <- readRDS(file.path(Data_path,"data/ices_intercatch/2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.Rdata"))
 
 # DISCARD RATES -----------------------------------------------------------
 #names
