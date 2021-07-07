@@ -7,9 +7,10 @@
 # Notes: User must make sure that:  
 # 1 - factors are turned to characters, 
 # 2 - dim of data frame does not change shape during cleaning process
+# Data sources vary per stock: 
+#       - InterCatch CANUM with distribution: meg.27.7b-k8abd, sol.27.7fg
+#       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, mon.27.78abd 
 
-
-# Setup ####
 gc()
 rm(list = ls())
 library(readxl)
@@ -17,11 +18,6 @@ library(tidyr)
 library(dplyr)
 library(icesTAF)
 library(ggplot2)
-
-# Merging age data ####
-# Data sources vary per stock: 
-#       - InterCatch CANUM with distribution: meg.27.7b-k8abd, sol.27.7fg
-#       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, mon.27.78abd 
 
 # 01 - InterCatch CANUM ####
 # with distributions 
