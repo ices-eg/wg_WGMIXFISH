@@ -14,15 +14,15 @@ library(tidyr)
 library(dplyr)
 library(icesTAF)
 library(ggplot2)
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+# Data_path <- "CelticSea/bootstrap"
+# Data_path_out <- "CelticSea/Results"
 
-# taf.unzip("CelticSea/bootstrap/initial/ices_intercatch/2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.zip",
-#           files="2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.csv",
-#           exdir="CelticSea/bootstrap/data/ices_intercatch")
+# taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip",
+#           files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv",
+#            exdir="CelticSea/bootstrap/data/ices_intercatch")
 
 #NB gitignore this file as it is too big
-intercatch_with_dist <-  read.csv(file = file.path(Data_path,"data/ices_intercatch/2021 06 24 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2020.csv"),fileEncoding = "UTF-8-BOM")
+intercatch_with_dist <-  read.csv(file = file.path(Data_path,"data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 #intercatch_with_dist_0 <- intercatch_with_dist
 
 intercatch_with_dist2 <- intercatch_with_dist %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
