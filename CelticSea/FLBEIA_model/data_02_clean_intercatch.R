@@ -38,13 +38,11 @@ taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with
 #NB gitignore this file as it is too big
 intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 names(intercatch_caton_no_dist) <- names(intercatch_caton)
-
 intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
 
 #subset for case study area
 intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
 intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
-
 
 # ~ Area fix ####
 area_spp_fix <- read.csv("bootstrap/data/supporting_files/Area_lookup.csv")
@@ -83,18 +81,20 @@ intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WH
 caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
 caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
 caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
+
+# ~ fix and merge ####
 caton_cod$Stock<-"cod.27.7e-k"
 caton_had$Stock<-"had.27.7b-k"
 caton_whg$Stock<-"whg.27.7b-ce-k"
-other_caton<-rbind(caton_cod,caton_had,caton_whg)
-names(other_caton)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
-other_caton$Catch<-other_caton$Landings+other_caton$Discards
-other_caton$lvl4<-substr(other_caton$lvl4,1,7)
+caton_other<-rbind(caton_cod,caton_had,caton_whg)
+names(caton_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
+caton_other$lvl4<-substr(caton_other$lvl4,1,7)
 
-IC_sum<-aggregate(list(BMS=NA,Catch=IC_rep$Catch,Discards=IC_rep$Discards,Landings=IC_rep$Landings,REP=NA),by=list(Stock=IC_rep$Stock,Country=IC_rep$Country,lvl4=IC_rep$lvl4,Area=IC_rep$Area,Year=IC_rep$Year),sum,na.rm=T)
-IC_sum$DR<-IC_sum$Discards/IC_sum$Catch
-
-
+# ~ calculating discard rates #### 
+caton_other <- caton_other %>% group_by(Year, Country, Area, lvl4, Stock) %>% 
+  summarise("Landings" = sum(Landings, na.rm=T), "Discards" = sum(Discards, na.rm=T))
+caton_other$Catch <- caton_other$Discards +caton_other$Landings
+caton_other$DR <- caton_other$Discards/caton_other$Catch
 
 # Summarise the discard table
 # Discard summary by lvl4
@@ -118,8 +118,7 @@ write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_sum
 
 rm(list=ls()[!ls() %in% c("Data_path","Data_path_out")])
 gc()
-Data_path <- "CelticSea/bootstrap"
-Data_path_out <- "CelticSea/Results"
+
 
 
 
