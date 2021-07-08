@@ -66,9 +66,9 @@ intercatch_canum2_YEARS <- intercatch_canum2 %>% filter(SeasonType %in%c("Year")
 intercatch_canum2_NOT_YEARS <- intercatch_canum2 %>% filter(!SeasonType %in%c("Year"))
 
 ##summing anything that can be summerd before doing weighted means (unique(Caton) and canum)
-intercatch_canum2_NOT_YEARS <- intercatch_canum2_NOT_YEARS %>% select(-Season,-SeasonType,-CATON_in_kg) %>% group_by_at(vars(-CANUM)) %>% summarise(CATON_in_kg=sum(unique(CATON_in_kg),na.rm=T),CANUM=sum(CANUM,na.rm = T))
+intercatch_canum2_NOT_YEARS <- intercatch_canum2_NOT_YEARS %>% select(-Season,-SeasonType) %>% group_by_at(vars(-CANUM,-CATON_in_kg)) %>% summarise(CATON_in_kg=sum(unique(CATON_in_kg),na.rm=T),CANUM=sum(CANUM,na.rm = T))
 ###Mean weight in grams (small saniity check on this as i dont use weighted.mean that often)
-intercatch_canum2_NOT_YEARS <- intercatch_canum2_NOT_YEARS %>% select(-Season,-SeasonType) %>% group_by_at(vars(-CANUM,-MeanWeight_in_g)) %>% summarise(CANUM=sum(CANUM,na.rm = T),MeanWeight_in_g=weighted.mean(MeanWeight_in_g,CANUM)) %>% ungroup()
+intercatch_canum2_NOT_YEARS <- intercatch_canum2_NOT_YEARS %>% group_by_at(vars(-CANUM,-MeanWeight_in_g)) %>% summarise(MeanWeight_in_g=weighted.mean(as.numeric(MeanWeight_in_g),CANUM),CANUM=sum(CANUM,na.rm = T)) %>% ungroup()
 
 #Remove Season and Season type
 intercatch_canum2_YEARS <- intercatch_canum2_YEARS %>% select(-Season,-SeasonType)
@@ -124,20 +124,26 @@ canum_cod <- canum_cod %>% group_by_at(vars(-frequency1000,-meanWeightKg)) %>% s
 canum_cod$Stock<-"cod.27.7e-k"
 canum_had$Stock<-"had.27.7b-k"
 canum_whg$Stock<-"whg.27.7b-ce-k"
-canum_other<-rbind(canum_cod,canum_had,canum_whg)
-names(canum_other)<-c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
+canum_other<-rbind(canum_had,canum_whg)
+names(canum_other)<-c("Year", "Country","Area" , "CatchCat","lvl4","Age", "frequency1000","MeanWeight_in_g",  "Stock")
 canum_other$lvl4<-substr(canum_other$lvl4,1,7)
-
+names(canum_cod)<-c("Year", "Country","Area" , "CatchCat","lvl4","Age", "frequency1000","MeanWeight_in_g",  "Stock")
+canum_cod$lvl4<-substr(canum_cod$lvl4,1,7)
 
 # ~bind addtional data to main IC File----
-Inter_canum<-rbind(intercatch_canum3,canum_other)
+#We need to remvoe any addtional coloumn and change the names of the ones we keep to match
+
+#code for if this is true
+# intercatch_canum_bind <- intercatch_canum3 %>% select(Year, Country,Area , CatchCat,lvl4,Age, frequency1000,MeanWeight_in_g,  Stock,No_At_Age_ADJ)
+# names(intercatch_canum_bind)[names(intercatch_canum_bind)=="No_At_Age_ADJ"] <- "No_At_Age"
+# names(canum_cod)[names(canum_cod)=="frequency1000"] <- "No_At_Age"
+# Inter_canum<-rbind(intercatch_canum3,canum_cod)
 
 ###Reduce to final columns of interest
-names(Inter_canum)
-## needs update peding resolution of additional canum data
-Inter_canum <- Inter_canum %>% select(Year,Stock,Country,Fleet,CatchCat,lvl4,Area,species,Age,CATON_in_kg,No_At_Age_ADJ,MeanWeight_in_g,SOP3,prop_weight)
-
-
-# 07 _ Write out intercatch summary ####
-write.taf(Inter_stock_summary,file.path(Data_path_out,"clean_data/intercatch_canum_summary.csv"))
-
+intercatch_canum_fin <- intercatch_canum3 %>% select(Year, Country,Area , CatchCat,lvl4,Age, frequency1000,MeanWeight_in_g,  Stock,No_At_Age_ADJ)
+names(intercatch_canum_fin)[names(intercatch_canum_fin)=="No_At_Age_ADJ"] <- "No_At_Age"
+# 07 _ Write out intercatch summary #####
+## three untill we know if cod can be combined on to IC code above commented out
+write.taf(intercatch_canum_fin,file.path(Data_path_out,"clean_data/intercatch_canum_summary.csv"))
+write.taf(canum_other,file.path(Data_path_out,"clean_data/intercatch_canum_HAD_WHG.csv"))
+write.taf(canum_cod,file.path(Data_path_out,"clean_data/intercatch_canum_COD.csv"))
