@@ -63,7 +63,6 @@ FLBobj<-function(stock,yearsfwd=2) {
   sourceTAF(file.path(Data_path,"software/functions/QC_FLStock.R"))
 
 
-
 #################################################
 # Load stock objects
 #################################################
