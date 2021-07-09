@@ -130,8 +130,6 @@ print(sp.lst)
 
 print(Sps)
 
-Area.Names<-c("CS") # This cab be removed
-
 # Read in data ------------------------------------------------------------
 #actual data
 InterCatch <- read.csv(file.path(Data_path,"clean_data/intercatch_caton_summary.csv"))
@@ -164,8 +162,8 @@ dim(catch)
 
 # #1.4 Clean Country Names ------------------------------------------------
 # select the last three Year
-effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
-catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
+# effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
+# catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
 
 # Combine catch and effort ------------------------------------------------
 catch2 <- catch
@@ -192,8 +190,11 @@ InterCatch$Species <- ifelse(InterCatch$Species =="NEP", toupper(InterCatch$Stoc
 InterCatch$Discard_ID <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species, InterCatch$Area, InterCatch$lvl4, sep = "_")
 Catch3$Discard_ID <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
 
-discard_dat <- InterCatch %>% select(Discard_ID, DR)
-discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( "DR" = max(DR) )
+discard_dat <- InterCatch %>% select(Discard_ID, DR,Landings)
+names(discard_dat)[names(discard_dat)=="Landings"] <- "IC_Landings"
+
+### so this line is takeing the maximum discard rate do we need this to be weighed?
+discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 
 
 # Join discard and catch --------------------------------------------------
@@ -203,9 +204,22 @@ dim(Catch3)
 Catch3 <- left_join(Catch3, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
 dim(Catch3)
 
-sum(Catch3$Landings)-sum(Catch3$Landings)
+sum(Catch3$Landings[is.na(Catch3$DR)==F])
+sum(unique(Catch3$IC_Landings),na.rm = T)/1000
 
-Catch3$DR[is.na(Catch3$DR)] <- 0 # this
+Catch_Check <- Catch3 %>% select(Discard_ID,Landings) %>% group_by(Discard_ID) %>% summarise(Landings=sum(Landings)) %>% ungroup()
+IC_Check <- InterCatch %>% select(Discard_ID,Landings,DR) %>% group_by(Discard_ID) %>% summarise(IC_Landings=sum(Landings),DR = max(DR,na.rm = T)) %>% ungroup()
+
+Catch_IC_Check <- full_join(Catch_Check,IC_Check)
+Problems <- Catch_IC_Check %>% filter(is.na(Landings)==T)
+
+
+#### ok so this is out untill we decide how to handle NA values and NaNs 
+### which will be done in the processing scripts
+#Catch3$DR[is.na(Catch3$DR)] <- 0 # this
+
+# IC catch against AC catch? -------------------------------------------------
+
 
 
 # Join stock ID to Catch3 --------------------------------------------------
