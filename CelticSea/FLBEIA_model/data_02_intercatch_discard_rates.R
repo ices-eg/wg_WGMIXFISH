@@ -81,6 +81,7 @@ caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv"
 caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
 caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
 
+
 # ~ Fix and merge ####
 caton_cod$Stock<-"cod.27.7e-k"
 caton_had$Stock<-"had.27.7b-k"
@@ -94,8 +95,16 @@ caton_other <- caton_other %>% group_by(Year, Country, Area, lvl4, Stock) %>% su
 caton_other$Catch <- rowSums(caton_other[c("Discards","Landings")],na.rm=T)
 caton_other$DR <- caton_other$Discards/caton_other$Catch
 
+
+# ~ fix caton countrys ----------------------------------------------------
+
+caton_other2 <- left_join(caton_other,Country_Lookup)
+dim(caton_other2)[1]-dim(caton_other)[1] #safety check - dims should match
+caton_other2$Country <- caton_other2$CorrectCountry
+table(caton_other2$Country)
+
 # 03 - Merge data sources and write out
-caton_summary<-rbind(intercatch_caton,caton_other)
+caton_summary<-rbind(intercatch_caton,caton_other2)
 
 
 # ~ Check for no discard data ---------------------------------------------
