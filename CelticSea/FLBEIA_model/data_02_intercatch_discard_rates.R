@@ -53,7 +53,7 @@ intercatch_caton <- intercatch_caton[-c(13)]
 # ~ Species fix #### 
 intercatch_caton$Species <- toupper(substr(intercatch_caton$Stock,1,3))
 
-# ~ Métier level 4 fix ####
+# ~ M?tier level 4 fix ####
 intercatch_caton$lvl4 <- substr(intercatch_caton$fleet,1,7)
 lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
 intercatch_caton <- left_join(intercatch_caton,lvl4_Lookup)
@@ -96,5 +96,17 @@ caton_other$DR <- caton_other$Discards/caton_other$Catch
 
 # 03 - Merge data sources and write out
 caton_summary<-rbind(intercatch_caton,caton_other)
-write.taf(caton_summary,"results/clean_data/intercatch_caton_summary.csv")
+
+
+# ~ Check for no discard data ---------------------------------------------
+
+table(is.na(caton_summary$Discards))
+##note the alternative way to deal with this is is to assign 0 to the NA values and 0 to the DR rate for NA
+## however NA typically implies no data not a zero discard rate so there could be a major assumtion there that 
+## is wrong
+NA_NaN_IC_DR <- caton_summary %>% filter(is.nan(DR)==T | is.na(Discards)==T) 
+caton_summary_fin <- caton_summary %>% filter(is.na(Discards)==F , is.nan(DR)==F) 
+dim(caton_summary)[1]-(dim(caton_summary_fin)[1]+dim(NA_NaN_IC_DR)[1])
+
+write.taf(caton_summary_fin,"results/clean_data/intercatch_caton_summary.csv")
 
