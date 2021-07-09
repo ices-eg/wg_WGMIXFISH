@@ -140,10 +140,10 @@ canum_cod$lvl4<-substr(canum_cod$lvl4,1,7)
 # Inter_canum<-rbind(intercatch_canum3,canum_cod)
 
 ###Reduce to final columns of interest
-intercatch_canum_fin <- intercatch_canum3 %>% select(Year, Country,Area , CatchCat,lvl4,Age, frequency1000,MeanWeight_in_g,  Stock,No_At_Age_ADJ)
+intercatch_canum_fin <- intercatch_canum3 %>% select(Year, Country,Area , CatchCat,lvl4,Age,MeanWeight_in_g,  Stock,No_At_Age_ADJ)
 names(intercatch_canum_fin)[names(intercatch_canum_fin)=="No_At_Age_ADJ"] <- "No_At_Age"
 # 07 _ Write out intercatch summary #####
 ## three untill we know if cod can be combined on to IC code above commented out
-write.taf(intercatch_canum_fin,file.path(Data_path_out,"clean_data/intercatch_canum_summary.csv"))
-write.taf(canum_other,file.path(Data_path_out,"clean_data/intercatch_canum_HAD_WHG.csv"))
-write.taf(canum_cod,file.path(Data_path_out,"clean_data/intercatch_canum_COD.csv"))
+write.taf(intercatch_canum_fin,file.path("results/clean_data/intercatch_canum_summary.csv"))
+write.taf(canum_other,file.path("results/clean_data/intercatch_canum_HAD_WHG.csv"))
+write.taf(canum_cod,file.path("results/clean_data/intercatch_canum_COD.csv"))
