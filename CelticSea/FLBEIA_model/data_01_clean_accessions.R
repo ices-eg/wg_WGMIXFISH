@@ -31,6 +31,7 @@ area_spp_fix <- read.csv(file.path(Data_path,"data/supporting_files/Area_lookup.
 lvl4_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Metier_lvl4_lookup.xlsx"))
 Vessel_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Vessel_length_lookup.xlsx"))
 Quarter_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Quarter_lookup.xlsx"))
+Country_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Country_lookup.xlsx"))
 Stock_lookup <- read.csv(file.path(Data_path,"data/supporting_files/Stock_lookup.csv"))
 #provision for adding fleets
 #Fleet_lookup <- read.csv("CelticSea/FLBEIA_model/lookup/Stock_lookup.csv")
@@ -178,49 +179,66 @@ accessions_landings4$Vessel_length[is.na(accessions_landings4$Correct_Vessel_len
 accessions_landings4 <- accessions_landings4 %>% select(-Correct_Vessel_length)
 unique(accessions_landings4$Vessel_length)
 
+
+# COUNTRYS ----------------------------------------------------------------
+
+unique(accessions_landings4$Country)
+
+dim(accessions_landings4)
+accessions_landings5 <- left_join(accessions_landings4,Country_Lookup)
+dim(accessions_landings5)[1]-dim(accessions_landings4)[1]
+
+accessions_landings5$Country[is.na(accessions_landings5$CorrectCountry)==F] <- accessions_landings5$CorrectCountry[is.na(accessions_landings5$CorrectCountry)==F]
+
+
+accessions_landings5 <- accessions_landings5 %>% select(-CorrectCountry)
+unique(accessions_landings5$Country)
+
+
+
 # SPECIFIC ISSUES  --------------------------------------------------------
 #cannot be corrected with lookup
 table(
-accessions_landings4$Vessel_length[accessions_landings4$Country=="FRA"]
+accessions_landings5$Vessel_length[accessions_landings5$Country=="FRA"]
 )
 
-print(unique(accessions_landings4$Vessel_length[accessions_landings4$Country=="FRA"]))
+print(unique(accessions_landings5$Vessel_length[accessions_landings5$Country=="FRA"]))
 
 table(
-    accessions_landings4$Country[accessions_landings4$Country =="FRA" & accessions_landings4$Vessel_length ==""]
+    accessions_landings5$Country[accessions_landings5$Country =="FRA" & accessions_landings5$Vessel_length ==""]
 )
 
 table(
-  accessions_landings4$Metier[accessions_landings4$Country =="FRA" & accessions_landings4$Vessel_length ==""]
+  accessions_landings5$Metier[accessions_landings5$Country =="FRA" & accessions_landings5$Vessel_length ==""]
 )
-unique(accessions_landings4$Metier[accessions_landings4$Country =="FRA" & accessions_landings4$Vessel_length =="" &grepl("DRB|FPO|LLS|LHM|GN|PS|MIS",accessions_landings4$Metier)==T])
+unique(accessions_landings5$Metier[accessions_landings5$Country =="FRA" & accessions_landings5$Vessel_length =="" &grepl("DRB|FPO|LLS|LHM|GN|PS|MIS",accessions_landings5$Metier)==T])
 
-unique(accessions_landings4$Vessel_length[accessions_landings4$Vessel_length =="" &grepl("all",accessions_landings4$Metier)==T])
+unique(accessions_landings5$Vessel_length[accessions_landings5$Vessel_length =="" &grepl("all",accessions_landings5$Metier)==T])
 
-unique(accessions_landings4$Vessel_length[accessions_landings4$Country =="FRA" & accessions_landings4$Vessel_length =="" &grepl("DRB",accessions_landings4$Metier)==T])
+unique(accessions_landings5$Vessel_length[accessions_landings5$Country =="FRA" & accessions_landings5$Vessel_length =="" &grepl("DRB",accessions_landings5$Metier)==T])
 
 
 #ES
-accessions_landings4$Vessel_length[accessions_landings4$Country=="ES"& accessions_landings4$Year==2017 & accessions_landings4$metier=="LLS_DEF"] <- "all"
+accessions_landings5$Vessel_length[accessions_landings5$Country=="ES"& accessions_landings5$Year==2017 & accessions_landings5$metier=="LLS_DEF"] <- "all"
 
 #UKS
-accessions_landings4$Vessel_length[accessions_landings4$Country=="UKS"& accessions_landings4$Vessel_length==""] <- "all"
-unique(accessions_landings4$Vessel_length[accessions_landings4$Country=="UKS"])
+accessions_landings5$Vessel_length[accessions_landings5$Country=="UKS"& accessions_landings5$Vessel_length==""] <- "all"
+unique(accessions_landings5$Vessel_length[accessions_landings5$Country=="UKS"])
 
 
 # some checks -------------------------------------------------------------
-unique(accessions_landings4$Country)
-unique(accessions_landings4$Quarter)
-unique(accessions_landings4$Vessel_length)
-unique(accessions_landings4$Species)
+unique(accessions_landings5$Country)
+unique(accessions_landings5$Quarter)
+unique(accessions_landings5$Vessel_length)
+unique(accessions_landings5$Species)
 
 
 
-accessions_landings <- accessions_landings4 %>% group_by(Country, Year, Quarter, Metier, Vessel_length,
+accessions_landings <- accessions_landings5 %>% group_by(Country, Year, Quarter, Metier, Vessel_length,
                                                         Area, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm = TRUE),
                                                                                             "Value" = sum(Value, na.rm=TRUE)) %>% data.frame()
 
-sum(accessions_landings4$Landings)/1000
+sum(accessions_landings5$Landings)/1000
 sum(accessions_landings$Landings)/1000
 
 q <- ggplot(accessions_landings[accessions_landings$Year %in% c(2019) & accessions_landings$Species %in% c("COD", "HAD", "WHG")& accessions_landings$Area %in% c("27.7.b" ,"27.7.c" ,  "27.7.d", "27.7.e","27.7.f" ,  "27.7.g" ,  "27.7.h" ,"27.7.j" ,  "27.7.k"),], aes(Country, Landings)) + geom_bar(stat="identity") + facet_wrap(~Species)
