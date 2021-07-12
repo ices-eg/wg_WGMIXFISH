@@ -186,41 +186,119 @@ InterCatch$Species <- toupper(substr(InterCatch$Stock, 1, 3))
 InterCatch$Species <- ifelse(InterCatch$Species =="NEP", toupper(InterCatch$Stock),InterCatch$Species)
 
 # ##Create discard ID in catch and effrot ---------------------------------
-
+###all
+###Remove area
+###Remove metier keep area
+### Just year country and species!!:
 InterCatch$Discard_ID <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species, InterCatch$Area, InterCatch$lvl4, sep = "_")
-Catch3$Discard_ID <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
+InterCatch$Discard_ID_NO_AREA <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species,  InterCatch$lvl4, sep = "_")
+InterCatch$Discard_ID_NO_METIER <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species,  InterCatch$Area, sep = "_")
+InterCatch$Discard_ID_YEAR_COUNTRY <- paste( InterCatch$Year, InterCatch$Country,  sep = "_")
 
+Catch3$Discard_ID <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
+Catch3$Discard_ID_NO_AREA <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Metier, sep = "_")
+Catch3$Discard_ID_NO_METIER <- paste(Catch3$Year, Catch3$Country, Catch3$Species,  Catch3$Area, sep = "_")
+Catch3$Discard_ID_YEAR_COUNTRY <- paste(Catch3$Year, Catch3$Country,  sep = "_")
+#selct dicard data
 discard_dat <- InterCatch %>% select(Discard_ID, DR,Landings)
 names(discard_dat)[names(discard_dat)=="Landings"] <- "IC_Landings"
-
+#one for area
+discard_dat_NO_AREA <- InterCatch %>% select(Discard_ID_NO_AREA, DR,Landings)
+names(discard_dat_NO_AREA)[names(discard_dat_NO_AREA)=="Landings"] <- "IC_Landings"
+###one for metier
+discard_dat_NO_METIER <- InterCatch %>% select(Discard_ID_NO_METIER, DR,Landings)
+names(discard_dat_NO_AREA)[names(discard_dat_NO_AREA)=="Landings"] <- "IC_Landings"
+###one for Year adn country
+discard_dat_YEAR_COUNTRY <- InterCatch %>% select(Discard_ID_YEAR_COUNTRY, DR,Landings)
+names(discard_dat_YEAR_COUNTRY)[names(discard_dat_YEAR_COUNTRY)=="Landings"] <- "IC_Landings"
 ### so this line is takeing the maximum discard rate do we need this to be weighed?
 discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
-
-
+#no araa
+discard_dat_NO_AREA<- discard_dat_NO_AREA %>% group_by(Discard_ID_NO_AREA) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+##noMetier
+#no araa
+discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+#Year and country
+discard_dat_YEAR_COUNTRY<- discard_dat_YEAR_COUNTRY %>% group_by(discard_dat_YEAR_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 # Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
 
 dim(Catch3)
-Catch3 <- left_join(Catch3, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
-dim(Catch3)
+Catch4 <- left_join(Catch3, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
+dim(Catch4)
 
-sum(Catch3$Landings[is.na(Catch3$DR)==F])
-sum(unique(Catch3$IC_Landings),na.rm = T)/1000
+sum(Catch4$Landings[is.na(Catch4$DR)==F])
+sum(unique(Catch4$IC_Landings),na.rm = T)/1000
+table(is.na(Catch4$DR))
 
-Catch_Check <- Catch3 %>% select(Discard_ID,Landings) %>% group_by(Discard_ID) %>% summarise(Landings=sum(Landings)) %>% ungroup()
-IC_Check <- InterCatch %>% select(Discard_ID,Landings,DR) %>% group_by(Discard_ID) %>% summarise(IC_Landings=sum(Landings),DR = max(DR,na.rm = T)) %>% ungroup()
 
-Catch_IC_Check <- full_join(Catch_Check,IC_Check)
-Problems <- Catch_IC_Check %>% filter(is.na(Landings)==T)
+Catch4_DR <- Catch4 %>% filter(is.na(DR)==F)
+Catch4_DR_NA <-Catch4 %>% filter(is.na(DR)==T) 
+
+# DR removeing area -------------------------------------------
+Catch4_DR_NA <-Catch4_DR_NA %>%  select(-IC_Landings,-DR)
+
+dim(Catch4_DR_NA)
+Catch5<- left_join(Catch4_DR_NA,discard_dat_NO_AREA)
+dim(Catch5)[1]-(dim(Catch4_DR_NA)[1])
+##check na
+table(is.na(Catch5$DR))
+
+Catch5_DR <- Catch5 %>% filter(is.na(DR)==F)
+Catch5_DR_NA <-Catch5 %>% filter(is.na(DR)==T) 
+# DR removeing gear but keeping area -------------------------------------------
+Catch5_DR_NA <-Catch5_DR_NA %>%  select(-IC_Landings,-DR)
+
+dim(Catch5_DR_NA)
+Catch6<- left_join(Catch5_DR_NA,discard_dat_NO_METIER)
+dim(Catch6)[1]-(dim(Catch5_DR_NA)[1])
+##check na
+table(is.na(Catch6$DR))
+
+
+Catch6_DR <- Catch6 %>% filter(is.na(DR)==F)
+Catch6_DR_NA <-Catch6 %>% filter(is.na(DR)==T) 
+# Put it all back together ------------------------------------------------
+Catch6_DR_NA$DR <- 0  ##'*So this is a major assumption and needs to be checked*
+
+names(Catch4_DR)
+names(Catch5_DR)
+names(Catch6_DR)
+names(Catch6_DR_NA)
+
+# Catch6_DR_NA <- Catch6_DR_NA mutate()
+
+setdiff(names(Catch4_DR),names(Catch5_DR))
+setdiff(names(Catch4_DR),names(Catch6_DR))
+
+Catch4_DR <- select(Catch4_DR,-IC_Landings)
+Catch5_DR <- select(Catch5_DR,-IC_Landings)
+
+Catch7 <- rbind(Catch4_DR,Catch5_DR,Catch6_DR)
+
+sum(Catch3$Landings)-(sum(Catch7$Landings)+sum(Catch6_DR_NA$Landings))
+
+
+# 
+# Catch_Check <- Catch3 %>% select(Discard_ID,Landings) %>% group_by(Discard_ID) %>% summarise(Landings=sum(Landings)) %>% ungroup()
+# IC_Check <- InterCatch %>% select(Discard_ID,Country,Year,Landings,DR) %>% group_by(Discard_ID,Country,Year) %>% summarise(IC_Landings=sum(Landings),DR = max(DR,na.rm = T)) %>% ungroup()
+# 
+# Catch_IC_Check <- full_join(Catch_Check,IC_Check)
+# 
+# 
+# Problems <- Catch_IC_Check %>% filter(is.na(Landings)==T)
+# Catch_IC_Match <- Catch_IC_Check %>% filter(is.na(Landings)==F)
+# dim(Catch_IC_Check)[1]-(dim(Catch_IC_Match)[1]+dim(Problems)[1])
+# 
+# Catch_Check2 <- Catch_Check %>% filter(!Discard_ID %in% Catch_IC_Match$Discard_ID)
+# 
+# 
+# Problem <- discard_dat %>% filter(Discard_ID %in% c(Problems$Discard_ID))
 
 
 #### ok so this is out untill we decide how to handle NA values and NaNs 
 ### which will be done in the processing scripts
 #Catch3$DR[is.na(Catch3$DR)] <- 0 # this
-
-# IC catch against AC catch? -------------------------------------------------
-
-
 
 # Join stock ID to Catch3 --------------------------------------------------
 dim(Catch3)
