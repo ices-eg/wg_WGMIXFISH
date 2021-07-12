@@ -3,3 +3,33 @@ CelticSea/FLBEIA_model/CelticSea/bootstrap/data/ices_intercatch/2019 06 22 WGMIX
 CelticSea/FLBEIA_model/bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv
 CelticSea/FLBEIA_model/bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv
 CelticSea/FLBEIA_model/.Rhistory
+.Rproj.user
+
+
+
+
+# file types
+
+*.Rhistory
+#*.RData
+*.Ruserdata
+*.Rproj
+*.docx
+
+# dirs produced by sourceAll
+NorthSea/bootstrap/data/
+NorthSea/bootstrap/library/
+NorthSea/bootstrap/software/
+NorthSea/data/
+NorthSea/model/
+NorthSea/output/
+NorthSea/report/
+
+# In case of temporary directory
+NorthSea/tmp/
+
+# other specific directories
+#/bootstrap/initial/data/Intercatch/*
+#/bootstrap/initial/data/wgmixfish_accessions/*
+!NorthSea/bootstrap/initial/data/wgmixfish_accessions/placeholder_tmp.csv
+!NorthSea/bootstrap/initial/data/Intercatch/placeholder_tmp.csv
