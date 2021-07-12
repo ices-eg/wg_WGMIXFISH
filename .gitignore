@@ -17,19 +17,19 @@ CelticSea/FLBEIA_model/.Rhistory
 *.docx
 
 # dirs produced by sourceAll
-NorthSea/bootstrap/data/
-NorthSea/bootstrap/library/
-NorthSea/bootstrap/software/
-NorthSea/data/
-NorthSea/model/
-NorthSea/output/
-NorthSea/report/
+/NorthSea/bootstrap/data/
+/NorthSea/bootstrap/library/
+/NorthSea/bootstrap/software/
+/NorthSea/data/
+/NorthSea/model/
+/NorthSea/output/
+/NorthSea/report/
 
 # In case of temporary directory
-NorthSea/tmp/
+/NorthSea/tmp/
 
 # other specific directories
 #/bootstrap/initial/data/Intercatch/*
 #/bootstrap/initial/data/wgmixfish_accessions/*
-!NorthSea/bootstrap/initial/data/wgmixfish_accessions/placeholder_tmp.csv
-!NorthSea/bootstrap/initial/data/Intercatch/placeholder_tmp.csv
+!/NorthSea/bootstrap/initial/data/wgmixfish_accessions/placeholder_tmp.csv
+!/NorthSea/bootstrap/initial/data/Intercatch/placeholder_tmp.csv
