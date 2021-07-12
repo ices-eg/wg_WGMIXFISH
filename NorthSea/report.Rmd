@@ -1,0 +1,1826 @@
+---
+title: "Tables And Figures WGMIXFISH-ADVICE REPORT AND ADVICE"
+# author: "Vanessa Trijoulet"
+output:
+  word_document:
+    reference_docx: bootstrap/data/reportTemplate.docx
+  mathjax: yes
+  pdf_document: default
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+<!-- VT: The Rmd is organized as the report and advice are currently outlined.
+For now the figure and table captions are not within the code because they can differ between the report and the advice. It would be however possible to change this in the future, as well as printing all the tables and figures at the end of the document if needed.   
+The section extra results is very useful for filling up some details in the report advice text (e.g. number of fleet choking on a species, etc.). Some additional information is also given within the sections.-->
+
+```{r echo=FALSE, include=FALSE}
+
+### General settings ###
+
+library(knitr)
+library(icesAdvice)
+library(icesTAF)
+library(pander)
+library(ggplot2)
+library(reshape2)
+library(icesSAG) # to extract the stock status graphs
+library(FLCore)
+library(png)
+
+
+## set the date
+repo <- getwd()
+now <- as.numeric(sub("_.*","",sub(".*/","",repo))) # Doesn't work well with as.numeric(substring(Sys.Date(),1,4)) since won't work in between years
+
+res.path <- file.path("model")
+
+RANGE <- TRUE # FALSE if range scenario not run yet otherwise need to be set to TRUE
+FIDES <- FALSE # affect the results names
+
+name_stocks <- read.csv("bootstrap/data/lookup_tables/Stock_names_advice.csv", sep=";")
+## single species advice
+SSA_file = "bootstrap/data/Reproduce_The_Advice/single_species_advice.csv"
+## for results projections for all scenarios
+if (FIDES==TRUE){
+  resFile=paste0("model/03_Fcube_withFIDES_sqEIntY_LO_FIDES_Catch_EffortByScenario.Rdata") 
+  resRosePLot =paste0("model/03_Fcube_withFIDES_sqEIntY_LO_FIDES_FcubeAllObjects.Rdata") # for rose plot
+
+} else {
+  resFile=paste0("model/03_Fcube_sqEIntY_LO_Catch_EffortByScenario.Rdata") 
+  resRosePLot =paste0("model/03_Fcube_sqEIntY_LO_FcubeAllObjects.Rdata") # for rose plot
+}
+
+if (RANGE==TRUE){
+  Range_file_SSB <- "output/04_Model/results/resultsSSB_Optim.csv"
+  Range_file_catch <- "output/04_Model/results/resultsCatches_Optim.csv"
+  if(FIDES == TRUE){
+    Range_file_all <- "model/04_Optim_04_Fcube_SQIntYr__OPTIM_FIDESdiff2max-min2.Rdata" # Use Rdata for Fbar because no csv
+    ## This below assumes that you saved the FIDES outputs in a separate repo "04_Model_FIDES"
+    optim_Frange_plot <- "output/04_Model_FIDES/plots/optim in Fmsy range.png"
+    optim_SSB_plot <- "output/04_Model_FIDES/plots/optim Compare SSA Catches.png"
+    optim_catch_plot <- "output/04_Model_FIDES/plots/optim Compare SSA SSB.png"
+  } else {
+    Range_file_all <- "model/04_Optim_04_Fcube_SQIntYr__OPTIMdiff2max-min2.Rdata" # Use Rdata for Fbar because no csv
+    optim_Frange_plot <- "output/04_Model/plots/optim in Fmsy range.png"
+    optim_SSB_plot <- "output/04_Model/plots/optim Compare SSA Catches.png"
+    optim_catch_plot <- "output/04_Model/plots/optim Compare SSA SSB.png"
+  }
+}
+
+
+
+pal <- colorRampPalette(c("grey20", "grey90"))
+
+
+#knitr::opts_chunk$set(fig.align='center', comment=NA,   message=FALSE, warning=FALSE, echo=TRUE)
+
+### Extra setting for the report ###
+thisY <- now
+yr.assess <- thisY-1
+yr.TACp1 <- thisY+2
+yr.now <- thisY
+yr.TAC <- thisY+1
+## fleet data for table details fleet, metiers, catch, effort
+fleets_table_data <- "data/NS_Fleet_database/02_catch_eff.RData"
+## reproduce the advice results
+repro_results_csv <- paste0("output/01_Reproduce_The_Advice/results/01_Reproduce_The_Advice_", thisY, "_keepNYrNow_LO_diagnostics_recreate_the_advice.csv")
+repro_results_Rdata <- paste0("model/01_Reproduce_The_Advice_", thisY, "_keepNYrNow_LO.Rdata") # reproduce the advice outputs
+
+source("report_extra_fig_funct.R")
+source("report_figures_funct.r")
+
+
+knitr::opts_chunk$set(cache=FALSE,echo=FALSE, warning=FALSE,
+	message=FALSE,progress=FALSE,verbose=FALSE,
+		include=TRUE,dev='png',autodep=FALSE) #, fig.width=12, fig.height=8
+
+```  
+
+
+<!-- VT: Maybe some code below could be put into utilities_report_figures_funct.r to save the space in the environment -->
+
+
+
+
+**Nomenclature used in the doc** 
+
+```{r setupConstants, echo=FALSE, message=FALSE, warning=FALSE}
+
+# now <- as.numeric(format(Sys.Date(),"%Y"))
+
+tableREf <- data.frame(rbind(
+  c(stock = "COD-NS", lab = "Cod", ref = "1"),
+  c(stock = "HAD", lab = "Haddock", ref = "2"),
+  c(stock = "NEP5", lab = "NEP5", ref = "3_1"),
+  c(stock = "NEP6", lab = "NEP6", ref = "3_2"),
+  c(stock = "NEP7", lab = "NEP7", ref = "3_3"),
+  c(stock = "NEP8", lab = "NEP8", ref = "3_4"),
+  c(stock = "NEP9", lab = "NEP9", ref = "3_5"),
+  c(stock = "NEP10", lab = "NEP10", ref = "3_6"),
+  c(stock = "NEP32", lab = "NEP32", ref = "3_7"),
+  c(stock = "NEP33", lab = "NEP33", ref = "3_8"),
+  c(stock = "NEP34", lab = "NEP34", ref = "3_9"),
+  c(stock = "NEPOTH-NS", lab = "NEPOTH-NS", ref = "3_10"),
+  c(stock = "PLE-EC", lab = "Plaice 7d", ref = "4"),
+  c(stock = "PLE-NS", lab = "Plaice 4", ref = "5"),
+  c(stock = "POK", lab = "Saithe", ref = "6"),
+# c(stock = "SOL-EC", lab = "Sol 7d", ref = "7"),
+  c(stock = "SOL-NS", lab = "Sole 4", ref = "7"),
+  c(stock = "TUR", lab = "Tur 4", ref = "8"),
+  c(stock = "WHG-NS", lab = "Whiting", ref = "9"),
+  c(stock = "WIT", lab = "Witch", ref = "10"),
+  c(stock = "NEP6-9", lab = "nep.fu6-9", ref = "11")
+), stringsAsFactors = F)
+# tableREf <- tableREf[order(tableREf$stock),]
+tableREf$order <- seq(nrow(tableREf))
+
+
+# single NEP stocks
+nepSingle <- grep(x = tableREf$lab, pattern = "NEP", ignore.case = FALSE)
+nepAgg <- grep(x = tableREf$lab, pattern = "nep.fu6-9", ignore.case = FALSE)
+
+# other stocks
+stkOther <- which(!seq(nrow(tableREf)) %in% c(nepSingle, nepAgg))
+
+# colors
+tableREf$col <- NA
+
+# pal_all_region <- c("#000000","#004949","#009292","#ff6db6","#ffb6db",
+#   "#490092","#006ddb","#b66dff","#6db6ff","#b6dbff",
+#   "#920000","#924900","#db6d00","#24ff24","#ffff6d")
+
+pal_all_region <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99') # good one!
+
+tableREf$col[c(stkOther, nepAgg)] <- pal_all_region[seq(length(c(stkOther, nepAgg)))]
+tableREf$col[nepSingle] <- pal(length(nepSingle))
+tableREf$col <- as.character(tableREf$col)
+
+
+tableREf$Advice_name <- ac(name_stocks$Stock_name)[match(tableREf$stock, ac(name_stocks$Fcube_stock_name))]
+tableREf$Advice_name[tableREf$stock=="NEP6-9"]<- "nep.fu6-9"
+
+
+AdviceSheet_Order <- c(
+  "COD-NS", "HAD", "PLE-EC", "PLE-NS", "POK", 
+  # "SOL-EC",
+  "SOL-NS", 
+  "TUR",
+  "WHG-NS",
+  "WIT",
+  "NEP5", "NEP6", "NEP7", "NEP8",
+  "NEP9","NEP10","NEP32","NEP33","NEP34","NEPOTH-NS")
+
+
+
+knitr::kable(tableREf)
+
+
+```
+
+\newpage
+
+
+
+# North Sea (REPORT FIGURES AND TABLES)
+
+
+## Background
+
+## Effort limitations
+
+### Stock-based management plans
+
+## FCube
+
+### Software
+
+<!-- Make the table with assessment name automated? -->
+
+### Scenarios
+
+**FIDES data option**
+
+
+## Stock input data and recent trends
+
+### Stock input data
+
+### Recent trends and advice
+
+Stock status plots
+
+VT: have been removed this year so I suppose we are not presenting this anymore and only the summary in text instead?
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 1.4, fig.width = 6.5, fig.units="in", dpi=300}
+
+# get year in repo so works for all years
+stocks <- getListStocks(thisY)
+ices_sp_names <- setdiff(name_stocks$Stock_name, c("sol.27.7d", "nep.fu.5", "nep.fu.10", "nep.fu.32", "nep.fu.34", "nep.27.4outFU", "nep.fu.11", "nep.fu.12" ,"nep.fu.13", "nep.fu.14", "nep.fu.15")) # nep.fu.5, nep.fu.10, nep.fu.33, and nep.fu.34 are not available in SAG, and remove SOL-EC
+
+# ices_sp_names <- c("cod.27.47d20", "had.27.46a20", "ple.27.420", "ple.27.7d", "pok.27.3a46", "sol.27.4", "tur.27.4", "whg.27.47d", "nep.fu.6", "nep.fu.7", "nep.fu.8", "nep.fu.9", "nep.fu.33") # nep.fu.5, nep.fu.10, nep.fu.33, and nep.fu.34 are not available in SAG
+
+# Keep only advice data
+stocks <- stocks[which(stocks$Purpose=="Advice"), ]
+ices_asstkeys <- stocks$AssessmentKey[as.numeric(which(stocks$StockKeyLabel%in%ices_sp_names))]
+
+
+
+for (k in 1:length(ices_sp_names)) {
+  print(ices_sp_names[k])
+  plot(getStockStatusTable(ices_asstkeys[k]))
+}
+
+
+```
+
+
+\newpage
+
+## Fleets and métiers
+
+### Catch and effort data
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.units="in", dpi=400}
+
+# rm.list <- ls(all.names=TRUE)
+
+load(fleets_table_data) # load catch, catch_ad, effcap
+#name_stocks <- read.csv("bootstrap/data/lookup_tables/Stock_names_advice.csv", sep=";")
+
+
+
+df <- preparedata(catch)
+
+# p2 <- landbystock(df)
+# dat <- p2$data
+
+dat <- aggregate(value ~ Stock, data = subset(df, Year == yr.assess & variable == "Landings"), FUN = sum, na.rm=TRUE)
+
+
+# p2 + geom_bar(width = 1,stat="identity") +
+#   scale_fill_grey(start=0,end=1)+
+#   coord_polar("y", start=0) +
+#   xlab("")+ylab("")+
+#   theme(axis.text.x = element_blank(),
+#         panel.border= element_blank(),
+#         panel.background = element_blank()) +
+#   geom_bar(width = 1,stat="identity",colour="black",show_guide=FALSE) +
+#   theme(legend.key.size=unit(1,"cm"),
+#         legend.text=element_text(face="bold",size=10),
+#         legend.title=element_text(face="bold",size=10),
+#         legend.title.align=0.5,
+#         legend.background = element_rect(colour="black", size=.5)) +
+#   annotate("text",x=1.8,y=1,label="Total Landings by Stock",fontface="bold",size=10)
+# 
+
+
+
+stks <- as.vector(dat$Stock)
+stks <- unlist(strsplit(stks, ":"))[(1:length(stks))*2]
+dat$Advice_name <- as.character(tableREf$Advice_name[match(stks, tableREf$Advice_name)])
+dat$Advice_name[length(dat$Advice_name)] <- "nep.fu6-9"
+dat <- merge(x = dat, y = tableREf, all.x = TRUE)
+dat$Advice_name[grep("nep.fu6-9", dat$Advice_name)] <- "Nephrops"
+dat <- dat[order(dat$order),]
+dat$Advice_name <- factor(dat$Advice_name, levels = dat$Advice_name)
+dat$Stock <- dat$Advice_name
+
+p <- ggplot(dat) + aes(x="", y = value, fill=Stock) + 
+  geom_bar(width = 1,stat="identity") +
+  scale_fill_manual(values = dat$col)+
+  coord_polar("y", start=0) +
+  xlab("")+ylab("")+
+  theme(axis.text.x = element_blank(),
+        panel.border= element_blank(),
+        panel.background = element_blank()) +
+  geom_bar(width = 1,stat="identity", colour="black", show.legend=FALSE) +
+  theme(#legend.key.size=unit(1,"cm"),
+        legend.text=element_text(face="bold",size=8),
+        legend.title=element_text("test", face="bold",size=8),
+        # legend.title.align=0.5,
+        legend.background = element_rect(colour="black", size=.5)
+    ) +
+  ggtitle("Total Landings by Stock")
+
+
+fname <- file.path("report/figs/totLandings~stock.png")
+png(file = fname,  width = 6, height = 4, units="in", res=400)
+  print(p)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+tmp2 <- dat[,c("Stock", "value")]
+tmp2$perc <- tmp2$value/sum(tmp2$value)*100
+roundPerc <- ac(round(tmp2$perc))
+roundPerc <- replace(roundPerc, roundPerc == "0", "<1")
+cap <- paste0(tmp2$Stock, " (", roundPerc, "%", ")", collapse = ", ")   
+
+```
+
+Figure 1. Distribution of `r yr.assess` landings of those stocks included in the mixed fisheries projections. 
+
+***
+
+**For information**
+
+`r cap` 
+
+***
+
+
+\newpage
+
+Table 1. Final fleet and métier categories used in the mixed fishery analysis. 4, 3AN and 7D refer to ICES area. Effort is in kWdays and catch is in tonnes, and both figures are for the year `r thisY-1`.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+## VT: Will have to get the names from outputs to avoid changing every year!
+all_names <- tableREf$stock[-length(tableREf$stock)] # all stock except NEP6-9
+nep_names <- all_names[grep("NEP", all_names)]
+fish_names <- all_names[!all_names%in%nep_names]
+  
+# fleets_table_data <- "data/NS_Fleet_database/02_catch_eff.RData"
+load(fleets_table_data) # load catch, catch_ad, effcap
+
+table <- effcap[which(effcap$year==thisY-1),] # only for last year data, could also do max year if problem
+order <- c("ID", "fleet", "metier", "kwdays")
+table <- table[,which(colnames(table)%in%order)]
+table$kwdays <- round(table$kwdays,2)
+
+catch_sp <- catch[which(catch$year==thisY-1 & catch$stock %in% all_names),]
+catch_sum <- aggregate(catch_sp[,c("land","disc")], list(ID=catch_sp$ID), sum, na.rm=TRUE)
+catch_sum$catch <- round(apply(catch_sum[, c("land","disc")], 1, sum),2)
+catch_sum <- catch_sum[, c("ID","catch")]
+
+table_merge <- merge(table, catch_sum, by="ID")
+table_report <- table_merge[,-1]
+colnames(table_report) <- c("Fleet", "Metier", "Effort", "Catch")
+num_row <- nrow(table_report)
+
+if (num_row%%2 ==0){
+  table_report_splitted <- cbind(table_report[1:ceiling(num_row/2),], table_report[ceiling(num_row/2)+1:num_row,])
+} else {
+  table_report_splitted <- cbind(table_report[1:ceiling(num_row/2),], rbind(table_report[(ceiling(num_row/2)+1):num_row,], rep("",ncol(table_report))))
+}
+
+knitr::kable(table_report_splitted)
+```
+
+***
+
+**Some extra outputs that can be useful for the report text:**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+num_fleets <- length(unique(table_report$Fleet))
+total_metiers <- nrow(table_report)
+
+metier_per_fleet <- c()
+for (k in unique(table_report$Fleet)){
+  metier_per_fleet <- c(metier_per_fleet, nrow(table_report[which(table_report$Fleet==k),]))
+}
+names(metier_per_fleet) <- unique(table_report$Fleet)
+
+print(paste("Total number of fleets:", num_fleets, sep=" "))
+print(paste("Total number of metiers:", total_metiers, sep=" "))
+
+print(paste("Min number of metiers per fleet:", min(metier_per_fleet), sep=" "))
+print(paste("Max number of metiers per fleet:", max(metier_per_fleet), sep=" "))
+
+
+knitr::kable(metier_per_fleet, caption = "Number of metiers per fleet", col.names = c("Number of metiers"))
+
+
+```
+***
+
+\newpage
+
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.units="in", dpi=300}
+
+p <- landbystockmetier(df)
+
+none <- element_blank()
+
+
+dat <- p$data
+
+stks <- as.vector(p$data$Stock)
+stks <- unlist(strsplit(stks, ":"))[(1:length(stks))*2]
+dat$Advice_name <- as.character(tableREf$Advice_name[match(stks, tableREf$Advice_name)])
+dat$Advice_name[is.na(dat$Advice_name)] <- "nep.fu6-9"
+
+tmp <- unique(dat[,c("Advice_name", "Stock")])
+
+tmp <- merge(x = tmp, y = tableREf, all.x = TRUE)
+# tmp$Advice_name[grep("Nephrops", tmp$Advice_name)] <- "Nephrops"
+tmp <- tmp[order(tmp$order),]
+
+# dat$Advice_name[grep("Nephrops", dat$Advice_name)] <- "Nephrops"
+dat <- merge(x = dat, y = tmp, all.x = T)
+
+# dat$Advice_name[is.na(dat$Advice_name)] <- "nep.fu6-9"
+dat <- merge(x = dat, y = tableREf, all.x = TRUE)
+dat$Advice_name <- factor(dat$Advice_name, levels = tmp$Advice_name, 
+  labels = replace(tmp$Advice_name, tmp$Advice_name == "nep.fu6-9", "Nephrops"))
+dat$Stock <- dat$Advice_name
+
+tmp$Advice_name <- factor(tmp$Advice_name, levels = tmp$Advice_name, 
+  labels = replace(tmp$Advice_name, tmp$Advice_name == "nep.fu6-9", "Nephrops"))
+
+stkColors <- tmp$col
+names(stkColors) <- tmp$Advice_name
+stkColorScale <- scale_colour_manual(name = "Stock", values = stkColors,
+  aesthetics = c("colour", "fill"))
+
+
+
+p2 <- ggplot(dat) + aes(x = Metier, y = value/1000, fill=Stock) +
+  geom_bar(stat="identity", position = "stack") +
+  theme(panel.grid.major = none, panel.grid.minor = none) +  
+  theme(panel.background = none) +
+  # scale_fill_manual(values=col)+ 
+  theme(panel.border = none) + theme(axis.line = element_line(colour = "grey50")) +
+  theme_bw() +
+  xlab("Gear-groupings used by mixed-fisheries model") + ylab("Landings ('000 tonnes)")  +
+  theme(axis.text.x = element_text(angle = -90,size = 8))  +
+  theme(#legend.position=c(0.9,0.6),legend.key.size=unit(0.5,"cm"),
+        legend.background = element_rect(colour="black", size=.5),
+        legend.text=element_text(face="bold",size=8),
+        legend.title=element_text(face="bold",size=8)#,
+        # legend.title.align=0.5
+    ) +
+  theme(axis.text = element_text(lineheight=0.8, size=8,face="bold")) +
+  theme(axis.title = element_text(size=12,face="bold")) +
+  geom_bar(stat="identity",position = "stack",colour="black", show.legend=FALSE) +
+  # annotate("text",x=5.5,y=125,label="Landings by species / metier",fontface="bold",size=6)
+  ggtitle("Total Landings by gear-groupings") + 
+  stkColorScale
+
+
+
+
+
+# 
+# 
+# stks <- as.vector(p$data$Stock)
+# stks <- unlist(strsplit(stks, ":"))[(1:length(stks))*2]
+# p$data$stk <- tableREf$Advice_name[match(stks, tableREf$Advice_name)]
+# p$data$stk[is.na(p$data$stk)] <- "Nephrops"
+# 
+# stks <- unique(p$data$stk)
+# stkColors <- tableREf$col[match(stks, tableREf$Advice_name)]
+# stkColors[is.na(stkColors)] <- tableREf$col[match("nep.fu6-9", tableREf$Advice_name)]
+# names(stkColors) <- stks
+# stkColorScale <- scale_colour_manual(name = "stock", values = stkColors,
+#   aesthetics = c("colour", "fill"))
+# 
+# 
+# p2 <- p + geom_bar(stat="identity",position = "stack") +
+#   theme(panel.grid.major = none, panel.grid.minor = none) +  theme(panel.background = none) +
+#   scale_fill_manual(values=col)+ #scale_fill_grey(start=0,end=1)+
+#   theme(panel.border = none) + theme(axis.line = element_line(colour = "grey50")) +
+#   theme_bw() +
+#   xlab("Metiers used by mixed-fisheries model") + ylab("Landings ('000 tonnes)")  +
+#   theme(axis.text.x = element_text(angle = -90,size = 8))  +
+#   theme(#legend.position=c(0.9,0.6),legend.key.size=unit(0.5,"cm"),
+#         legend.background = element_rect(colour="black", size=.5),
+#         legend.text=element_text(face="bold",size=8),
+#         legend.title=element_text(face="bold",size=8)#,
+#         # legend.title.align=0.5
+#     ) +
+#   theme(axis.text = element_text(lineheight=0.8, size=8,face="bold")) +
+#   theme(axis.title = element_text(size=12,face="bold")) +
+#   geom_bar(stat="identity",position = "stack",colour="black",show_guide=FALSE) +
+#   # annotate("text",x=5.5,y=125,label="Landings by species / metier",fontface="bold",size=6)
+#   ggtitle("Total Landings by Stock")
+#   # annotate("text",x=1.8,y=1,label="Total Landings by Stock",fontface="bold",size=10)
+# 
+
+fname <- file.path("report/figs/totLandings~stock+metier.png")
+png(file = fname,  width = 6, height = 4, units="in", res=400)
+  print(p2)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+#ggsave(file="Figure 6.3.2.4_advice_sheet_landing_by_metier_plot.png",width=7.3,height=4.8)
+
+```
+
+Figure 2. `r yr.assess` landings distribution of species by métier with landings consisting of ≥1% of any of the stocks. Note: The “other” (OTH) displayed here is a mixed category consisting of (i) landings without corresponding effort and (ii) landings of any combination of fleet and métier with landings <1% of any of the stocks.
+
+
+
+### Definitions of fleets and métiers
+
+ 
+### Trends
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=6, fig.width=6, fig.units="in", dpi=300}
+#rm.list <- ls(all.names=TRUE)
+#rm(list=rm.list)
+
+#resRosePLot =paste0("model/03_Fcube_withFIDES_sqEIntY_LO_FIDES_FcubeAllObjects.Rdata") # for rose plot
+load(resRosePLot)
+
+
+#load("model/03_Fcube_withFIDES_2_LO_FIDES_FcubeAllObjects.Rdata")
+#source("report_extra_fig_funct.R")
+
+tmp <- effortbyfleet()
+ef.type<-"KW"
+unit. <- units(effort(fleets[[1]])) 
+
+
+# xyplot(data ~ year|qname,data=tmp,
+#              scales=list(x=list(cex=0.7,tick.number=4),y=list(cex=0.7)),
+#              xlab="year",ylab=unit.,type="b",col="black",par.strip.text=list(cex=0.7),
+#              main=paste("observed effort by fleet, ",ef.type,sep=""))
+
+p <- ggplot(data = tmp) + aes(x = year, y = data) +
+  geom_line() + 
+  geom_point(shape = 1) + 
+  facet_wrap(~qname) +
+  ggtitle(paste("observed effort by fleet, ",ef.type,sep="")) +
+  xlab("year") + ylab(unit.) +
+  theme(text = element_text(size = 10), 
+    strip.text = element_text(size = 9),
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) 
+# print(p)
+
+fname <- file.path("report/figs/effort~fleet+year.png")
+png(file = fname,  width = 7, height = 7, units="in", res=400)
+  print(p)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+```
+Figure 3. Effort by fleet and year for the North Sea demersal fleets, in ‘000 KWdays.
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=6, fig.width=6, fig.units="in", dpi=300}
+
+year.ref=yr.assess # reference year
+
+#print(paste0("Reference year used for the plot is ", year.ref))
+
+rel.eff <- relative.effort(year.ref)
+
+# xyplot(data ~ year|qname,data=subset(as.data.frame(rel.eff),!qname=="unalloc"),
+#              scales=list(x=list(cex=0.7,tick.number=4), y=list(cex=0.7)),
+#              xlab="year",ylab=paste0("ratio to ", year.ref, " level"),col="black",par.strip.text=list(cex=0.7),type="b",
+#              main=paste("relative observed effort by fleet, ",ef.type,sep=""))
+
+
+p <- ggplot(data = subset(as.data.frame(rel.eff),!qname=="unalloc")) + 
+  aes(x = year, y = data) +
+  geom_line() + 
+  geom_point(shape = 1) + 
+  facet_wrap(~qname) +
+  ggtitle(paste("relative observed effort by fleet, ",ef.type,sep="")) +
+  xlab("year") + ylab(paste0("ratio to ", year.ref, " level")) +
+  theme(text = element_text(size = 10), 
+    strip.text = element_text(size = 9),
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) 
+# print(p)
+
+fname <- file.path("report/figs/relEffort~fleet+year.png")
+png(file = fname,  width = 7, height = 7, units="in", res=400)
+  print(p)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+#savePlot(filename=paste("fig_3232_relative observed effort by fleet",ef.type,stock,sep=""),type="png")           
+
+```
+Figure 4. Relative trends (compared to the `r year.ref` value) in effort (KW Days) by fleet and year for the North Sea demersal fleets.
+
+
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=6, fig.width=6, fig.units="in", dpi=300}
+
+res <- landingsbyfleet()
+
+fl_landAllspM_NEP_ordered <- res[[1]]
+test <- res[[2]]
+
+
+
+min.plot <- seq(1,length(unique(fl_landAllspM_NEP_ordered$qname)),9)
+max.plot <- c(seq(9,length(unique(fl_landAllspM_NEP_ordered$qname)),9),length(unique(fl_landAllspM_NEP_ordered$qname)))
+
+# for(i in 1:length(min.plot)){
+#   
+#   toto <- subset(fl_landAllspM_NEP_ordered, as.character(fl_landAllspM_NEP_ordered$qname) %in% test[min.plot[i]:max.plot[i]])
+#   toto$qname <- factor(toto$qname, levels=test[min.plot[i]:max.plot[i]])
+#   toto$col <- tableREf$col[match(toto$stock,tableREf$stock)]
+#   print(xyplot(data ~year|qname,groups=stock,main=paste0("Landings by fleet (",min.plot[i], " to ", max.plot[i], ")"),
+#              data=toto, 
+#              type="b",auto.key=list(columns=3,points=FALSE,lines=TRUE,type="b",cex=0.8),
+#              par.strip.text=list(cex=0.7), ylab=list(label="landings",cex=0.8),
+#              par.settings=list(superpose.symbol=list(pch=0:5)))
+#   )
+#   #savePlot(filename=paste(paste0("Landings by fleet (,",min.plot[i], " to ", max.plot[i], ")"),stock,sep=""),type="png")
+# 
+#   stks <- unique(toto$stock)
+#   stkColors <- tableREf$col[match(stks, tableREf$stock)]
+#   names(stkColors) <- levels(as.factor(toto$stock))
+#   stkColorScale <- scale_colour_manual(name = "stock", values = stkColors,
+#     aesthetics = c("colour", "fill"))
+#   
+# 
+#   p <- ggplot(data = toto) + 
+#     aes(x = year, y = data, group=stock, color = stock, shape = stock) +
+#     geom_line() + 
+#     geom_point() +
+#     scale_shape_manual(values = rep(1:4, length.out = length(stks))) +
+#     facet_wrap(~qname) +
+#     ggtitle(paste0("Landings by fleet (", min.plot[i], " to ", max.plot[i], ")")) +
+#     xlab("year") + ylab("Landings") +
+#     theme(text = element_text(size = 10), 
+#       strip.text = element_text(size = 10),
+#       axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) +
+#     stkColorScale
+#   print(p)
+#   
+#   
+# }
+
+stks <- unique(fl_landAllspM_NEP_ordered$stock)
+stkColors <- tableREf$col[match(stks, tableREf$stock)]
+names(stkColors) <- levels(as.factor(fl_landAllspM_NEP_ordered$stock))
+stkColorScale <- scale_colour_manual(name = "stock", values = stkColors,
+  aesthetics = c("colour", "fill"))
+
+# p <- ggplot(data = fl_landAllspM_NEP_ordered) +
+#   aes(x = year, y = data, group=stock, color = stock, shape = stock) +
+#   geom_line() +
+#   geom_point() +
+#   scale_shape_manual(values = rep(1:4, length.out = length(stks))) +
+#   facet_wrap(~qname, scales = "free_y") +
+#   ggtitle("Landings by fleet") +
+#   xlab("year") + ylab("Landings") +
+#   theme(text = element_text(size = 8),
+#     strip.text = element_text(size = 6),
+#     axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1),
+#     legend.position="bottom") +
+#   stkColorScale +
+#   guides(col = guide_legend(nrow = 2))
+# 
+# 
+# fname <- file.path("report/figs/landings~fleet+stock_lines.png")
+# png(file = fname,  width = 7, height = 7, units="in", res=400)
+#   print(p)
+# x <- dev.off()
+# 
+# tmp <- readPNG(fname)
+# knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+# 
+
+
+p <- ggplot(data = fl_landAllspM_NEP_ordered) +
+  aes(x = year, y = data, group=stock, fill = stock) +
+  geom_area() +
+  facet_wrap(~qname, scales = "free_y") +
+  ggtitle("Landings by fleet") +
+  xlab("year") + ylab("Landings") +
+  theme(text = element_text(size = 8),
+    strip.text = element_text(size = 6),
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1),
+    legend.position="bottom") +
+  stkColorScale +
+  guides(col = guide_legend(nrow = 2))
+
+
+fname <- file.path("report/figs/landings~fleet+stock_stacked.png")
+png(file = fname,  width = 7, height = 7, units="in", res=400)
+  print(p)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+```
+Figure 5. Landings by fleet, stock and year.
+
+
+
+## Mixed fisheries forecasts
+
+### Description of scenarios
+
+#### Baseline runs
+
+#### Mixed fisheries runs
+
+### Results of FCube runs
+
+#### Baseline run
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=6, fig.width=6, fig.units="in", dpi=300}
+
+# rm.list <- ls(all.names=TRUE)
+# rm(list=rm.list)
+# # now <- as.numeric(format(Sys.Date(),"%Y"))
+# 
+# repo <- getwd()
+# thisY <- as.numeric(sub("_.*","",sub(".*/","",repo))) # Doesn't work well with as.numeric(substring(Sys.Date(),1,4)) since won't work in between years
+# 
+# 
+# repro_results_Rdata <- paste0("model/01_Reproduce_The_Advice_", thisY, "_keepNYrNow_LO.Rdata") # reproduce the advice outputs
+# 
+
+load(repro_results_Rdata)
+#source("report_extra_fig_funct.R")
+
+  input.path <- "bootstrap/data/Reproduce_The_Advice"
+  # yr.assess <- thisY-1
+  # yr.TACp1 <- thisY+2
+  # now <- thisY
+  # yr.now <- thisY
+  # yr.TAC <- thisY+1
+
+
+res <- repro()
+
+res[[1]] -> stf_check
+res[[2]] -> plots.comp.rel
+
+# i <- order(as.character(stf_check$qname))
+# stf_check <- stf_check[i,]
+
+p0 <- ggplot(
+  stf_check[(stf_check$year != as.numeric(yr.TACp1)),],
+  aes(x=(year),y=data,colour=factor(year)) 
+) 
+p0 <- p0 + 
+  scale_x_continuous("", breaks=as.numeric(c(yr.assess, yr.now, yr.TAC))) +
+  geom_point(size=2) +
+  geom_line(colour="black") +
+  facet_grid(type ~ qname,scale="free_y") +
+  theme_bw() +
+  geom_hline(
+    data = stf_check[(stf_check$year==yr.assess),],
+    aes(yintercept=data), lty=2
+  ) +
+  theme(axis.text.x=element_text(angle=-90,vjust=0),strip.text.x=element_text(size=6)) +
+  ggtitle("FCube baseline output \n(dashed line = Sq values from assessment year)") +
+  xlab("")
+# print(p0)
+
+
+fname <- file.path("report/figs/fcube_baseline_v_single_spp_advice.png")
+png(file = fname,  width = 6, height = 6, units="in", res=400)
+  print(p0)
+x<- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+
+```
+Figure 6. Summary of the relative changes in the single-stock advice for `r yr.now` and `r yr.TAC` compared to the situation in `r yr.assess`.
+
+\newpage
+
+Table 2. Comparison between baseline run and ICES advice for *Nephrops* * in the TAC year. The values for *Nephrops* FUs that do not receive an absolute ICES abundance estimate are set according to the ICES approach for data-limited *Nephrops* stocks. No ‘ICES advice’ values are given for *Nephrops* in the intermediate year because the baseline run uses values based on recorded landings in the previous year which can vary significantly from the advice for each FU.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+reproduce <- read.csv(repro_results_csv) # reproduce the advice outputs
+
+# Need comparison baseline and ICES in TAC year (thisY + 1)
+table_repro <- reproduce[which(reproduce$year==thisY+1 & reproduce$value=="landings"),]
+col_table_repro <- colnames(table_repro)
+col_table_repro_new <- sub("\\.", "-", col_table_repro)
+col_table_repro_new <- sub("type", "scenario", col_table_repro_new)
+colnames(table_repro) <- col_table_repro_new
+kept_col <- c("year", "value", "scenario")
+order_row <- c("ICES_advice", "FCube_single_spp", "difference (%)")
+table_repro <- table_repro[order(order_row),]
+
+# Only NEP stocks for Table report
+table_repro_nep <- table_repro[,which(colnames(table_repro) %in% c(kept_col,nep_names))]
+# reorder NEP names
+col_nep <- colnames(table_repro_nep)
+i <- grep("NEP", col_nep)
+sub_nep <- table_repro_nep[,i]
+col_num <- sub("NEP","",colnames(sub_nep))
+k <- order(as.numeric(col_num))
+## Permutation
+p <- 1:ncol(table_repro_nep)
+p[i] <- p[i][k]
+table_repro_nep <- table_repro_nep[,p]
+rownames(table_repro_nep) <- NULL
+
+knitr::kable(table_repro_nep)
+
+
+```
+*These numbers are landings values; ICES advice does not provide total catch.
+
+\newpage
+
+
+
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=6, fig.width=6, fig.units="in", dpi=300}
+dem.names <- ls(wg.stock)[-grep("NEP", ls(wg.stock))]
+
+p3 <- ggplot(plots.comp.rel[(plots.comp.rel$stock %in% dem.names),],aes(x=value,y=diff))
+p4 <- p3 + 
+  geom_point(aes(colour=year,shape=year),size=2) + 
+  facet_wrap(~stock) + 
+  theme_bw() + 
+  scale_shape(solid = FALSE) +
+  theme(legend.position="top", 
+    axis.text.x = element_text(angle=-90,hjust=0,face="bold",size=8),
+    title = element_text(size = 9)) +
+  ggtitle("Reproduce the advice diagnostic plot for Analytical stocks. \nValues are percentage deviation of FCube baseline run from single species output")
+
+
+fname <- file.path("report/figs/repro_advice_Analytical.png")
+png(file = fname,  width = 6, height = 6, units="in", res=400)
+  print(p4)
+x<- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+```
+Figure 7. Difference between FCube baseline run and Single-species advice for finfish stocks, showing Fbar (`r yr.now`-`r yr.TAC`), landings (`r yr.now`-`r yr.TAC`) and SSB (`r yr.now`-`r yr.TACp1`).
+
+
+\newpage
+
+#### Mixed fisheries analyses
+
+Table 3. Results of Final FCube runs.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#resFile=paste0("model/03_Fcube_withFIDES_sqEIntY_LO_FIDES_Catch_EffortByScenario.Rdata") # for figure projections for all scenarios
+
+load(resFile) # results from Fcube runs, check name not modified this year
+rownames(results) <- NULL
+
+tmp <- reshape(results, idvar=c("value", "sc", "year"), timevar="stock", direction="wide")
+# tmp[which(tmp$value=="Fbar"),4:ncol(tmp)] <- round(tmp[which(tmp$value=="Fbar"),4:ncol(tmp)],3)
+# tmp[which(tmp$value!="Fbar"),4:ncol(tmp)] <- round(tmp[which(tmp$value!="Fbar"),4:ncol(tmp)],0)
+tmp[,4:ncol(tmp)] <- round(tmp[,4:ncol(tmp)],3) # cannot have difference in rounding between Fbar and the rest
+col_name <- colnames(tmp)
+col_name <- sub("data.", "", col_name)
+col_name[col_name=="sc"] <- "scenario"
+colnames(tmp) <- col_name
+tmp[is.na(tmp)] <- " "
+res_Fcube <- tmp
+rownames(res_Fcube) <- NULL
+# table_Fcube <- xtabs(data~ factor(paste(sc,year,value)) + stock,data=results,sparse = TRUE)
+# 
+# xtabs(data~ factor(paste(sc,year,value)) + stock,data=results)
+
+knitr::kable(res_Fcube)
+
+```
+
+
+\newpage
+
+
+```{r, fig.width = 7.5, fig.height = 7.5, fig.units="in", dpi=300, echo=FALSE, message=FALSE, warning=FALSE}
+
+#pal <- colorRampPalette(c("grey20", "grey90"))
+ssaObj = read.csv(SSA_file)
+load(resFile)
+resObj = results
+
+# to make NEP6-9
+stks <- unique(resObj$stock)
+
+stks <- stks[-grep("NEP",stks)]
+stks <- sort(stks)
+
+stks <- c(stks, "NEP6-9") ################## VT:  what about other FU (32-34, 5, OTH-NS) ???
+
+
+#stks <- setdiff(stks,c("PLE-EC", "TUR", "WIT"))
+
+# stks <- c("COD-NS", "HAD", "PLE-NS", "POK", "SOL-NS", "TUR", 
+#     "WHG-NS", "WIT", "NEP6-9", "PLE-EC")
+S <- vector("list", length(stks))
+names(S) <- stks
+for(i in seq(S)){
+  S[[i]]$stks = stks[i]
+  if(S[[i]]$stks == "NEP6-9"){S[[i]]$stks <- paste0("NEP", 6:9)}
+}
+for(i in seq(S)){
+  S[[i]]$resObj <- subset(resObj, stock %in% c(S[[i]]$stks))
+  S[[i]]$ssaObj <- subset(ssaObj, stock %in% c(S[[i]]$stks))
+  
+  S[[i]]$resObj$stock <- names(S)[i]
+  S[[i]]$ssaObj$stock <- names(S)[i]
+}
+
+resObj <- do.call("rbind", lapply(X = S, FUN = function(x){x$resObj}))
+ssaObj <- do.call("rbind", lapply(X = S, FUN = function(x){x$ssaObj}))
+
+col <- tableREf$col[match(stks, tableREf$stock)]
+col[which(is.na(col))] <- "grey"
+
+stockLabels <- tableREf$Advice_name[match(stks, tableREf$stock)]
+
+fname <- file.path("report/figs/underOver1.png")
+png(file = fname,  width = 7, height = 6, units="in", res=400)
+  op <- par(ps = 10)
+  underOverPlot(
+    inclYear = (now+1), 
+    inclStock = stks, 
+    inclScen = c("max", "min", "cod-ns", "sq_E", "val"), 
+    var = "catch", 
+    ssaObj = ssaObj, 
+    resObj = resObj, 
+    stockLabels =  paste0(1:length(stockLabels),":",stockLabels),
+    col = col)
+  par(op)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+resnew <- res.
+```
+Figure 8. Mixed-fisheries projections. Estimates of potential catches (in tonnes) by stock and by scenario. Horizontal lines correspond to the single-stock catch advice for `r yr.TAC`. Bars below the value of zero show undershoot (compared to single-stock advice) where catches are predicted to be lower when applying the scenario. Hatched columns represent catches that overshoot the single-stock advice. 
+
+\newpage
+
+
+```{r, fig.width = 7.5, fig.height = 7.5, fig.units="in", dpi=300, echo=FALSE, message=FALSE, warning=FALSE}
+#pal <- colorRampPalette(c("grey20", "grey90"))
+ssaObj = read.csv(SSA_file)
+load(resFile)
+resObj = results
+
+stks <- c("TUR","PLE-EC", "WIT")
+stks <- sort(stks)
+
+col <- tableREf$col[match(stks, tableREf$stock)]
+#col[which(is.na(col))] <- "grey"
+
+stockLabels <- tableREf$Advice_name[match(stks, tableREf$stock)]
+
+fname <- file.path("report/figs/underOver2.png")
+png(file = fname,  width = 7, height = 6, units="in", res=400)
+  op <- par(ps = 10)
+  underOverPlot(
+  inclYear = (now+1), 
+  inclStock = stks, 
+  inclScen = c("max", "min", "cod-ns", "sq_E", "val"), 
+  var = "catch", 
+  ssaObj = ssaObj, 
+  resObj = resObj, 
+  stockLabels =  paste0(1:length(stockLabels),":",stockLabels),
+  col = col)
+  par(op)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+resnew2 <- res.
+
+
+```
+Figure 9. Mixed fisheries projections results for the stocks subject to lower landings (detail from Figure 7.8). Estimates of potential catches (in tonnes) by stock and by scenario. Horizontal lines correspond to the single-stock catch advice for `r yr.TAC`. Bars below the value of zero show undershoot (com-pared to single-stock advice) where catches are predicted to be lower when applying the scenario. Hatched columns represent catches that overshoot the single-stock advice.
+
+\newpage
+
+
+
+
+```{r , fig.width = 7.5, fig.height = 7.5, fig.units="in", fig.ext='png', dpi=300, echo=FALSE, message=FALSE, warning=FALSE}
+
+#pal <- colorRampPalette(c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00'))
+
+#stks <- c("COD-NS", "HAD", "PLE-NS", "POK", "SOL-NS", "WHG-NS", "TUR", "PLE-EC")
+
+stks <- unique(results$stock)
+stks <- sort(stks)
+stks <- stks[-grep("NEP",stks)]
+
+
+col <- tableREf$col[match(stks, tableREf$stock)]
+
+fname <- file.path("report/figs/relSSB.png")
+png(file = fname, width = 7, height = 6, units="in", res=400)
+  op <- par(mar = c(3,4,1,1), ps = 10)
+  figNS_Advice_SSB(yearNow=now, stks=stks, LO=TRUE,  res=resFile , pal = colorRampPalette(col))
+  par(op)
+x <- dev.off()
+
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+```
+Figure 10. Mixed fisheries for the North Sea. Estimated SSB at the start of `r yr.TACp1` by stock after applying the mixed-fisheries scenarios, expressed as a ratio to the single-stock advice forecast. The horizontal line corresponds to the SSB resulting from the single-stock advice. Norway lobster are not included as the abundance was not forecasted in the mixed-fisheries model.
+
+\newpage
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+eff2 <- plotRose(res=resRosePLot, yearNow=now)
+tmpdf <- subset(eff2, fleet != "OTH_OTH")
+
+levs <- ac(unique(tmpdf$Advice_name))
+neps <- grep("nep", levs)
+levs <- c(levs[-neps], levs[neps])
+tmpdf$Advice_name <- factor(ac(tmpdf$Advice_name), levels = levs)
+
+stkColors <- tableREf$col[match(ac(levs), tableREf$Advice_name)]
+names(stkColors) <- tableREf$Advice_name[match(ac(levs), tableREf$Advice_name)]
+stkColorScale <- scale_colour_manual(name = "Effort stock", values = stkColors,
+  aesthetics = c("fill"))
+
+
+  
+p <- ggplot(tmpdf) + 
+  aes(x = Advice_name, y = data, fill = Advice_name, color = Limitation, group = fleet) +
+  facet_wrap(fleet~., scales = 'free_y', ncol = 3) + 
+  geom_bar(stat = 'identity', size = 1, alpha = 0.7) +
+  scale_color_manual(values = c('red', NA, 'green')) +
+  xlab("Stock") +
+  ylab('KW days (000)') +
+  labs(fill = 'Effort stock', color = 'Limiting Stock') +
+  theme_bw() + 
+  theme(
+    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.3, size = 7),
+    panel.grid = element_blank(),
+    text = element_text(size = 9), 
+    strip.text = element_text(size = 9)) +
+  stkColorScale
+# print(p)
+
+fname <- file.path("report/figs/effortLim~fleet.png")
+png(file = fname, width = 8, height = 10, units="in", res=400)
+  print(p)
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+```
+Figure 11. Mixed fisheries for the North Sea. Estimates of effort by fleet needed to reach each single-stock advice. Red triangles highlight the most limiting species for that fleet in `r yr.TAC` (“choke species”), whereas the green triangles highlight the least limiting species. Fleet names are given by country (BE = Belgium, DK = Denmark, EN = England, FR = France, GE = Germany, IE = Ireland, NI = Northern Ireland, NL = the Netherlands, SC = Scotland, SW = Sweden, OTH = Others) and by meaningful combinations of main gear and vessel size differing across countries and based on homogeneous average fishing patterns. FDF = Fully Documented Fisheries vessels. Vessels in the various fleet segments can engage in several fisheries (métiers) over the year.
+
+
+\newpage
+
+**Without the range scenario**
+
+Table 4. [TEMPORARY TABLE WITHOUT RANGE] Mixed fisheries for the North Sea. Catch per mixed-fisheries scenario `r yr.TAC`, in absolute values. 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+  # source("ReportFunctions/TableCatch.r")
+  tmp <- TableCatch(yearNow=now, LO=TRUE, SSA=SSA_file, res=resFile)
+  
+  # Reorder columns tmp after 2019 advice
+  tmp <- tmp[,-which(colnames(tmp)=="baseline")] # baseline sc not shown
+  base_sc1 <- c("Single-stock-advice", "max", "min")
+  base_sc2 <- c("sq_E", "val")
+  other_sc <- colnames(tmp)[!(colnames(tmp) %in% c(base_sc1,base_sc2))] # species specific scenarios
+  order_sc <- c(base_sc1,other_sc,base_sc2)
+  tmp <- tmp[,order_sc]
+  tmp <- round(tmp[AdviceSheet_Order,]) # order species
+  # Change names stocks
+  #name_stocks <- read.csv("bootstrap/data/lookup_tables/Stock_names_advice.csv", sep=";")
+  init_name <- rownames(tmp)
+  new_names <- name_stocks$Stock_name[which(name_stocks$Fcube_stock_name %in% init_name)]
+  rownames(tmp) <- new_names
+  
+  # pander([AdviceSheet_Order,])
+  knitr::kable(tmp)
+  
+```
+
+
+**Final table for the report and advice**
+
+Table 4. Mixed fisheries for the North Sea. Catch per mixed-fisheries scenario `r yr.TAC`, in absolute values.
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+  # Only run if RANGE=TRUE
+
+  # Get results from range scenario
+  
+  range_res <- read.csv(Range_file_catch) # TACs are the results to use in the table
+  range_res2 <- unlist(range_res[which(range_res[,1]=="TACs"),-1])
+  
+  # merge with tmp
+  tmp2 <- rep(NA,nrow(tmp))
+  names(tmp2) <- rownames(tmp)
+  tmp2[names(range_res2)] <- range_res2
+  
+  tmp_range <- cbind(tmp, range=tmp2)
+  
+  # pander([AdviceSheet_Order,])
+  knitr::kable(round(tmp_range))
+  
+```
+NA: stocks for which ranges of $F_{MSY}$ are either not available or not yet included in the scenario.    
+*Advised catches no more than the indicated value.    
+**Single-stock advice is based on ranges in accordance with the EU MAP for demersal stocks in the North Sea (EU, 2019). The value presented here is for catches corresponding to $F_{MSY}$.
+
+
+
+\newpage
+
+
+**Optimised range option**
+
+
+```{r , fig.width = 4, fig.height = 4, fig.units="in", dpi=300,echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+#optim_Frange_plot <- "output/04_Model/plots/optim in Fmsy range.png"
+
+include_graphics(optim_Frange_plot)
+
+```
+Figure 12. North Sea mixed-fisheries `r yr.TAC` “range” fishing mortality within the $F_{MSY}$ range, compared with $F_{MSY}$, the current F (F in `r yr.assess`), and F in the single-stock advice for `r yr.TAC`. The “range” F is the one giving the lowest difference in tonnage between the “max” and the “min” scenario across all stocks and fleets. For cod in the North Sea, $F_{MSY}$ ranges are limited in accordance with the MSY approach and the MAP when below $MSY B_{trigger}$.
+
+\newpage
+
+
+
+```{r , fig.width = 3.1, fig.height = 2.11, fig.units="in", dpi=300, fig.align='left', echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+# optim_SSB_plot <- "output/04_Model/plots/optim Compare SSA Catches.png"
+# optim_catch_plot <- "output/04_Model/plots/optim Compare SSA SSB.png"
+fname <- file.path(optim_SSB_plot)
+
+tmp <- readPNG(fname)
+include_graphics(optim_SSB_plot)
+include_graphics(optim_catch_plot)
+
+```
+Figure 13. Comparison of the outcomes in terms of total catches in `r yr.TAC` (left) and SSB in `r yr.TACp1` (right) between the $F_{MSY}$-based single-stock advice and the $F_{range}$-based forecast.
+
+\newpage
+
+
+## FIDES results explained
+
+Figures and Tables below might not be needed from now on. Otherwise need to run the report with FIDES=TRUE
+
+Figure 7.14.
+Table 7.5.
+Table 7.6.
+Table 7.7.
+
+
+
+Conclusion
+
+Figure 7.15.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\newpage
+
+# North Sea mixed-fisheries Advice (Advice FIGURES AND TABLES)
+
+<!-- VT: For now the outline of the current advice -->
+
+## Mixed-fisheries considerations 
+
+
+```{r, fig.width = 7.5, fig.height = 7.5, fig.units="in", dpi=300, echo=FALSE, message=FALSE, warning=FALSE}
+
+fname <- file.path("report/figs/underOver1.png")
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+#resnew <- res.
+```
+Figure 2 Mixed-fisheries projections for the North Sea. Estimates of potential catches (in tonnes) by stock and by scenario. The horizontal lines correspond to the single-stock catch advice for `r yr.TAC`. Bars below the value of zero show undershoot (compared to single-stock advice) where catches are predicted to be lower when applying the scenario. Hatched columns represent catches that overshoot the single-stock advice. For full stock names, see Table A1 in the Annex.
+
+\newpage
+
+
+```{r , fig.width = 4, fig.height = 4, fig.units="in", dpi=300,echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+#optim_Frange_plot <- "output/04_Model/plots/optim in Fmsy range.png"
+
+include_graphics(optim_Frange_plot)
+
+```
+Figure 3 Mixed fisheries for the North Sea. North Sea mixed-fisheries `r yr.TAC` “range” fishing mortality within the $F_{MSY}$ range, compared with $F_{MSY}$, the current F (`r yr.assess`), and F in the single-stock advice for `r yr.TAC`. For cod in the North Sea, $F_{MSY}$ ranges are limited in accordance with the MSY approach and the MAP when the cod SSB is below $MSY B_{trigger}$.
+
+
+***
+
+**For information**
+
+Table. Mixed fisheries for the North Sea. FMSY ranges used for the “range” scenario.
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+  # Only run if RANGE=TRUE
+  
+
+    # Get results from range scenario
+  
+    load(Range_file_all) # load rbga.res
+
+    Flower <- rbga.res$stringMin
+    Fupper <- rbga.res$stringMax
+    names_table <- colnames(rbga.res$population)
+    names(Flower) <- names_table
+    names(Fupper) <- names_table
+    order <- match(sort(names_table),names_table)
+    tmp <- cbind(Flower=Flower[order],Fupper=Fupper[order])
+    rownames(tmp) <- tableREf$Advice_name[match(rownames(tmp), tableREf$stock)]
+    
+    
+    # pander([AdviceSheet_Order,])
+    knitr::kable(round(tmp,3))
+  
+
+```
+
+***
+
+\newpage
+
+
+
+### Catch scenarios
+
+
+New Table. Intermediate year assumption in the mixed fisheries projections.
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+interim <- matrix(nrow=nrow(tmp_range), ncol=5)
+rownames(interim) <- rownames(tmp_range)
+add_name <- c(paste0("Fbar in ", yr.now), paste0("Landings in ", yr.now), paste0("Discards in ", yr.now), paste0("Catches in ", yr.now), paste0("SSB in ", yr.TAC))
+colnames(interim) <- add_name
+
+sqE_interim <- res_Fcube[which(res_Fcube$scenario=="sq_E" & res_Fcube$year==yr.now & res_Fcube$value%in%c("Fbar", "landings", "discards")),]
+Fbar_interim <- sqE_interim[which(sqE_interim$value=="Fbar"),]
+landings_interim <- sqE_interim[which(sqE_interim$value=="landings"),]
+discards_interim <- sqE_interim[which(sqE_interim$value=="discards"),]
+
+sqE_TAC <- res_Fcube[which(res_Fcube$scenario=="sq_E" & res_Fcube$year==yr.TAC & res_Fcube$value=="ssb"),]
+
+for (sp in rownames(interim)){
+  interim[sp,paste0("Fbar in ", yr.now)] <- as.numeric(Fbar_interim[which(colnames(Fbar_interim)==tableREf$stock[which(tableREf$Advice_name==sp)])][1,])
+    interim[sp,paste0("Landings in ", yr.now)] <- round(as.numeric(landings_interim[which(colnames(Fbar_interim)==tableREf$stock[which(tableREf$Advice_name==sp)])][1,]))
+  interim[sp,paste0("Discards in ", yr.now)] <- round(as.numeric(discards_interim[which(colnames(Fbar_interim)==tableREf$stock[which(tableREf$Advice_name==sp)])][1,]))
+  interim[sp,paste0("Catches in ", yr.now)] <- interim[sp,paste0("Landings in ", yr.now)]+interim[sp,paste0("Discards in ", yr.now)]
+  interim[sp,paste0("SSB in ", yr.TAC)] <- round(as.numeric(sqE_TAC[which(colnames(sqE_TAC)==tableREf$stock[which(tableREf$Advice_name==sp)])][1,]))
+}
+
+
+
+  knitr::kable(interim)
+  
+```
+
+
+
+Table 2 Mixed fisheries for the North Sea. Catch per mixed-fisheries scenario `r yr.TAC`, in tonnes.
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+  knitr::kable(round(tmp_range))
+  
+```
+
+***
+
+**For information**
+
+Ratio between catches from min and single-stock-advice:
+```{r}
+ratio <- tmp_range[,"min"]/tmp_range[,"Single-stock-advice"]
+knitr::kable(t(round(ratio, 2)))
+
+```
+
+***
+
+\newpage
+
+Table 3 [TEMPORARY TABLE WITHOUT RANGE] Mixed fisheries for the North Sea. Ftotal resulting from single-stock advice and different mixed-fisheries scenarios. Norway lobster are not included as management is not applied at the functional unit level.
+
+**Without the range scenario**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+  # source("ReportFunctions/TableSSB.r")
+  tmp <- TableFbar(yearNow=now, LO=TRUE, SSA=SSA_file, res=resFile)
+  # pander(tmp)
+  tmp <- tmp[-which(is.na(tmp[,"baseline"])),]
+  tmp <- tmp[-which(substr(x = rownames(tmp), 
+    start = 1, stop = 3) == "NEP"),]
+  
+  # Reorder columns tmp after 2019 advice
+  tmp <- tmp[,-which(colnames(tmp)=="baseline")] # baseline sc not shown
+  #base_sc1 <- c("Single-stock-advice", "max", "min")
+  #base_sc2 <- c("sq_E", "val")
+  other_sc <- colnames(tmp)[!(colnames(tmp) %in% c(base_sc1,base_sc2))] # species specific scenarios
+  order_sc <- c(base_sc1,other_sc,base_sc2)
+  tmp <- tmp[,order_sc]
+  tmp <- round(tmp[AdviceSheet_Order[-grep("NEP", AdviceSheet_Order)],],4) # order species
+  # Change names stocks
+  #name_stocks <- read.csv("bootstrap/data/lookup_tables/Stock_names_advice.csv", sep=";")
+  init_name <- rownames(tmp)
+  new_names <- name_stocks$Stock_name[which(name_stocks$Fcube_stock_name %in% init_name)]
+  rownames(tmp) <- new_names
+  
+  knitr::kable(round(tmp,3))
+```
+
+
+**Final table with the range scenario**
+
+Table 3 Mixed fisheries for the North Sea. $F_{total}$ resulting from single-stock advice and different mixed-fisheries scenarios. Norway lobster are not included as management is not applied at the functional unit level.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+  # Only run if RANGE=TRUE
+  
+
+    # Get results from range scenario
+  
+    load(Range_file_all) # load rbga.res
+  
+    Fbar_range <- rbga.res$population[which.min(rbga.res$evaluations),] # results from optim for Fbar
+    names(Fbar_range) <- tableREf$Advice_name[match(names(Fbar_range), tableREf$stock)]
+
+    
+    tmp_range <- cbind(tmp,range=Fbar_range[rownames(tmp)])
+    
+    # pander([AdviceSheet_Order,])
+    knitr::kable(round(tmp_range,3))
+  
+
+```
+Fbar for main demersal in `r yr.TAC`
+
+\newpage
+
+
+Table 4 [TEMPORARY TABLE WITHOUT RANGE] Mixed fisheries for the North Sea. SSB results from single-stock advice and different mixed-fisheries scenarios. Norway lobster are not included as the abundance is not forecasted in the mixed-fisheries model. All weights are in tonnes. Unless otherwise noted, SSB (`r yr.TACp1`) > $B_{pa}$ or $MSY B_{trigger}$.
+
+**Without the range scenario**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+  # source("ReportFunctions/TableSSB.r")
+  tmp <- TableSSB(yearNow=now, LO=TRUE, SSA=SSA_file, res=resFile)
+
+# Reorder columns tmp after 2019 advice
+  tmp <- tmp[,-which(colnames(tmp)=="baseline")] # baseline sc not shown
+  base_sc1 <- c("Single-stock-advice", "max", "min")
+  base_sc2 <- c("sq_E", "val")
+  other_sc <- colnames(tmp)[!(colnames(tmp) %in% c(base_sc1,base_sc2))] # species specific scenarios
+  order_sc <- c(base_sc1,other_sc,base_sc2)
+  tmp <- tmp[,order_sc]
+  tmp <- round(tmp[AdviceSheet_Order[-grep("NEP", AdviceSheet_Order)],]) # order species
+  
+  # Change names stocks
+  #name_stocks <- read.csv("bootstrap/data/lookup_tables/Stock_names_advice.csv", sep=";")
+  init_name <- rownames(tmp)
+  new_names <- name_stocks$Stock_name[which(name_stocks$Fcube_stock_name %in% init_name)]
+  rownames(tmp) <- new_names
+
+
+  # pander(tmp)
+  knitr::kable(tmp)
+  
+#source("./North_Sea/programs/prgrTablesAndFigures/FigAdvice_NS_SSB.r") 
+
+```
+
+
+**Final table with the range scenario**
+
+Table 4 Mixed fisheries for the North Sea. SSB results from single-stock advice and different mixed-fisheries scenarios. Norway lobster are not included as the abundance is not forecasted in the mixed-fisheries model. All weights are in tonnes. Unless otherwise noted, SSB (`r yr.TACp1`) > $B_{pa}$ or $MSY B_{trigger}$.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=RANGE}
+  # Only run if RANGE=TRUE
+ 
+# Get results from range scenario
+  
+  range_res <- read.csv(Range_file_SSB) # SSBs are the results to use in the table
+  range_res2 <- unlist(range_res[which(range_res[,1]=="SSBs"),-1])
+ 
+  # merge with tmp
+  tmp2 <- rep(NA,nrow(tmp))
+  names(tmp2) <- rownames(tmp)
+  tmp2[names(range_res2)] <- range_res2
+  
+  tmp_range <- cbind(tmp, range=tmp2)
+  
+  # pander([AdviceSheet_Order,])
+  knitr::kable(round(tmp_range))
+  
+#source("./North_Sea/programs/prgrTablesAndFigures/FigAdvice_NS_SSB.r") 
+
+```
+
+\newpage
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+fname <- file.path("report/figs/effortLim~fleet.png")
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+```
+Figure 4 Mixed fisheries for the North Sea. Estimates of effort by fleet needed to reach each single-stock advice. Stocks are coded by colour, with the most limiting stock (“choke species”) for each fleet in `r yr.TAC` highlighted with a red border and the least limiting species highlighted with a green border. Fleet names are given by country, main gear, and vessel size (m). The status quo effort for each fleet (`r yr.assess` values) is shown as a dashed line for reference.
+
+\newpage
+
+### Quality considerations
+
+### Methods and data
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.units="in", dpi=400}
+
+fname <- file.path("report/figs/totLandings~stock.png")
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+```
+Figure 5 Mixed fisheries for the North Sea. Landings distribution by species: `r cap`.
+
+
+
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.units="in", dpi=300}
+
+fname <- file.path("report/figs/totLandings~stock+metier.png")
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+```
+Figure 6 Mixed fisheries for the North Sea. Landings distribution of species by gear-grouping in `r yr.assess` (list of gear-groupings are available in Table 7). Note: The “other” (OTH) displayed here is a mixed category consisting of (i) landings without corresponding effort (Including all Norwegian fleets) and (ii) landings of any combination of fleet and gear with landings < 1% of any of the stocks in `r yr.assess`. The “non allocated” is the differences between total landings used in the single-stock advice and mixed-fisheries advice.
+
+
+### Issues relevant for the advice
+
+
+\newpage
+
+# Extra results and info that could be useful for the report or advice text
+
+*Printing statements from model_03*
+
+
+## Choke species
+
+**Pourcentage effort limited**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# rm.list <- ls(all.names=TRUE)
+# rm(list=rm.list)
+
+#resRosePLot =paste0("model/03_Fcube_withFIDES_sqEIntY_LO_FIDES_FcubeAllObjects.Rdata") # for rose plot
+load(resRosePLot)
+
+#load("model/03_Fcube_withFIDES_2_LO_FIDES_FcubeAllObjects.Rdata")
+
+    eff.st <- effort.stock[["max"]][[yr.TAC]]
+    
+    
+    #calculating the choke species!
+    zz_min <- vector()
+    zz_max <- vector()
+        max_ <- apply(eff.st,2,max,na.rm=T)
+        min_ <- apply(eff.st,2,min,na.rm=T)
+        if(FIDES) {
+          for (i in names(min_)) {
+            for (j in seq(dim(eff.st)[[3]])) {
+              if (isTRUE(any(ChokeCategory1[,i,j])) & !is.na(min(eff.st[which(ChokeCategory1[,i,j]),i,j]))) {
+                min_[i] <- min(eff.st[which(ChokeCategory1[,i,j]),i,j],na.rm=T)
+              } else {
+                min_[i] <- NA
+              }
+        }}}
+          
+          
+    
+    for (i in dimnames(eff.st)[[2]]) {
+      if(!i=="unalloc") {
+        x <- eff.st[,i,1]
+        if (!is.na(min_[i])){
+          zz_min <- c(zz_min,which(x==min_[i]))
+        } else {
+          zz_min <- c(zz_min,NA)
+        }
+        zz_max <- c(zz_max,which(x==max_[i]))
+      }}
+      names(zz_min)[names(zz_min)==""] <- "NONE"
+      zz_min[names(zz_min)=="NONE"] <- 1
+      
+    
+    effort_fl_yrassess <- sapply(fl.f3,function(x) effort(x)[,yr.assess])
+    
+    chokespecies[,ac(YY)] <- sapply(dimnames(eff.st)[[1]],function(x) {sum(effort_fl_yrassess[which(names(zz_min)==x)],na.rm=T)})
+    unchokespecies[,ac(YY)] <- sapply(dimnames(eff.st)[[1]],function(x) {sum(effort_fl_yrassess[which(names(zz_max)==x)],na.rm=T)})
+    
+    
+     
+    
+    
+    table1=cbind(round(chokespecies[,ac(YY)]/sum(chokespecies[,ac(YY)],na.rm=T),3))
+    colnames(table1) <- paste0("% of ",yr.assess, " effort limited by each species in ", YY)
+    knitr::kable(table1)
+    
+```
+
+
+**Number of fleets**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+    
+    nflchoke <- table(names(zz_min))
+    #names(nflchoke) <- stock.names[as.numeric( names(nflchoke))]
+    #print ("nbr of fleets")
+    knitr::kable(nflchoke)
+    
+    ```
+
+
+**Stock most limiting for each fleet**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+    
+    # zz_min <- dimnames(eff.st)[[1]][zz_min]
+    # names(zz_min) <- dimnames(eff.st)[[2]]
+    zz_min <- names(zz_min)
+    names(zz_min) <- dimnames(eff.st)[[2]]
+    #print("#-- stock most limiting each fleet")
+    table3=cbind(zz_min)
+    colnames(table3) <- ""
+    knitr::kable(table3)
+
+```
+
+
+
+## Unchokespecies
+
+**Least limiting species**
+    
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+  #print(paste("#-- least limiting species - % of ",yr.assess, " effort unlimited by each species in ", YY))
+  table2=cbind(round(unchokespecies[,ac(YY)]/sum(unchokespecies[,ac(YY)],na.rm=T),2))
+  colnames(table2) <- paste0("% of ",yr.assess, " effort unlimited by each species in ", YY)
+  knitr::kable(table2)
+    
+    
+```
+
+
+
+**Number of fleets**  
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+    
+    #print ("nbr of fleets")
+    nflunchoke <- table(zz_max)
+    names(nflunchoke) <- stock.names[as.numeric( names(nflunchoke))]
+    knitr::kable(nflunchoke)
+    
+    
+```
+    
+
+
+**Stock least limiting for each fleet**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+    
+    zz_max <- dimnames(eff.st)[[1]][zz_max]
+    names(zz_max) <- dimnames(eff.st)[[2]]
+    
+    #print("#-- stock least limiting each fleet")
+    table4=cbind(zz_max)
+    colnames(table4) <-  ""
+    knitr::kable(table4)
+
+    
+```         
+
+
+
+## % of effort reduction between sq and min
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE}
+    reduction <- (sum(subset(res.effort,year==YY & scenario=="sq_E")$effort) - sum(subset(res.effort,year==YY & scenario=="min")$effort))/sum(subset(res.effort,year==YY & scenario=="sq_E")$effort)
+    print(-round(reduction*100,2)) 
+    
+```
+
+
+
+## % of effort increase between sq and max
+```{r ,echo=FALSE, message=FALSE, warning=FALSE}
+    increase <- (sum(subset(res.effort,year==YY & scenario=="sq_E")$effort) - sum(subset(res.effort,year==YY & scenario=="max")$effort))/sum(subset(res.effort,year==YY & scenario=="sq_E")$effort)
+    print(-round(increase*100,2))  
+    
+```
+
+
+**Landings by Metier**
+
+```{r}
+data.yr <- max(levels(df$Year))
+tmp <- df[(df$variable=="Landings" & df$Year==data.yr),]
+aggL <- aggregate(value ~ Metier, tmp, sum)
+aggL$rel.value <- aggL$value/sum(aggL$value)
+knitr::kable(aggL)
+```
+
+**Sum of Landings**
+
+```{r}
+sum(aggL$value)
+```
+
+
+**Discards by Metier**
+
+```{r}
+data.yr <- max(levels(df$Year))
+tmp <- df[(df$variable=="Discards" & df$Year==data.yr),]
+aggD <- aggregate(value ~ Metier, tmp, sum)
+aggD$rel.value <- aggD$value/sum(aggD$value)
+knitr::kable(aggD)
+```
+
+**Sum of Discards**
+
+```{r}
+sum(aggD$value)
+```
+
+**Sum of Catches**
+
+```{r}
+sum(aggD$value) + sum(aggL$value)
+```
+
+
+
+**Discard ratio**
+```{r}
+print(sum(aggD$value) / sum(sum(aggD$value) + sum(aggL$value)))
+```
+
+
+```{r}
+#rm.list <- ls(all.names=TRUE)
+#rm(list=rm.list)
+
+#resRosePLot =paste0("model/03_Fcube_withFIDES_sqEIntY_LO_FIDES_FcubeAllObjects.Rdata") # for rose plot
+load(resRosePLot)
+
+
+#load("model/03_Fcube_withFIDES_2_LO_FIDES_FcubeAllObjects.Rdata")
+fleets <- fl.f3
+yrs <- ac(yr.assess)
+### Make summary dataframes
+L <- D <- vector(mode = "list", length(fleets))
+for(i in seq(length(fleets))){
+  for(j in seq(length(fleets[[i]]@metiers))){
+    for(k in seq(length(fleets[[i]]@metiers[[j]]@catches))){
+      tmpL <- as.data.frame(fleets[[i]]@metiers[[j]]@catches[[k]]@landings[,yrs])
+      tmpD <- as.data.frame(fleets[[i]]@metiers[[j]]@catches[[k]]@discards[,yrs])
+      tmpL$fleet <- tmpD$fleet <- name(fleets[[i]])
+      tmpL$metier <- tmpD$metier <- name(fleets[[i]]@metiers[[j]])
+      tmpL$stock <- tmpD$stock <- name(fleets[[i]]@metiers[[j]]@catches[[k]])
+      if(j == 1 & k == 1){
+        dfL <- tmpL
+        dfD <- tmpD
+      } else {
+        dfL <- rbind(dfL, tmpL)
+        dfD <- rbind(dfD, tmpD)
+      }
+      # print(paste("| fl =", i, "| met =", j, "| stk =", k, "|"))
+    }
+  }
+  L[[i]] <- dfL
+  D[[i]] <- dfD
+  
+}
+L <- do.call("rbind", L)
+D <- do.call("rbind", D)
+L$variable <- "landings"
+D$variable <- "discards"
+#dim(L); dim(D)
+DF <- rbind(L, D)
+```
+
+
+**Improved Landings per metier**
+
+```{r}
+tmp <- DF$metier
+DF$metier2 <- unlist(lapply(strsplit(tmp, ".", fixed = T), FUN = function(x){x[1]}))
+aggL2 <- aggregate(data ~ metier2, data = DF, subset = variable=="landings", FUN = sum, na.rm=T)
+aggL2$rel.value <- aggL2$data/sum(aggL2$data)
+knitr::kable(aggL2)
+
+```
+
+**Improved Discards per metier**
+
+```{r}
+aggD2 <- aggregate(data ~ metier2, data = DF, subset = variable=="discards", FUN = sum, na.rm=T)
+aggD2$rel.value <- aggD2$data/sum(aggD2$data)
+knitr::kable(aggD2)
+```
+
+**Sum of improved Discards**
+```{r}
+sum(aggD2$data)
+```
+
+**Ratio of improved Discards**
+```{r}
+sum(aggD2$data)/sum(aggD2$data+aggL2$data)
+```
+
+
+**Landings by stock and gear in `r yrs`**
+```{r, fig.height=4, fig.width=6, fig.units="in", dpi=300}
+agg <- aggregate(data ~ stock+metier2, data = DF, subset = variable=="landings", FUN = sum, na.rm=T)
+agg2 <- reshape2::dcast(agg, formula = stock~metier2)
+stks <- agg2$stock
+agg2 <- agg2[match(stks, tableREf$stock),]
+col2 <- tableREf$col[match(stks, tableREf$stock)]
+stks <- tableREf$Advice_name[match(stks, tableREf$stock)]
+#col[length(col)] <- tableREf$col[match("nep.fu6-9", tableREf$Advice_name)]
+
+fname <- file.path("report/figs/landings~stock+gear.png")
+png(file = fname,  width = 6, height = 4, units="in", res=400)
+op <- par(mar=c(5,3,1,1), mgp = c(2,0.5,0), ps = 10)
+  barplot(as.matrix(agg2[,-1]), las=2, col=col2, legend.text = stks, args.legend = list(x=3, cex=0.6))
+x <- dev.off()
+
+tmp <- readPNG(fname)
+knitr::include_graphics(fname, dpi = floor(dim(tmp)[2]/4))
+
+
+```
+
+
+
+
+
+\newpage
+
+
+
+**Table.** Single Stock Advice Table (results for the advice year `r yr.TAC`)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+  # source("prgrTablesAndFigures/exportSSATables.r")
+  tmp <- exportSSATables(yearNow=now, LO=TRUE, SSA=SSA_file, res=resFile )
+  knitr::kable(tmp, row.names = FALSE)
+```
