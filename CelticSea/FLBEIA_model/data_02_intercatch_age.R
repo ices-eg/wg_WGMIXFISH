@@ -83,7 +83,7 @@ intercatch_canum <- intercatch_canum %>% select(Datayear, Country,Area , CatchCa
 
 # 02 - Convert length to age #####
 
-# 03 - CANUM raised outside InterCatch ####
+# 03 - CANUM raised outside InterCatch - WGCSE ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
 canum_had <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_HAD_summary.csv")
 canum_whg <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_WHG_summary.csv")
@@ -150,6 +150,9 @@ ggplot(other_canum_checks[other_canum_checks$Stock == "whg.27.7b-ce-k",], aes(Ac
 #And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at)
 #intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
 
-# 04 _ Merge and write out final CANUM #####
+# 04 - CANUM raised outside InterCatch - WGBIE ####
+#Mon
+
+# 05 _ Merge and write out final CANUM #####
 write.taf(intercatch_canum_fin,file.path("results/clean_data/intercatch_canum_summary.csv"))
 
