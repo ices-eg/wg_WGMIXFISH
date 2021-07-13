@@ -82,6 +82,7 @@ intercatch_canum_QUARTER <- intercatch_canum_QUARTER %>% group_by(Datayear, Stoc
 intercatch_canum <- rbind(intercatch_canum_YEARS,intercatch_canum_QUARTER)
 intercatch_canum <- intercatch_canum %>% select(Datayear, Country,Area , CatchCat,lvl4,CANUMType, ageorlength,CANUM, MeanWeight_in_g, samples_weight_kg,Stock)
 names(intercatch_canum) 
+intercatch_canum$MeanWeight_in_g <-  as.numeric(intercatch_canum$MeanWeight_in_g)
 
 intercatch_canum_hke <- intercatch_canum[intercatch_canum$Stock == "hke.27.3a46-8abd", ]
 intercatch_canum <- intercatch_canum[!intercatch_canum$Stock == "hke.27.3a46-8abd", ]
@@ -99,11 +100,29 @@ dimnames(alk)#arrays: [i,j,k] for the ith row, jth column, kth level
 # average across cohorts 
 hke_alk_year <- apply(alk, c(1,2), FUN=mean)
 hke_alk_year <- prop.table(apply(hke_alk_year,2,rev), margin=1)
-alkPlot(hke_alk_year,"splines")
-#hke_alk_year <- as_tibble(hke_alk_year, rownames = "Length")%>% gather( key = "Age", value ="Proportion", 2:17) %>% data.frame()
-intercatch_canum_hke_new <- intercatch_canum_hke
+alkPlot(hke_alk_year,"splines") # sanity check
+names(intercatch_canum_hke)[15] <- "Length"
+
+#plot length against weight by country
+ggplot(intercatch_canum_hke, aes(Length, MeanWeight_in_g)) + geom_line() + facet_wrap(~Country) +theme_classic()
+ggplot(intercatch_canum_hke, aes(Length, MeanWeight_in_g)) + geom_line() + facet_wrap(~Datayear) +theme_classic()
+#issues with data submitted in 2013 - 2016
+ggplot(intercatch_canum_hke[intercatch_canum_hke$Datayear %in% c(2013, 2014, 2015, 2016) & intercatch_canum_hke$Length<200,], aes(Length, MeanWeight_in_g)) + geom_line() + facet_wrap(~Datayear) +theme_classic()
+ggplot(intercatch_canum_hke[intercatch_canum_hke$Datayear %in% c(2013, 2014, 2015, 2016) & intercatch_canum_hke$Length<200,], aes(Length, MeanWeight_in_g)) + geom_line() + facet_wrap(~Country) +theme_classic()
+ggplot(intercatch_canum_hke, aes(Length, MeanWeight_in_g)) + geom_line() + facet_wrap(~DataUsedInAssessment) +theme_classic()
+
+#issue with mixed length units! https://shiny.marine.ie/igfs/
+intercatch_canum_hke$Length_new <- intercatch_canum_hke$Length
+
+intercatch_canum_hke$Length_new <- ifelse(intercatch_canum_hke$Length_new[intercatch_canum_hke$Length_new >25 & intercatch_canum_hke$MeanWeight_in_g <100], intercatch_canum_hke$Length_new/100, intercatch_canum_hke$Length_new)
+#intercatch_canum_hke$Length_new [intercatch_canum_hke$MeanWeight_in_g <100 & intercatch_canum_hke$Length_new >25 ]  <-  intercatch_canum_hke$Length_new [intercatch_canum_hke$MeanWeight_in_g <100 & intercatch_canum_hke$Length_new >25 ] /100 #convert from mm to cm
+
+
+ggplot(intercatch_canum_hke, aes(Length_new, MeanWeight_in_g)) + geom_line() + facet_wrap(~Country) +theme_classic()
+
+#intercatch_canum_hke$Length <- ifelse(intercatch_canum_hke$Length<1,1,intercatch_canum_hke$Length) #there are no fish in ALK less then 1
 brks <- c(1,seq(2,100,2),110,120,130)
-rb.len1 <- FSA::alkIndivAge(hke_alk_year,~Length  ,data=intercatch_canum_hke_new, type="SR", breaks=brks)
+rb.len1 <- FSA::alkIndivAge(hke_alk_year,~Length  ,data=intercatch_canum_hke, type="SR", breaks=brks)
 
 # 03 - CANUM raised outside InterCatch - WGCSE ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
