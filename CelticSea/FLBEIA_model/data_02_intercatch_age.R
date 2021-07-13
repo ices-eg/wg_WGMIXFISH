@@ -97,15 +97,13 @@ dimnames(alk)#arrays: [i,j,k] for the ith row, jth column, kth level
 # }
 
 # average across cohorts 
-hke_alk_year <- apply(alk, c(1,2), FUN=mean) #averaging across cohorts
-dimnames(x)
-matrix.key <- prop.table(apply(hke_alk_year,2,rev), margin=1)
-alkPlot(matrix.key,"splines")
-hke_alk_year <- as_tibble(hke_alk_year, rownames = "Length")%>% gather( key = "Age", value ="Proportion", 2:17) %>% data.frame()
-
-#apply to intercatch subset
-
-intercatch_canum_hke
+hke_alk_year <- apply(alk, c(1,2), FUN=mean)
+hke_alk_year <- prop.table(apply(hke_alk_year,2,rev), margin=1)
+alkPlot(hke_alk_year,"splines")
+#hke_alk_year <- as_tibble(hke_alk_year, rownames = "Length")%>% gather( key = "Age", value ="Proportion", 2:17) %>% data.frame()
+intercatch_canum_hke_new <- intercatch_canum_hke
+brks <- c(1,seq(2,100,2),110,120,130)
+rb.len1 <- FSA::alkIndivAge(hke_alk_year,~Length  ,data=intercatch_canum_hke_new, type="SR", breaks=brks)
 
 # 03 - CANUM raised outside InterCatch - WGCSE ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
