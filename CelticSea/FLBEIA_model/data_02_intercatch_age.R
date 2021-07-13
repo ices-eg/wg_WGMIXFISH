@@ -18,6 +18,7 @@ library(tidyr)
 library(dplyr)
 library(icesTAF)
 library(ggplot2)
+library(FSA)
 
 # 01 - CANUM raised in InterCatch  ####
 taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
@@ -80,8 +81,31 @@ intercatch_canum_QUARTER <- intercatch_canum_QUARTER %>% group_by(Datayear, Stoc
 #NOTE - warnings are due to no mean weights for HKE in 2009 for UKN, UKE and UKS.
 intercatch_canum <- rbind(intercatch_canum_YEARS,intercatch_canum_QUARTER)
 intercatch_canum <- intercatch_canum %>% select(Datayear, Country,Area , CatchCat,lvl4,CANUMType, ageorlength,CANUM, MeanWeight_in_g, samples_weight_kg,Stock)
+names(intercatch_canum) 
+
+intercatch_canum_hke <- intercatch_canum[intercatch_canum$Stock == "hke.27.3a46-8abd", ]
+intercatch_canum <- intercatch_canum[!intercatch_canum$Stock == "hke.27.3a46-8abd", ]
 
 # 02 - Convert length to age #####
+load("bootstrap/data/ices_intercatch/ALK/hke/alk.RData")
+dimnames(alk)#arrays: [i,j,k] for the ith row, jth column, kth level
+# dim(alk)
+# # trends in alk per chort stara
+# for (i in 1:24){
+#   matrix.key <- prop.table(apply(alk[,,i],2,rev), margin=1)
+#   alkPlot(matrix.key,"splines")
+# }
+
+# average across cohorts 
+hke_alk_year <- apply(alk, c(1,2), FUN=mean) #averaging across cohorts
+dimnames(x)
+matrix.key <- prop.table(apply(hke_alk_year,2,rev), margin=1)
+alkPlot(matrix.key,"splines")
+hke_alk_year <- as_tibble(hke_alk_year, rownames = "Length")%>% gather( key = "Age", value ="Proportion", 2:17) %>% data.frame()
+
+#apply to intercatch subset
+
+intercatch_canum_hke
 
 # 03 - CANUM raised outside InterCatch - WGCSE ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
@@ -117,7 +141,6 @@ other_canum$Area <- as.character(other_canum$Area)
 other_canum_saftey_check <- other_canum
 
 # ~ Country fix  ####
-Country_Lookup <- read_xlsx("bootstrap/data/supporting_files/Country_lookup.xlsx")
 other_canum <- left_join(other_canum,Country_Lookup)
 dim(other_canum)[1]-dim(other_canum_saftey_check)[1] #safety check - dims should match
 other_canum$Country <- other_canum$CorrectCountry
