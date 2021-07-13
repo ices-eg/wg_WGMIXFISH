@@ -11,8 +11,8 @@
 #       - InterCatch CANUM with distribution: meg.27.7b-k8abd, sol.27.7fg
 #       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, mon.27.78abd 
 
-#gc()
-#rm(list = ls())
+gc()
+rm(list = ls())
 library(readxl)
 library(tidyr)
 library(dplyr)
@@ -53,6 +53,13 @@ intercatch_canum$lvl4_new <- ifelse(is.na(intercatch_canum$Correct_lvl4),interca
 intercatch_canum$lvl4 <- intercatch_canum$lvl4_new 
 intercatch_canum <- intercatch_canum[-c(25,26,27)]
 
+# ~ Check SOP here!!!! ####
+# Check the caton and numbers at age*meanweight matches, SOP is in grams
+intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
+### SOP and the caton_kg should be the same or within very small tolerances)
+intercatch_canum$diff <- intercatch_canum$SOP - as.numeric(intercatch_canum$CATON_in_kg) 
+
+
 # ~ Remove unwanted data ####  
 intercatch_canum <-intercatch_canum [intercatch_canum$CatchCat %in% c("Discards", "Landings"),]
 
@@ -64,14 +71,18 @@ intercatch_canum_QUARTER <- intercatch_canum %>% filter(!SeasonType %in%c("Year"
 intercatch_canum_QUARTER <- intercatch_canum_QUARTER %>% group_by(Datayear, Stock,  Country, Fleet, CatchCat, lvl4,  Area,  Species, CANUMType, ageorlength, CATON_in_kg) %>% summarise(MeanWeight_in_g = weighted.mean(as.numeric(MeanWeight_in_g), CANUM), CANUM=sum(CANUM,na.rm = T))%>% data.frame()
 #NOTE - warnings are due to no mean weights for HKE in 2009 for UKN, UKE and UKS.
 intercatch_canum <- rbind(intercatch_canum_YEARS,intercatch_canum_QUARTER)
-
-#sum(intercatch_canum_saftey_check$CANUM)-sum(intercatch_canum$CANUM) # This is not a valid sanity check as they are repeated values
-
-# ~ SOP check ####
 # first remove all zeros
 intercatch_canum <- intercatch_canum[intercatch_canum$CANUM>0,]
 intercatch_canum <- intercatch_canum[intercatch_canum$MeanWeight_in_g>0,] # why would there be fish with an age and no weight?
 intercatch_canum <- intercatch_canum[!is.na(intercatch_canum$CATON_in_kg),] 
+intercatch_canum <- intercatch_canum %>% group_by(Datayear, Stock,  Country, Fleet, CatchCat, lvl4,  Area,  Species, CANUMType, ageorlength) %>% summarise(CATON_in_kg = sum(CATON_in_kg, na.rm=T), MeanWeight_in_g = weighted.mean(as.numeric(MeanWeight_in_g), CANUM), CANUM=sum(CANUM,na.rm = T))%>% data.frame()
+
+#sum(intercatch_canum_saftey_check$CANUM)-sum(intercatch_canum$CANUM) # This is not a valid sanity check as they are repeated values
+
+# ~ SOP check ####
+# Age 
+intercatch_canum_age_checks <- intercatch_canum [intercatch_canum$CANUMType == "Age", ] %>% select(Year, Stock, County, Fleet, Area, CATON_in_kg, MeanWeight_in_g, CANUM) %>% group_by
+
 
 # Check the caton and numbers at age*meanweight matches, SOP is in grams
 intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
@@ -81,8 +92,6 @@ intercatch_canum$diff <- intercatch_canum$SOP - as.numeric(intercatch_canum$CATO
 
 #And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at) 
 intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
-
-
 
 # 02 - CANUM raised outside InterCatch ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
