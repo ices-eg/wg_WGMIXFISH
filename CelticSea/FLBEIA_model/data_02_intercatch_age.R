@@ -53,7 +53,18 @@ intercatch_canum$lvl4_new <- ifelse(is.na(intercatch_canum$Correct_lvl4),interca
 intercatch_canum$lvl4 <- intercatch_canum$lvl4_new 
 intercatch_canum <- intercatch_canum[-c(25,26,27)]
 
-# ~ Check SOP here!!!! ####
+
+# ~ SOP check ####
+intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
+intercatch_canum_checks <- intercatch_canum %>% 
+  group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, DiscardsImportedOrUnrep, AgeOrLengthDistribution, CATON_in_kg, Season, SeasonType, ageorlength,Gender) %>% summarise(SOP = )
+
+  
+  # Check the caton and numbers at age*meanweight matches, SOP is in grams
+
+### SOP and the caton_kg should be the same or within very small tolerances)
+intercatch_canum$diff <- intercatch_canum$SOP - as.numeric(intercatch_canum$CATON_in_kg) 
+
 # Check the caton and numbers at age*meanweight matches, SOP is in grams
 intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
 ### SOP and the caton_kg should be the same or within very small tolerances)
@@ -78,16 +89,6 @@ intercatch_canum <- intercatch_canum[!is.na(intercatch_canum$CATON_in_kg),]
 intercatch_canum <- intercatch_canum %>% group_by(Datayear, Stock,  Country, Fleet, CatchCat, lvl4,  Area,  Species, CANUMType, ageorlength) %>% summarise(CATON_in_kg = sum(CATON_in_kg, na.rm=T), MeanWeight_in_g = weighted.mean(as.numeric(MeanWeight_in_g), CANUM), CANUM=sum(CANUM,na.rm = T))%>% data.frame()
 
 #sum(intercatch_canum_saftey_check$CANUM)-sum(intercatch_canum$CANUM) # This is not a valid sanity check as they are repeated values
-
-# ~ SOP check ####
-# Age 
-intercatch_canum_age_checks <- intercatch_canum [intercatch_canum$CANUMType == "Age", ] %>% select(Year, Stock, County, Fleet, Area, CATON_in_kg, MeanWeight_in_g, CANUM) %>% group_by
-
-
-# Check the caton and numbers at age*meanweight matches, SOP is in grams
-intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
-### SOP and the caton_kg should be the same or within very small tolerances)
-intercatch_canum$diff <- intercatch_canum$SOP - as.numeric(intercatch_canum$CATON_in_kg) 
 
 
 #And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at) 
