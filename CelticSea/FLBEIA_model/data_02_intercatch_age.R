@@ -8,8 +8,9 @@
 # 1 - factors are turned to characters, 
 # 2 - dim of data frame does not change shape during cleaning process
 # Data sources vary per stock: 
-#       - InterCatch CANUM with distribution: meg.27.7b-k8abd, sol.27.7fg
+#       - InterCatch CANUM with distribution: meg.27.7b-k8abd, sol.27.7fg, hke.27.3a46-8abd(lengths only)
 #       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, mon.27.78abd 
+
 
 gc()
 rm(list = ls())
@@ -23,7 +24,9 @@ library(ggplot2)
 taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 intercatch_canum <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 #subset for case study area
-intercatch_canum <- intercatch_canum[intercatch_canum$Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ),]
+intercatch_canum <- intercatch_canum[intercatch_canum$Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ) & intercatch_canum$CatchCat %in% c("Discards", "Landings") & intercatch_canum$Stock %in% c("hke.27.3a46-8abd", "meg.27.7b-k8abd", "sol.27.7fg" ),]
+# ~ Remove unwanted data ####  
+intercatch_canum <- intercatch_canum[intercatch_canum$CANUM>0,] #  CM -a number of hke with no canum, why?
 intercatch_canum_saftey_check <- intercatch_canum #save for sanity checking later
 
 # ~ Area fix ####
@@ -52,27 +55,24 @@ dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - d
 intercatch_canum$lvl4_new <- ifelse(is.na(intercatch_canum$Correct_lvl4),intercatch_canum$lvl4, intercatch_canum$Correct_lvl4)
 intercatch_canum$lvl4 <- intercatch_canum$lvl4_new 
 intercatch_canum <- intercatch_canum[-c(25,26,27)]
+intercatch_canum$samples_weight_kg <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
 
-
-# ~ SOP check ####
-intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
+#~ SOP check of baseline data ####
 intercatch_canum_checks <- intercatch_canum %>% 
-  group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, DiscardsImportedOrUnrep, AgeOrLengthDistribution, CATON_in_kg, Season, SeasonType, ageorlength,Gender) %>% summarise(SOP = )
+  group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, CATON_in_kg ) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON_in_kg -samples_weight_kg) , SOP = (samples_weight_kg/ CATON_in_kg)) %>% data.frame() 
+ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("hke.27.3a46-8abd")
+ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")
+ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")
+# sanity check - assuming we consider SOP between 0.95 and 1.05 as acceptable
+intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>0.94, "Acceptable", "Suspect")
+intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>1.05, "Suspect", intercatch_canum_checks$Acceptable)
+ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes( Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")+xlab("")
+ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")+xlab("")
+ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")+xlab("")
 
-  
-  # Check the caton and numbers at age*meanweight matches, SOP is in grams
-
-### SOP and the caton_kg should be the same or within very small tolerances)
-intercatch_canum$diff <- intercatch_canum$SOP - as.numeric(intercatch_canum$CATON_in_kg) 
-
-# Check the caton and numbers at age*meanweight matches, SOP is in grams
-intercatch_canum$SOP <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
-### SOP and the caton_kg should be the same or within very small tolerances)
-intercatch_canum$diff <- intercatch_canum$SOP - as.numeric(intercatch_canum$CATON_in_kg) 
-
-
-# ~ Remove unwanted data ####  
-intercatch_canum <-intercatch_canum [intercatch_canum$CatchCat %in% c("Discards", "Landings"),]
+# ~ Adjustment _ I am not sure this is required - CM - need to ask PD and JB
+#And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at)
+#intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
 
 
 #~ Remove quarter ~ aggregate ####  
@@ -82,17 +82,6 @@ intercatch_canum_QUARTER <- intercatch_canum %>% filter(!SeasonType %in%c("Year"
 intercatch_canum_QUARTER <- intercatch_canum_QUARTER %>% group_by(Datayear, Stock,  Country, Fleet, CatchCat, lvl4,  Area,  Species, CANUMType, ageorlength, CATON_in_kg) %>% summarise(MeanWeight_in_g = weighted.mean(as.numeric(MeanWeight_in_g), CANUM), CANUM=sum(CANUM,na.rm = T))%>% data.frame()
 #NOTE - warnings are due to no mean weights for HKE in 2009 for UKN, UKE and UKS.
 intercatch_canum <- rbind(intercatch_canum_YEARS,intercatch_canum_QUARTER)
-# first remove all zeros
-intercatch_canum <- intercatch_canum[intercatch_canum$CANUM>0,]
-intercatch_canum <- intercatch_canum[intercatch_canum$MeanWeight_in_g>0,] # why would there be fish with an age and no weight?
-intercatch_canum <- intercatch_canum[!is.na(intercatch_canum$CATON_in_kg),] 
-intercatch_canum <- intercatch_canum %>% group_by(Datayear, Stock,  Country, Fleet, CatchCat, lvl4,  Area,  Species, CANUMType, ageorlength) %>% summarise(CATON_in_kg = sum(CATON_in_kg, na.rm=T), MeanWeight_in_g = weighted.mean(as.numeric(MeanWeight_in_g), CANUM), CANUM=sum(CANUM,na.rm = T))%>% data.frame()
-
-#sum(intercatch_canum_saftey_check$CANUM)-sum(intercatch_canum$CANUM) # This is not a valid sanity check as they are repeated values
-
-
-#And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at) 
-intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
 
 # 02 - CANUM raised outside InterCatch ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
