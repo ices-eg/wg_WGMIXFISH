@@ -27,6 +27,8 @@ intercatch_canum <- intercatch_canum[intercatch_canum$Area %in% c("27.7"  , "27.
 # ~ Remove unwanted data ####  
 intercatch_canum <- intercatch_canum[intercatch_canum$CANUM>0,] #  CM -a number of hke with no canum, why?
 intercatch_canum_saftey_check <- intercatch_canum #save for sanity checking later
+intercatch_canum$samples_weight_kg <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
+
 
 # ~ Area fix ####
 area_spp_fix <- read.csv("bootstrap/data/supporting_files/Area_lookup.csv")
@@ -51,9 +53,9 @@ dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - d
 intercatch_canum$lvl4_new <- ifelse(is.na(intercatch_canum$Correct_lvl4),intercatch_canum$lvl4, intercatch_canum$Correct_lvl4)
 intercatch_canum$lvl4 <- intercatch_canum$lvl4_new 
 intercatch_canum <- intercatch_canum[-c(25,26,27)]
-intercatch_canum$samples_weight_kg <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
 
 #~ SOP check of baseline data ####
+#needs to be done before you aggregate
 intercatch_canum_checks <- intercatch_canum %>% 
   group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, CATON_in_kg ) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON_in_kg -samples_weight_kg) , SOP = (samples_weight_kg/ CATON_in_kg)) %>% data.frame() 
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("hke.27.3a46-8abd")
@@ -96,57 +98,55 @@ canum_whg$lvl4 <- canum_whg$fleet
 
 # ~ Format fix ####
 canum_cod <- canum_cod[canum_cod$year <2020,] # we only had access to this years file
-canum_cod<- canum_cod %>% select(year, country, subArea  , catchCat   , lvl4, Age  , frequency1000  , meanWeightKg) %>% 
-  group_by(year, country, subArea  , catchCat   , lvl4, Age ) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame() #CM needs to be changed to weighted mean when we get the right file
-names(canum_cod) <- c("year", "country", "area", "CatchCat", "lvl4", "age", "canum", "mean_weight_in_g")
+canum_cod<- canum_cod %>% select(year, country, subArea  , catchCat   , lvl4, Age  , frequency1000  , meanWeightKg, Stock) %>% 
+  group_by(year, country, subArea  , catchCat   , lvl4, Age, Stock ) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame() #CM needs to be changed to weighted mean when we get the right file
+names(canum_cod) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age", "Stock", "CANUM", "Mean_Weight_in_g")
 
-canum_had <- canum_had %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg) %>% 
-  group_by(year, country, subArea, catchCat, lvl4, Age) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame()
-names(canum_had) <- c("year", "country", "area", "CatchCat", "lvl4", "age", "canum", "mean_weight_in_g")
+canum_had <- canum_had %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg, Stock) %>% 
+  group_by(year, country, subArea, catchCat, lvl4, Age, Stock) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame()
+names(canum_had) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_g")
 
-canum_whg <- canum_whg %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg) %>% 
-  group_by(year, country, subArea, catchCat, lvl4, Age) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame()
-names(canum_whg) <- c("year", "country", "area", "CatchCat", "lvl4", "age", "canum", "mean_weight_in_g")
+canum_whg <- canum_whg %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg, Stock) %>% 
+  group_by(year, country, subArea, catchCat, lvl4, Age, Stock) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame()
+names(canum_whg) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_g")
 
 other_canum <- rbind(canum_cod, canum_whg, canum_had)
+other_canum$Area <- as.character(other_canum$Area)
 other_canum_saftey_check <- other_canum
 
 # ~ Country fix  ####
 Country_Lookup <- read_xlsx("bootstrap/data/supporting_files/Country_lookup.xlsx")
-other_canum <- left_join(other_canum,Country_Lookup, by= c("country" = "Country"))
+other_canum <- left_join(other_canum,Country_Lookup)
 dim(other_canum)[1]-dim(other_canum_saftey_check)[1] #safety check - dims should match
-other_canum$country <- other_canum$CorrectCountry
-other_canum <- other_canum[-c(9)]
+other_canum$Country <- other_canum$CorrectCountry
+other_canum <- other_canum[-c(10)]
 
 #~ SOP check of baseline data ####
+other_caton <- read.csv("results/clean_data/intercatch_caton_summary.csv")
+other_caton <- other_caton[other_caton$Stock %in% c("cod.27.7e-k" ,"had.27.7b-k", "whg.27.7b-ce-k"),]
+other_caton$Area <- "27.7"
+other_caton <- other_caton%>% select(Year, Stock, Country, Area,lvl4, Discards, Landings) %>% 
+  group_by(Year, Stock, Country, Area,lvl4) %>% 
+  summarise(Discards =sum(Discards, na.rm=T), Landings = sum(Landings ,na.rm=T))
+other_caton <- gather(other_caton, key = CatchCat, value = "CATON", 6:7)
+other_canum <- left_join(other_canum, other_caton, by= c("Year" = "Year", "Stock" = "Stock", "Country" = "Country", "Area" = "Area", "lvl4" = "lvl4", "CatchCat"= "CatchCat"))
+other_canum$samples_weight_kg <- (other_canum$CANUM*other_canum$Mean_Weight_in_g)/1000 # put in kg
 
-#need to read in caton
-caton 
-intercatch_canum_checks <- intercatch_canum %>% 
-  group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, CATON_in_kg ) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON_in_kg -samples_weight_kg) , SOP = (samples_weight_kg/ CATON_in_kg)) %>% data.frame() 
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("hke.27.3a46-8abd")
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")
+other_canum_checks <- other_canum %>% 
+  group_by(Year, Stock, Country, Area, CatchCat, CATON) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_kg) , SOP = (samples_weight_kg/ CATON)) %>% data.frame() 
+ggplot(other_canum_checks[other_canum_checks$Stock == "cod.27.7e-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("cod.27.7e-k")
+ggplot(other_canum_checks[other_canum_checks$Stock == "had.27.7b-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("had.27.7b-k")
+ggplot(other_canum_checks[other_canum_checks$Stock == "whg.27.7b-ce-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("whg.27.7b-ce-k")
 # sanity check - assuming we consider SOP between 0.95 and 1.05 as acceptable
-intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>0.94, "Acceptable", "Suspect")
-intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>1.05, "Suspect", intercatch_canum_checks$Acceptable)
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes( Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")+xlab("")
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")+xlab("")
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")+xlab("")
+other_canum_checks$Acceptable <- ifelse(other_canum_checks$SOP>0.94, "Acceptable", "Suspect")
+other_canum_checks$Acceptable <- ifelse(other_canum_checks$SOP>1.05, "Suspect", other_canum_checks$Acceptable)
+ggplot(other_canum_checks[other_canum_checks$Stock == "cod.27.7e-k",], aes( Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("cod.27.7e-k")+xlab("")
+ggplot(other_canum_checks[other_canum_checks$Stock == "had.27.7b-k",], aes(Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("had.27.7b-k")+xlab("")
+ggplot(other_canum_checks[other_canum_checks$Stock == "whg.27.7b-ce-k",], aes(Acceptable, CATON)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("whg.27.7b-ce-k")+xlab("")
 
 # ~ Adjustment _ I am not sure this is required - CM - need to ask PD and JB
 #And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at)
 #intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
-
-
-##selects coloumns and changes from grams to kg 
-canum_cod <- canum_cod %>% select(year,country,subArea,catchCat,fleet,Age,frequency1000,meanWeightKg) %>% mutate(meanWeightKg=meanWeightKg/1000) %>% group_by_at(vars(-frequency1000)) %>% summarise(frequency1000=sum(frequency1000,na.rm = T)) 
-
-##Weighted mean by freqencey of mean weights
-canum_cod <- canum_cod %>% group_by_at(vars(-frequency1000,-meanWeightKg)) %>% summarise(meanWeightKg=weighted.mean(meanWeightKg,w=frequency1000,na.rm=T),frequency1000=sum(frequency1000,na.rm = T)) %>% ungroup()
-
-
-# 03 _ Convert length to age #####
 
 # 04 _ Write out final CANUM #####
 write.taf(intercatch_canum_fin,file.path("results/clean_data/intercatch_canum_summary.csv"))
