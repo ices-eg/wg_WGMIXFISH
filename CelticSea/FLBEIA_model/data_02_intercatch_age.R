@@ -90,14 +90,14 @@ canum_had$Stock<-"had.27.7b-k"
 canum_whg$Stock<-"whg.27.7b-ce-k"
 
 # ~ Métier level 4 fix
-canum_cod$lvl4 <- substr(canum_cod$Fleet1,1,7)
+canum_cod$lvl4 <- canum_cod$fleet 
 canum_had$lvl4 <- canum_had$fleet 
 canum_whg$lvl4 <- canum_whg$fleet 
 
 # ~ Format fix ####
-canum_cod <- canum_cod[canum_cod$Frequency>0,]
-canum_cod<- canum_cod %>% select(Year, Country, Area , Catch.Cat., lvl4, AgeLength , Frequency , Weight) %>% 
-  group_by(Year, Country, Area, Catch.Cat., lvl4, AgeLength) %>% summarise(Frequency = sum(Frequency, na.rm=T), Weight = mean(Weight)) %>% data.frame() #CM needs to be changed to weighted mean when we get the right file
+canum_cod <- canum_cod[canum_cod$year <2020,] # we only had access to this years file
+canum_cod<- canum_cod %>% select(year, country, subArea  , catchCat   , lvl4, Age  , frequency1000  , meanWeightKg) %>% 
+  group_by(year, country, subArea  , catchCat   , lvl4, Age ) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame() #CM needs to be changed to weighted mean when we get the right file
 names(canum_cod) <- c("year", "country", "area", "CatchCat", "lvl4", "age", "canum", "mean_weight_in_g")
 
 canum_had <- canum_had %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg) %>% 
@@ -109,13 +109,14 @@ canum_whg <- canum_whg %>% select(year, country, subArea, catchCat, lvl4, Age, f
 names(canum_whg) <- c("year", "country", "area", "CatchCat", "lvl4", "age", "canum", "mean_weight_in_g")
 
 other_canum <- rbind(canum_cod, canum_whg, canum_had)
+other_canum_saftey_check <- other_canum
 
 # ~ Country fix  ####
 Country_Lookup <- read_xlsx("bootstrap/data/supporting_files/Country_lookup.xlsx")
-intercatch_canum <- left_join(intercatch_canum,Country_Lookup)
-dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - dims should match
-intercatch_canum$Country <- intercatch_canum$CorrectCountry
-intercatch_canum <- intercatch_canum[-c(25)]
+other_canum <- left_join(other_canum,Country_Lookup, by= c("country" = "Country"))
+dim(other_canum)[1]-dim(other_canum_saftey_check)[1] #safety check - dims should match
+other_canum$country <- other_canum$CorrectCountry
+other_canum <- other_canum[-c(9)]
 
 #~ SOP check of baseline data ####
 
@@ -138,39 +139,12 @@ ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd
 #intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
 
 
-#### alters canum_cod allow rbind
-#?From the processing scripts, it seems that Frequency is equal to FrequencyUploaded / SOP ratio for each line. SOP ratio is equal to the sum of products of N@age*W@age/Caton.  (pers coms lionel)
-##
-names(canum_cod)
-names(canum_cod) <- tolower(names(canum_cod))
-names(canum_cod)[names(canum_cod)=="area"] <-"subArea"
-names(canum_cod)[names(canum_cod)=="frequency"] <-"frequency1000"
-names(canum_cod)[names(canum_cod)=="weight"] <-"meanWeightKg"
-names(canum_cod)[names(canum_cod)=="catch.cat."] <-"catchCat"
-names(canum_cod)[names(canum_cod)=="agelength"] <-"Age"
-names(canum_cod)[names(canum_cod)=="fleet1"] <-"fleet"
-
-### lvl4
-canum_cod$fleet <- substring(canum_cod$fleet,1,7)
-
 ##selects coloumns and changes from grams to kg 
 canum_cod <- canum_cod %>% select(year,country,subArea,catchCat,fleet,Age,frequency1000,meanWeightKg) %>% mutate(meanWeightKg=meanWeightKg/1000) %>% group_by_at(vars(-frequency1000)) %>% summarise(frequency1000=sum(frequency1000,na.rm = T)) 
 
 ##Weighted mean by freqencey of mean weights
 canum_cod <- canum_cod %>% group_by_at(vars(-frequency1000,-meanWeightKg)) %>% summarise(meanWeightKg=weighted.mean(meanWeightKg,w=frequency1000,na.rm=T),frequency1000=sum(frequency1000,na.rm = T)) %>% ungroup()
 
-
-canum_other<-rbind(canum_had,canum_whg)
-names(canum_other)<-c("Year", "Country","Area" , "CatchCat","lvl4","Age", "frequency1000","MeanWeight_in_g",  "Stock")
-canum_other$lvl4<-substr(canum_other$lvl4,1,7)
-names(canum_cod)<-c("Year", "Country","Area" , "CatchCat","lvl4","Age", "frequency1000","MeanWeight_in_g",  "Stock")
-canum_cod$lvl4<-substr(canum_cod$lvl4,1,7)
-
-
-
-###Reduce to final columns of interest
-intercatch_canum_fin <- intercatch_canum3 %>% select(Year, Country,Area , CatchCat,lvl4,Age,MeanWeight_in_g,  Stock,No_At_Age_ADJ)
-names(intercatch_canum_fin)[names(intercatch_canum_fin)=="No_At_Age_ADJ"] <- "No_At_Age"
 
 # 03 _ Convert length to age #####
 
