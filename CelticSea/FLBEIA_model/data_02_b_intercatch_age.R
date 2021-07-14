@@ -59,13 +59,13 @@ intercatch_canum <- intercatch_canum[-c(25,26,27)]
 #needs to be done before you aggregate
 intercatch_canum_checks <- intercatch_canum %>% 
   group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, CATON_in_kg ) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON_in_kg -samples_weight_kg) , SOP = (samples_weight_kg/ CATON_in_kg)) %>% data.frame() 
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("hke.27.3a46-8abd")
+#ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("hke.27.3a46-8abd")
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")
 # sanity check - assuming we consider SOP between 0.95 and 1.05 as acceptable
 intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>0.94, "Acceptable", "Suspect")
 intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>1.05, "Suspect", intercatch_canum_checks$Acceptable)
-ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes( Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")+xlab("")
+#ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "hke.27.3a46-8abd",], aes( Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")+xlab("")
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")+xlab("")
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")+xlab("")
 
