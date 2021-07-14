@@ -83,7 +83,6 @@ intercatch_canum_QUARTER <- intercatch_canum_QUARTER %>% group_by(Datayear, Stoc
 intercatch_canum <- rbind(intercatch_canum_YEARS,intercatch_canum_QUARTER)
 intercatch_canum <- intercatch_canum %>% select(Datayear, Country,Area , CatchCat,lvl4, ageorlength,CANUM, MeanWeight_in_g, samples_weight_kg,Stock)
 names(intercatch_canum) <- c("Year","Country", "Area", "CatchCat", "lvl4", "Age", "CANUM", "Mean_Weight_in_g","samples_weight_kg", "Stock")
-intercatch_canum$Mean_Weight_in_g <-  as.numeric(intercatch_canum$Mean_Weight_in_g)
 
 # 02 - Convert length to age #####
 #issue with mixed length units! https://shiny.marine.ie/igfs/ 
@@ -205,13 +204,17 @@ ggplot(other_canum_checks[other_canum_checks$Stock == "whg.27.7b-ce-k",], aes(Ac
 
 # ~ Adjustment _ I am not sure this is required - CM - need to ask PD and JB
 #And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at)
-#intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
-
+# intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
 WGCSE_canum <- other_canum %>% select(Year,Country, Area, CatchCat, lvl4, Age, CANUM, Mean_Weight_in_g,samples_weight_kg, Stock) 
 
 # 04 - CANUM raised outside InterCatch - WGBIE ####
-#Mon
+# mon.27.78abd
+# So we have been give numbers at length 
+# Need to apply that to the metier intercatch
+# perhaps get alk from IAMS?
 
 # 05 _ Merge and write out final CANUM #####
-write.taf(intercatch_canum, intercatch_canum_hke, WGCSE_canum, WGBIE_canum, file.path("results/clean_data/intercatch_canum_summary.csv"))
+canum_summary <- rbind(intercatch_canum, intercatch_canum_hke, WGCSE_canum)
+
+write.taf(canum_summary, file.path("results/clean_data/canum_summary.csv"))
 

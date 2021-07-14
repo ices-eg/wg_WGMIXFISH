@@ -117,5 +117,5 @@ NA_NaN_IC_DR <- caton_summary %>% filter(is.nan(DR)==T | is.na(Discards)==T)
 caton_summary_fin <- caton_summary %>% filter(is.na(Discards)==F , is.nan(DR)==F) 
 dim(caton_summary)[1]-(dim(caton_summary_fin)[1]+dim(NA_NaN_IC_DR)[1])
 
-write.taf(caton_summary_fin,"results/clean_data/intercatch_caton_summary.csv")
+write.taf(caton_summary_fin,"results/clean_data/caton_summary.csv")
 
