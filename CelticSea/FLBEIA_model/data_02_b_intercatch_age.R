@@ -212,6 +212,12 @@ WGCSE_canum <- other_canum %>% select(Year,Country, Area, CatchCat, lvl4, Age, C
 # So we have been give numbers at length 
 # Need to apply that to the metier intercatch
 # perhaps get alk from IAMS?
+# Length composition for the four fishing fleets and the three abundance indices were used. The available length data and their disaggregated level
+# differ among fleets
+
+caton <- read.csv("results/clean_data/caton_summary.csv")
+
+caton <- caton[caton$Stock == "mon.27.78abd",]
 
 # 05 _ Merge and write out final CANUM #####
 canum_summary <- rbind(intercatch_canum, intercatch_canum_hke, WGCSE_canum)
