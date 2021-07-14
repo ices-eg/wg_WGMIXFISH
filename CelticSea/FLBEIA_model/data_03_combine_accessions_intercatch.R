@@ -9,7 +9,7 @@ library(tidyverse)
 library(FLCore)
 library(FLFleet)
 library(Hmisc)
-
+library(icesTAF)
 # Purpose -----------------------------------------------------------------
 # This script is to process avalible effort, catch and logbook data from
 # disparrate sources into something useable and format the data into 
@@ -194,11 +194,14 @@ InterCatch$Discard_ID <- paste( InterCatch$Year, InterCatch$Country, InterCatch$
 InterCatch$Discard_ID_NO_AREA <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species,  InterCatch$lvl4, sep = "_")
 InterCatch$Discard_ID_NO_METIER <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species,  InterCatch$Area, sep = "_")
 InterCatch$Discard_ID_YEAR_COUNTRY <- paste( InterCatch$Year, InterCatch$Country,  sep = "_")
+InterCatch$Discard_ID_NO_COUNTRY <- paste( InterCatch$Year, InterCatch$Species, InterCatch$Area, InterCatch$lvl4, sep = "_")
 
 Catch3$Discard_ID <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
 Catch3$Discard_ID_NO_AREA <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Metier, sep = "_")
 Catch3$Discard_ID_NO_METIER <- paste(Catch3$Year, Catch3$Country, Catch3$Species,  Catch3$Area, sep = "_")
-Catch3$Discard_ID_YEAR_COUNTRY <- paste(Catch3$Year, Catch3$Country,  sep = "_")
+Catch3$Discard_ID_YEAR_COUNTRY <- paste(Catch3$Year, Catch3$Country,Catch3$Species,  sep = "_")
+Catch3$Discard_ID_NO_COUNTRY <- paste(Catch3$Year,  Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
+
 #selct dicard data
 discard_dat <- InterCatch %>% select(Discard_ID, DR,Landings)
 names(discard_dat)[names(discard_dat)=="Landings"] <- "IC_Landings"
@@ -207,7 +210,7 @@ discard_dat_NO_AREA <- InterCatch %>% select(Discard_ID_NO_AREA, DR,Landings)
 names(discard_dat_NO_AREA)[names(discard_dat_NO_AREA)=="Landings"] <- "IC_Landings"
 ###one for metier
 discard_dat_NO_METIER <- InterCatch %>% select(Discard_ID_NO_METIER, DR,Landings)
-names(discard_dat_NO_AREA)[names(discard_dat_NO_AREA)=="Landings"] <- "IC_Landings"
+names(discard_dat_NO_METIER)[names(discard_dat_NO_METIER)=="Landings"] <- "IC_Landings"
 ###one for Year adn country
 discard_dat_YEAR_COUNTRY <- InterCatch %>% select(Discard_ID_YEAR_COUNTRY, DR,Landings)
 names(discard_dat_YEAR_COUNTRY)[names(discard_dat_YEAR_COUNTRY)=="Landings"] <- "IC_Landings"
@@ -219,7 +222,7 @@ discard_dat_NO_AREA<- discard_dat_NO_AREA %>% group_by(Discard_ID_NO_AREA) %>% d
 #no araa
 discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 #Year and country
-discard_dat_YEAR_COUNTRY<- discard_dat_YEAR_COUNTRY %>% group_by(discard_dat_YEAR_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+discard_dat_YEAR_COUNTRY<- discard_dat_YEAR_COUNTRY %>% group_by(Discard_ID_YEAR_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 # Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
 
@@ -259,6 +262,16 @@ table(is.na(Catch6$DR))
 Catch6_DR <- Catch6 %>% filter(is.na(DR)==F)
 Catch6_DR_NA <-Catch6 %>% filter(is.na(DR)==T) 
 # Put it all back together ------------------------------------------------
+## So this is some code to take the mean DR rate based off the matches we do have 
+setdiff(names(Catch4_DR),names(Catch5_DR))
+setdiff(names(Catch4_DR),names(Catch6_DR))
+
+# Catch4_DR <- select(Catch4_DR,-IC_Landings)
+# Catch5_DR <- select(Catch5_DR,-IC_Landings)
+# Catch6 <- select(Catch6,-IC_Landings)
+
+Catch7 <- rbind(Catch4_DR,Catch5_DR,Catch6_DR)
+
 Catch6_DR_NA$DR <- 0  ##'*So this is a major assumption and needs to be checked*
 
 names(Catch4_DR)
@@ -273,13 +286,20 @@ setdiff(names(Catch4_DR),names(Catch6_DR))
 
 Catch4_DR <- select(Catch4_DR,-IC_Landings)
 Catch5_DR <- select(Catch5_DR,-IC_Landings)
+Catch6_DR <- select(Catch6_DR,-IC_Landings)
 
 Catch7 <- rbind(Catch4_DR,Catch5_DR,Catch6_DR)
 
 sum(Catch3$Landings)-(sum(Catch7$Landings)+sum(Catch6_DR_NA$Landings))
 
+Catch6_DR_NA <- select(Catch6_DR_NA,-IC_Landings)
+Catch7 <- rbind(Catch7,Catch6_DR_NA)
 
-# 
+
+
+# Set Catch7 back to Catch3 and remove 4-7 --------------------------------
+Catch3 <- Catch7
+rm(Catch4,Catch4_DR,Catch4_DR_NA,Catch5,Catch5_DR,Catch5_DR_NA,Catch6,Catch6_DR,Catch6_DR_NA)
 # Catch_Check <- Catch3 %>% select(Discard_ID,Landings) %>% group_by(Discard_ID) %>% summarise(Landings=sum(Landings)) %>% ungroup()
 # IC_Check <- InterCatch %>% select(Discard_ID,Country,Year,Landings,DR) %>% group_by(Discard_ID,Country,Year) %>% summarise(IC_Landings=sum(Landings),DR = max(DR,na.rm = T)) %>% ungroup()
 # 
@@ -300,14 +320,19 @@ sum(Catch3$Landings)-(sum(Catch7$Landings)+sum(Catch6_DR_NA$Landings))
 ### which will be done in the processing scripts
 #Catch3$DR[is.na(Catch3$DR)] <- 0 # this
 
-# Join stock ID to Catch3 --------------------------------------------------
-dim(Catch3)
-Catch3 <- left_join(Catch3,Stock_Lookup, by = c("Area", "Species"))
-dim(Catch3)
+# # Join stock ID to Catch3 --------------------------------------------------
+# dim(Catch3)
+# Catch3 <- left_join(Catch3,Stock_lookup, by = c("Area", "Species"))
+# dim(Catch3)
 
 # #subset out lines without stock -----------------------------------------
-Catch3<- Catch3[!is.na(Catch3$Stock),]
-
+Catch3_NA_Stocks <- Catch3[is.na(Catch3$Stock)==T,] 
+Catch3<- Catch3[is.na(Catch3$Stock)==F,]
+# check residuals
+table(Catch3_NA_Stocks$Species,Catch3_NA_Stocks$Area)
+#check what we keep
+table(Catch3$Species,Catch3$Area)
+table(Catch3$Species,Catch3$Stock)
 
 # Produce Catch3 by country from Catch3 df-------------------------------------------------------------
 summa <- Catch3 %>% select(Landings,Country,Year,Stock) %>% group_by_at(vars(-Landings)) %>% summarise(Landings=sum(Landings,na.rm = T)) %>% ungroup()
@@ -317,8 +342,11 @@ summafleet<-aggregate(list(Landings=Catch3$Landings),by=list(Discard_ID=Catch3$D
 write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per_country_", options,".csv")))
 
 
-Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
-
+# Calculate discards ------------------------------------------------------
+#hashed out old code
+## Question is this not simply landigns*discard rate?
+# Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
+Catch3<-mutate(Catch3,Discards=(Landings*DR)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
 
 # #Assigning a fleet ------------------------------------------------------
 
