@@ -185,6 +185,17 @@ InterCatch <- InterCatch[InterCatch$Stock %in% tolower(sp.lst),]
 InterCatch$Species <- toupper(substr(InterCatch$Stock, 1, 3))
 InterCatch$Species <- ifelse(InterCatch$Species =="NEP", toupper(InterCatch$Stock),InterCatch$Species)
 
+
+# Prep the Nep data -----------------------------------------------------
+
+nep_data <- nep_data %>% filter(!year %in% c(2020)) %>% select(fu,year,discard.rate.wgt)
+names(nep_data)[names(nep_data) =="fu"] <-"Stock" 
+names(nep_data)[names(nep_data) =="year"] <-"Year"
+names(nep_data)[names(nep_data) =="discard.rate.wgt"] <-"DR"
+
+nep_data$Stock <- paste("nep.",nep_data$Stock,sep="")
+nep_data$Stock[nep_data$Stock=="nep.out7.fu"] <- "nep.out.7"
+
 # ##Create discard ID in catch and effrot ---------------------------------
 ###all
 ###Remove area
@@ -225,10 +236,25 @@ discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER)
 discard_dat_YEAR_COUNTRY<- discard_dat_YEAR_COUNTRY %>% group_by(Discard_ID_YEAR_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 # Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
+table(grepl("NEP",Catch3$Species)==T)
+Catch3_NEP <- Catch3 %>% filter(grepl("NEP",Catch3$Species)==T)
+Catch3_NO_NEP <- Catch3 %>% filter(Species !="NEP")
 
-dim(Catch3)
-Catch4 <- left_join(Catch3, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
-dim(Catch4)
+
+dim(Catch3_NO_NEP)
+Catch4_NO_NEP <- left_join(Catch3_NO_NEP, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
+dim(Catch4_NO_NEP)
+
+
+# Nep section -------------------------------------------------------------
+dim(Catch3_NEP)
+Catch4_NEP <- left_join(Catch3_NEP, nep_data) # anything that is here as NA is unknown
+dim(Catch4_NEP)
+
+
+# ~bind data back together ------------------------------------------------
+
+Catch4 <- rbind(Catch4_NO_NEP,Catch4_NEP)
 
 sum(Catch4$Landings[is.na(Catch4$DR)==F])
 sum(unique(Catch4$IC_Landings),na.rm = T)/1000
