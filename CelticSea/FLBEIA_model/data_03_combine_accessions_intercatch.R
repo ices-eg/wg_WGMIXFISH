@@ -132,8 +132,8 @@ print(Sps)
 
 # Read in data ------------------------------------------------------------
 #actual data
-InterCatch <- read.csv(file.path(Data_path,"clean_data/intercatch_caton_summary.csv"))
-InterCatch_age <- read.csv(file.path(Data_path,"clean_data/intercatch_canum_summary.csv"))
+InterCatch <- read.csv(file.path(Data_path,"clean_data/caton_summary.csv"))
+InterCatch_age <- read.csv(file.path(Data_path,"clean_data/canum_summary.csv"))
 ## Data that has been matched 
 ### data has also been filterede to Yearwg-3 and summarise so yes it is smaller 
 ## this is all done at the end of data_01
@@ -204,14 +204,16 @@ nep_data$Stock[nep_data$Stock=="nep.out7.fu"] <- "nep.out.7"
 InterCatch$Discard_ID <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species, InterCatch$Area, InterCatch$lvl4, sep = "_")
 InterCatch$Discard_ID_NO_AREA <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species,  InterCatch$lvl4, sep = "_")
 InterCatch$Discard_ID_NO_METIER <- paste( InterCatch$Year, InterCatch$Country, InterCatch$Species,  InterCatch$Area, sep = "_")
-InterCatch$Discard_ID_YEAR_COUNTRY <- paste( InterCatch$Year, InterCatch$Country,  sep = "_")
 InterCatch$Discard_ID_NO_COUNTRY <- paste( InterCatch$Year, InterCatch$Species, InterCatch$Area, InterCatch$lvl4, sep = "_")
+InterCatch$Discard_ID_NO_COUNTRY_AREA <- paste( InterCatch$Year, InterCatch$Species,  InterCatch$lvl4, sep = "_")
+
 
 Catch3$Discard_ID <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
 Catch3$Discard_ID_NO_AREA <- paste(Catch3$Year, Catch3$Country, Catch3$Species, Catch3$Metier, sep = "_")
 Catch3$Discard_ID_NO_METIER <- paste(Catch3$Year, Catch3$Country, Catch3$Species,  Catch3$Area, sep = "_")
-Catch3$Discard_ID_YEAR_COUNTRY <- paste(Catch3$Year, Catch3$Country,Catch3$Species,  sep = "_")
 Catch3$Discard_ID_NO_COUNTRY <- paste(Catch3$Year,  Catch3$Species, Catch3$Area, Catch3$Metier, sep = "_")
+Catch3$Discard_ID_NO_COUNTRY_AREA <- paste( Catch3$Year, Catch3$Species,  Catch3$Metier, sep = "_")
+
 
 #selct dicard data
 discard_dat <- InterCatch %>% select(Discard_ID, DR,Landings)
@@ -222,9 +224,9 @@ names(discard_dat_NO_AREA)[names(discard_dat_NO_AREA)=="Landings"] <- "IC_Landin
 ###one for metier
 discard_dat_NO_METIER <- InterCatch %>% select(Discard_ID_NO_METIER, DR,Landings)
 names(discard_dat_NO_METIER)[names(discard_dat_NO_METIER)=="Landings"] <- "IC_Landings"
-###one for Year adn country
-discard_dat_YEAR_COUNTRY <- InterCatch %>% select(Discard_ID_YEAR_COUNTRY, DR,Landings)
-names(discard_dat_YEAR_COUNTRY)[names(discard_dat_YEAR_COUNTRY)=="Landings"] <- "IC_Landings"
+### for no country
+Discard_ID_NO_COUNTRY <- InterCatch %>% select(Discard_ID_NO_COUNTRY, DR,Landings)
+names(Discard_ID_NO_COUNTRY)[names(Discard_ID_NO_COUNTRY)=="Landings"] <- "IC_Landings"
 ### so this line is takeing the maximum discard rate do we need this to be weighed?
 discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 #no araa
@@ -232,34 +234,33 @@ discard_dat_NO_AREA<- discard_dat_NO_AREA %>% group_by(Discard_ID_NO_AREA) %>% d
 ##noMetier
 #no araa
 discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
-#Year and country
-discard_dat_YEAR_COUNTRY<- discard_dat_YEAR_COUNTRY %>% group_by(Discard_ID_YEAR_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+##no country but with everything elese
+Discard_ID_NO_COUNTRY<- Discard_ID_NO_COUNTRY %>% group_by(Discard_ID_NO_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+
 # Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
 table(grepl("NEP",Catch3$Species)==T)
 Catch3_NEP <- Catch3 %>% filter(grepl("NEP",Catch3$Species)==T)
-Catch3_NO_NEP <- Catch3 %>% filter(Species !="NEP")
-
+Catch3_NO_NEP <- Catch3 %>% filter(grepl("NEP",Catch3$Species)==F)
 
 dim(Catch3_NO_NEP)
 Catch4_NO_NEP <- left_join(Catch3_NO_NEP, discard_dat, by = "Discard_ID") # anything that is here as NA is unknown
 dim(Catch4_NO_NEP)
-
 
 # Nep section -------------------------------------------------------------
 dim(Catch3_NEP)
 Catch4_NEP <- left_join(Catch3_NEP, nep_data) # anything that is here as NA is unknown
 dim(Catch4_NEP)
 
-
 # ~bind data back together ------------------------------------------------
+setdiff(names(Catch4_NO_NEP),names(Catch4_NEP))
+Catch4_NEP <- Catch4_NEP %>% mutate(IC_Landings=NA)
 
 Catch4 <- rbind(Catch4_NO_NEP,Catch4_NEP)
 
 sum(Catch4$Landings[is.na(Catch4$DR)==F])
 sum(unique(Catch4$IC_Landings),na.rm = T)/1000
 table(is.na(Catch4$DR))
-
 
 Catch4_DR <- Catch4 %>% filter(is.na(DR)==F)
 Catch4_DR_NA <-Catch4 %>% filter(is.na(DR)==T) 
@@ -287,23 +288,25 @@ table(is.na(Catch6$DR))
 
 Catch6_DR <- Catch6 %>% filter(is.na(DR)==F)
 Catch6_DR_NA <-Catch6 %>% filter(is.na(DR)==T) 
+# ~Remove country  --------------------------------------------------------
+Catch6_DR_NA <-Catch6_DR_NA %>%  select(-IC_Landings,-DR)
+
+dim(Catch5_DR_NA)
+Catch7<- left_join(Catch6_DR_NA,Discard_ID_NO_COUNTRY)
+dim(Catch7)[1]-(dim(Catch6_DR_NA)[1])
+
+Catch7_DR <- Catch7 %>% filter(is.na(DR)==F)
+Catch7_DR_NA <-Catch7 %>% filter(is.na(DR)==T) 
 # Put it all back together ------------------------------------------------
 ## So this is some code to take the mean DR rate based off the matches we do have 
-setdiff(names(Catch4_DR),names(Catch5_DR))
-setdiff(names(Catch4_DR),names(Catch6_DR))
 
-# Catch4_DR <- select(Catch4_DR,-IC_Landings)
-# Catch5_DR <- select(Catch5_DR,-IC_Landings)
-# Catch6 <- select(Catch6,-IC_Landings)
 
-Catch7 <- rbind(Catch4_DR,Catch5_DR,Catch6_DR)
-
-Catch6_DR_NA$DR <- 0  ##'*So this is a major assumption and needs to be checked*
 
 names(Catch4_DR)
 names(Catch5_DR)
 names(Catch6_DR)
-names(Catch6_DR_NA)
+names(Catch7_DR)
+names(Catch7_DR_NA)
 
 # Catch6_DR_NA <- Catch6_DR_NA mutate()
 
@@ -313,19 +316,20 @@ setdiff(names(Catch4_DR),names(Catch6_DR))
 Catch4_DR <- select(Catch4_DR,-IC_Landings)
 Catch5_DR <- select(Catch5_DR,-IC_Landings)
 Catch6_DR <- select(Catch6_DR,-IC_Landings)
+Catch7_DR <- select(Catch7_DR,-IC_Landings)
 
-Catch7 <- rbind(Catch4_DR,Catch5_DR,Catch6_DR)
+Catch7 <- rbind(Catch4_DR,Catch5_DR,Catch6_DR,Catch7_DR)
 
-sum(Catch3$Landings)-(sum(Catch7$Landings)+sum(Catch6_DR_NA$Landings))
+sum(Catch3$Landings)-(sum(Catch7$Landings)+sum(Catch7_DR_NA$Landings))
 
-Catch6_DR_NA <- select(Catch6_DR_NA,-IC_Landings)
-Catch7 <- rbind(Catch7,Catch6_DR_NA)
-
-
-
+ Catch7_DR_NA$DR <- 0  ##'*So this is a major assumption and needs to be checked*
+ 
+ Catch7_DR_NA <- select(Catch7_DR_NA,-IC_Landings)
+ Catch8 <- rbind(Catch7,Catch7_DR_NA)
+ 
 # Set Catch7 back to Catch3 and remove 4-7 --------------------------------
-Catch3 <- Catch7
-rm(Catch4,Catch4_DR,Catch4_DR_NA,Catch5,Catch5_DR,Catch5_DR_NA,Catch6,Catch6_DR,Catch6_DR_NA)
+Catch3 <- Catch8
+rm(Catch4,Catch4_DR,Catch4_DR_NA,Catch5,Catch5_DR,Catch5_DR_NA,Catch6,Catch6_DR,Catch6_DR_NA,Catch6_DR,Catch7_DR_NA)
 # Catch_Check <- Catch3 %>% select(Discard_ID,Landings) %>% group_by(Discard_ID) %>% summarise(Landings=sum(Landings)) %>% ungroup()
 # IC_Check <- InterCatch %>% select(Discard_ID,Country,Year,Landings,DR) %>% group_by(Discard_ID,Country,Year) %>% summarise(IC_Landings=sum(Landings),DR = max(DR,na.rm = T)) %>% ungroup()
 # 
