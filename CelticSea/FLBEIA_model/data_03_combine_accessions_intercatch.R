@@ -372,7 +372,7 @@ summa<-summa[,c(3,2,1,4)]
 summafleet<-aggregate(list(Landings=Catch3$Landings),by=list(Discard_ID=Catch3$Discard_ID, Year=Catch3$Year,   Stock=Catch3$Stock),sum)
 write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per_country_", options,".csv")))
 
-# Calculate discards ------------------------------------------------------
+# ~Calculate discards ------------------------------------------------------
 #hashed out old code
 ## Question is this not simply landigns*discard rate?
 # Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
