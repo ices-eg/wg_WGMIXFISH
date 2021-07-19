@@ -6,9 +6,15 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+gc()
+rm(list= ls())
 library(tidyverse)
 library(ggplot2)
 library(FLCore)
+library(devtools)
+library(icesSAG)
+
+stock_list <- c("cod.27.7e-k", "had.27.7b-k" ,"whg.27.7b-ce-k" , "sol.27.7fg"  , "meg.27.7b-k8abd", "mon.27.78abd" ,"hke.27.3a46-8abd")
 
 ```
 
@@ -18,15 +24,57 @@ This script is designed to highlight the differences in the data sources before 
 _Advice sheet_
 Raised total of catchs, landings and discards for 2019, taken form advice sheet
 ```{r}
-advice_sheet_total <- read.csv("bootstrap/data/supporting_files/single_species_rasied_data_advice sheet.csv")
+advice_key <- icesSAG::findAssessmentKey( stock = stock_list, year = 2020,  published = TRUE)
+advice_sheet <- icesSAG::getSummaryTable(advice_key)
+
+cod_advice <- as.data.frame(advice_sheet[1]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+had_advice <- as.data.frame(advice_sheet[2]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+whg_advice <- as.data.frame(advice_sheet[3]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+sol_advice <- as.data.frame(advice_sheet[4]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+meg_advice <- as.data.frame(advice_sheet[5]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+mon_advice <- as.data.frame(advice_sheet[6]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+hke_advice <- as.data.frame(advice_sheet[7]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+
+advice_sheet_values <- rbind(cod_advice, had_advice, whg_advice, sol_advice, meg_advice, mon_advice, hke_advice)
+
 ```
 
 
 _Stock objects_
 Raised total of catchs, landings and discards for 2019, taken from stock objects supplied by single species stock coordinator and formatted by WGMIXFISH
+
 ```{r}
-cod_stock_object <- load("results/clean_data/clean_stock_objects/cod.27.7e-k.RData")
-cod_stock_object@l
+
+
+stock_object_summary <- data.frame("stock" = NaN, "landings" = NaN, "discards" = NaN, "catch" = NaN)
+i <- "cod.27.7e-k"
+for(i in stock_list){
+print(i)
+load(paste0("results/clean_data/clean_stock_objects/", i ,".RData"))
+landings_info <- as.data.frame(stock@landings@.Data)
+names(landings_info) <- substr(names(landings_info),1,4)
+discards_info <- as.data.frame(stock@discards@.Data)
+names(discards_info) <- substr(names(discards_info),1,4)
+catch_info <- as.data.frame(stock@catch@.Data)
+names(catch_info) <- substr(names(catch_info),1,4)
+object_summary <- data.frame("stock" = paste(stock@name), "landings" = landings_info$`2019`, "discards" = discards_info$`2019`, "catch" =  catch_info$`2019`)
+stock_object_summary <- rbind(stock_object_summary, object_summary)
+rm(stock,object_summary)
+}
+
+stock_object_summary <- stock_object_summary [!stock_object_summary$stock == NaN,] %>% gather(catch_cat, total, 2:4) 
+stock_object_summary$source <-  "stock object"
+```
+
+_InterCatch Canum_
+```{r}
+inter_canum <- read.csv()
 ```
 
 
