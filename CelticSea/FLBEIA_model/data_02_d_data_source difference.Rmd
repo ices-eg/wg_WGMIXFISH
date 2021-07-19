@@ -43,6 +43,14 @@ hke_advice <- as.data.frame(advice_sheet[7]) %>% select(fishstock, Year, stockSi
 
 advice_sheet_values <- rbind(cod_advice, had_advice, whg_advice, sol_advice, meg_advice, mon_advice, hke_advice)
 
+advice_sheet_values$source <- "advice sheet"
+advice_sheet_values$catch_cat[advice_sheet_values$catch_cat == "catches"] <- "catch"
+
+
+advice_sheet_values <- advice_sheet_values %>% select(Year, fishstock, source, stockSizeUnits,  catch_cat, total)
+
+names(advice_sheet_values) <- c("year", "stock", "source",  "unit","catch_cat", "total")
+
 ```
 
 
@@ -50,32 +58,151 @@ _Stock objects_
 Raised total of catchs, landings and discards for 2019, taken from stock objects supplied by single species stock coordinator and formatted by WGMIXFISH
 
 ```{r}
+stock_object_summary <- data.frame("year" = NaN, "catch_cat" = NaN, "total" = NaN,  "unit" = NaN, "stock" = NaN)
 
-
-stock_object_summary <- data.frame("stock" = NaN, "landings" = NaN, "discards" = NaN, "catch" = NaN)
-i <- "cod.27.7e-k"
+#i = "cod.27.7e-k"
 for(i in stock_list){
 print(i)
 load(paste0("results/clean_data/clean_stock_objects/", i ,".RData"))
+
 landings_info <- as.data.frame(stock@landings@.Data)
 names(landings_info) <- substr(names(landings_info),1,4)
+landings_info <- gather(landings_info, year, total)
+landings_info$catch_cat <- "landings"
+landings_info$unit <- NaN
+landings_info$stock <- paste(i)
+
 discards_info <- as.data.frame(stock@discards@.Data)
 names(discards_info) <- substr(names(discards_info),1,4)
+discards_info <- gather(discards_info, year, total)
+discards_info$catch_cat <- "discards"
+discards_info$unit <- NaN
+discards_info$stock <- paste(i)
+
 catch_info <- as.data.frame(stock@catch@.Data)
 names(catch_info) <- substr(names(catch_info),1,4)
-object_summary <- data.frame("stock" = paste(stock@name), "landings" = landings_info$`2019`, "discards" = discards_info$`2019`, "catch" =  catch_info$`2019`)
+catch_info <- gather(catch_info, year, total)
+catch_info$catch_cat <- "catch"
+catch_info$unit <- NaN
+catch_info$stock <- paste(i)
+
+object_summary <- rbind(landings_info,discards_info, catch_info)
 stock_object_summary <- rbind(stock_object_summary, object_summary)
 rm(stock,object_summary)
 }
 
-stock_object_summary <- stock_object_summary [!stock_object_summary$stock == NaN,] %>% gather(catch_cat, total, 2:4) 
+stock_object_summary <- stock_object_summary [!stock_object_summary$stock == NaN,]
 stock_object_summary$source <-  "stock object"
+
+stock_object_summary <-stock_object_summary %>% select(year, stock, source, unit, catch_cat,  total)
 ```
 
-_InterCatch Canum_
+_InterCatch CATON_
 ```{r}
-inter_canum <- read.csv()
+inter_caton <- read.csv("results/clean_data/caton_summary.csv")
+inter_caton$source <- "intercatch caton"
+inter_caton$unit <- NaN
+inter_caton <- inter_caton %>% select(Year, Stock, source, unit, Landings, Discards)%>% mutate("catch" = Landings+Discards) %>% gather(catch_cat, total, 5:7) %>% group_by(Year, Stock, source, unit, catch_cat) %>% summarise(total = sum(total, na.rm=T)) %>% data.frame()
+
+names(inter_caton) <- c("year", "stock", "source", "unit" ,"catch_cat", "total" )
+
 ```
 
+_InterCatch CANUM_
+```{r}
+inter_canum <- read.csv("results/clean_data/canum_summary.csv")
+inter_canum$source <- "intercatch canum"
+inter_canum$unit <- NaN
+
+inter_canum <- inter_canum %>% select(Year, Stock, source, unit, CatchCat, samples_weight_kg) %>% group_by(Year, Stock, source, unit, CatchCat) %>% summarise(total = sum(samples_weight_kg, na.rm=T)) %>% data.frame()
+
+inter_canum <- inter_canum%>% spread(CatchCat, total) %>% mutate("catch" = Landings+Discards) %>% gather(catch_cat, total, 5:7) %>% group_by(Year, Stock, source, unit, catch_cat) %>% summarise(total = sum(total, na.rm=T)) %>% data.frame()
+
+
+names(inter_canum) <- c("year", "stock", "source", "unit" ,"catch_cat", "total" )
+```
+
+
+Summary plots
+```{r}
+all_dat <- rbind(inter_canum, inter_caton, stock_object_summary, advice_sheet_values)
+all_dat$catch_cat <- tolower(all_dat$catch_cat)
+all_dat$year <- as.numeric(all_dat$year)
+all_dat <- all_dat[all_dat$stock %in% stock_list,]
+
+ggplot(all_dat[all_dat$catch_cat == "catch",], aes(year, total, colour = source)) + geom_line() +facet_wrap(~stock) + theme_classic()
+
+ggplot(all_dat[all_dat$catch_cat == "landings",], aes(year, total, colour = source)) + geom_line() +facet_wrap(~stock) + theme_classic()
+
+ggplot(all_dat[all_dat$catch_cat == "discards",], aes(year, total, colour = source)) + geom_line() +facet_wrap(~stock) + theme_classic()
+```
+
+
+There is clearly a units issue here, so now we take it stock by stock and figure out if we can apply a blanket change or we need something more specfic to stocks and years.
+
+For cod all sources in recent years. Historical differences are due to the absence of discards data. 
+```{r}
+ggplot(all_dat[all_dat$stock == "cod.27.7e-k",], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "cod.27.7e-k",], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "cod.27.7e-k",], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+```
+
+For had all sources in recent years. Historical differences are due to the absence of discards data. 
+```{r}
+ggplot(all_dat[all_dat$stock == "had.27.7b-k" ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "had.27.7b-k" ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "had.27.7b-k" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+```
+
+For whg some differences but mostly ok for the last 3 years so I think we are ok.  
+```{r}
+ggplot(all_dat[all_dat$stock == "whg.27.7b-ce-k" ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "whg.27.7b-ce-k" ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "whg.27.7b-ce-k" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+```
+
+
+For mon nothing matches!!!  
+```{r}
+ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+```
+
+
+For meg nothing matches!!!  
+```{r}
+ggplot(all_dat[all_dat$stock == "meg.27.7b-k8abd"  ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "meg.27.7b-k8abd"  ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+```
+
+
+For meg nothing matches!!!  
+```{r}
+ggplot(all_dat[all_dat$stock == "meg.27.7b-k8abd"  ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "meg.27.7b-k8abd"  ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+```
+
+For sol little matches
+```{r}
+ggplot(all_dat[all_dat$stock == "sol.27.7fg",], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "sol.27.7fg" & all_dat$source %in% c("advice sheet", "stock object"),], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+```
 
 
