@@ -1,0 +1,33 @@
+---
+title: "02_c_data_source_difference"
+author: "Claire Moore"
+date: "7/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(FLCore)
+
+```
+
+This script is designed to highlight the differences in the data sources before merging. 
+
+
+_Advice sheet_
+Raised total of catchs, landings and discards for 2019, taken form advice sheet
+```{r}
+advice_sheet_total <- read.csv("bootstrap/data/supporting_files/single_species_rasied_data_advice sheet.csv")
+```
+
+
+_Stock objects_
+Raised total of catchs, landings and discards for 2019, taken from stock objects supplied by single species stock coordinator and formatted by WGMIXFISH
+```{r}
+cod_stock_object <- load("results/clean_data/clean_stock_objects/cod.27.7e-k.RData")
+cod_stock_object@l
+```
+
+
+
