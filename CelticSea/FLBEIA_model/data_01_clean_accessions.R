@@ -310,7 +310,7 @@ dim(accessions_landings)[1]-dim(accessions_landings_Stock)[1]
 # dim(accessions_landings_Stock)[1]-dim(accessions_landings_fin)[1]
 
 #  Write out clean data
-write.taf(accessions_landings_fin, file = file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
+write.taf(accessions_landings_Stock, file = file.path(Data_path_out,"clean_data/clean_accessions_landings.csv"))
 
 print(unique(accessions_landings$Vessel_length))
 
@@ -509,10 +509,10 @@ accessions_effort<- accessions_effort %>% group_by(Country, Year, Quarter, Metie
                                                                               "No_vessels" = sum(No_vessels, na.rm=TRUE) )
 
 accessions_effort$Metier <- substr(accessions_effort$Metier,1,7)
-accessions_effort_2020 <- as.data.frame(accessions_effort)
+accessions_effort_fin <- as.data.frame(accessions_effort)
 
 # 06 _ Write out clean data ####
-write.taf(accessions_effort_2020, file.path(Data_path_out,"clean_data/clean_accessions_effort.csv"))
+write.taf(accessions_effort_fin, file.path(Data_path_out,"clean_data/clean_accessions_effort.csv"))
 
 
 
@@ -558,15 +558,16 @@ catch2 <- catch2 %>% mutate(check=1:nrow(catch2))
 
 
 # 04_Adjustments and corrections ---------------------------------------------
+
 Catch3 <- catch2
 
 # ~exclude SOL 7.E in 2020 ----------------------------------------
 # This is due to known cross reporting in 27.7.e for SOL (I assume)
 # currently filtering sol in 27.7.e 
-Catch3[Catch3$Species =="SOL" & Catch3$Area == "27.7.e",]
-Catch3 <- Catch3[Catch3$Species !="SOL" & Catch3$Area != "27.7.e",]
+SOL_REMOVED <- Catch3 %>%  filter(Species =="SOL" & Area == "27.7.e")
+Catch3 <- Catch3 %>%  filter(Species !="SOL" | Area != "27.7.e")
 
-
+dim(catch2)[1]-(dim(SOL_REMOVED)[1]+dim(Catch4)[1])
 
 # ~ proportion of megrim based on split established by WG -------------------
 Catch3$Landings[Catch3$Species=="LDB"]<-Catch3$Landings[Catch3$Species=="LDB"]*(1-0.052)
@@ -613,6 +614,10 @@ table(Catch_effort_NA$Country)
 table(Effort_Na$Country)
 table(Effort_Na$Metier)
 
+
+# write out before match but after adjustments ----------------------------
+write.taf(Catch4, file = file.path(Data_path_out,"clean_data/Unmatched_clean_accessions_landings.csv"))
+write.taf(effort3, file = file.path(Data_path_out,"clean_data/Unmatched_clean_accessions_effort.csv"))
 
 # ~Write out data with NA values ------------------------------------------
 write.taf(Catch_effort_NA,file.path(Data_path_out,"Intermediate_products/NA_Catch.csv"))

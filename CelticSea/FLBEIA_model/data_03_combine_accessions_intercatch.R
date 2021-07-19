@@ -137,14 +137,14 @@ InterCatch_age <- read.csv(file.path(Data_path,"clean_data/canum_summary.csv"))
 ## Data that has been matched 
 ### data has also been filterede to Yearwg-3 and summarise so yes it is smaller 
 ## this is all done at the end of data_01
-catch_start <-read.csv(file.path(Data_path,"clean_data/MATCHED_clean_accessions_landings.csv"))
-effort_start <-read.csv(file.path(Data_path,"clean_data/MATCHED_clean_accessions_effort.csv"))
+#catch_start <-read.csv(file.path(Data_path,"clean_data/Matched_clean_accessions_landings.csv"))
+#effort_start <-read.csv(file.path(Data_path,"clean_data/Matched_clean_accessions_landings.csv"))
 ##Can also read in the data that could not be matched but need to decide wht to do with it
 
 
 # # all data including unmatched
-# catch_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_landings.csv"))
-# effort_start <-read.csv(file.path(Data_path,"clean_data/clean_accessions_effort.csv"))
+catch_start <-read.csv(file.path(Data_path,"clean_data/Unmatched_clean_accessions_landings.csv"))
+effort_start <-read.csv(file.path(Data_path,"clean_data/Unmatched_clean_accessions_effort.csv"))
 #stock data
 Stock_lookup <- read.csv(file.path(LookupPath,"data/supporting_files/Stock_lookup.csv"))
 nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv"))
