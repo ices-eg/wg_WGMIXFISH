@@ -116,7 +116,7 @@ inter_canum$unit <- NaN
 
 inter_canum <- inter_canum %>% select(Year, Stock, source, unit, CatchCat, samples_weight_kg) %>% group_by(Year, Stock, source, unit, CatchCat) %>% summarise(total = sum(samples_weight_kg, na.rm=T)) %>% data.frame()
 
-inter_canum <- inter_canum%>% spread(CatchCat, total) %>% mutate("catch" = Landings+Discards) %>% gather(catch_cat, total, 5:7) %>% group_by(Year, Stock, source, unit, catch_cat) %>% summarise(total = sum(total, na.rm=T)) %>% data.frame()
+inter_canum <- inter_canum %>% tidyr::spread(CatchCat, total) %>% mutate("catch" = Landings+Discards) %>% gather(catch_cat, total, 5:7) %>% group_by(Year, Stock, source, unit, catch_cat) %>% summarise(total = sum(total, na.rm=T)) %>% data.frame()
 
 
 names(inter_canum) <- c("year", "stock", "source", "unit" ,"catch_cat", "total" )
@@ -211,6 +211,8 @@ For sol little matches
 ggplot(all_dat[all_dat$stock == "sol.27.7fg",], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
 
 ggplot(all_dat[all_dat$stock == "sol.27.7fg" & all_dat$source %in% c("advice sheet", "stock object"),], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+
+ggplot(all_dat[all_dat$stock == "sol.27.7fg"  ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
 
 ```
 

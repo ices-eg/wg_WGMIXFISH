@@ -209,15 +209,43 @@ WGCSE_canum <- other_canum %>% select(Year,Country, Area, CatchCat, lvl4, Age, C
 
 # 04 - CANUM raised outside InterCatch - WGBIE ####
 # mon.27.78abd
-# So we have been give numbers at length 
-# Need to apply that to the metier intercatch
-# perhaps get alk from IAMS?
-# Length composition for the four fishing fleets and the three abundance indices were used. The available length data and their disaggregated level
-# differ among fleets
-
+# Stock assor supplied anumbers at age and metier info was taken from Caton
 caton <- read.csv("results/clean_data/caton_summary.csv")
 
-caton <- caton[caton$Stock == "mon.27.78abd",]
+caton <- caton[caton$Stock == "mon.27.78abd",] %>% select(Year, Country, Area, lvl4, Discards, Landings)%>% gather(CatchCat, caton, 5:6)
+caton_dis <- caton[caton$CatchCat== "Discards",]
+caton_lan <- caton[caton$CatchCat== "Landings",]
+
+mon_lan_num <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_landings_n.csv")
+mon_lan_num <- mon_lan_num %>% gather(Season, CANUM, 2:73) %>% data.frame()
+mon_lan_num$Year <- substr(mon_lan_num$Season, 2,5)
+mon_lan_num$Quarter <- substr(mon_lan_num$Season, 7,7)
+mon_lan_num$catch_cat <- "Landings"
+
+mon_lan_wt <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_landings_wt_.csv")
+mon_lan_wt <- mon_lan_wt %>% gather(Season, Mean_Weight_in_g, 2:73) %>% data.frame()
+mon_lan_wt$Year <- substr(mon_lan_wt$Season, 2,5)
+mon_lan_wt$Quarter <- substr(mon_lan_wt$Season, 7,7)
+mon_lan_wt$catch_cat <- "Landings"
+
+mon_dis_num <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_discards_n.csv")
+mon_dis_num <- mon_dis_num %>% gather(Season, CANUM, 2:69) %>% data.frame()
+mon_dis_num$Year <- substr(mon_dis_num$Season, 2,5)
+mon_dis_num$Quarter <- substr(mon_dis_num$Season, 7,7)
+mon_dis_num$catch_cat <- "Discards"
+
+mon_dis_wt <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_discards_wt.csv")
+mon_dis_wt <- mon_dis_wt %>% gather(Season, Mean_Weight_in_g , 2:69) %>% data.frame()
+mon_dis_wt$Year <- substr(mon_dis_wt$Season, 2,5)
+mon_dis_wt$Quarter <- substr(mon_dis_wt$Season, 7,7)
+mon_dis_wt$catch_cat <- "Discards"
+
+mon_dis <- left_join(mon_dis_num, mon_dis_wt)
+mon_dis <- mon_dis[mon_dis$CANUM>0 & mon_dis$Year>2016,] #caton only covers 2017 - 2019
+mon_lan <- left_join(mon_lan_num, mon_lan_wt)
+mon_lan <- mon_lan[mon_lan$CANUM>0 & mon_lan$Year>2016,] #caton only covers 2017 - 2019
+
+mon_data <- left_join(caton, mon_len_dist, by= )
 
 # 05 _ Merge and write out final CANUM #####
 canum_summary <- rbind(intercatch_canum, intercatch_canum_hke, WGCSE_canum)
