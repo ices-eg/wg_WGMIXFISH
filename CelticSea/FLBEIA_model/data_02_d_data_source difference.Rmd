@@ -140,7 +140,12 @@ ggplot(all_dat[all_dat$catch_cat == "discards",], aes(year, total, colour = sour
 
 There is clearly a units issue here, so now we take it stock by stock and figure out if we can apply a blanket change or we need something more specfic to stocks and years.
 
-For cod all sources in recent years. Historical differences are due to the absence of discards data. 
+Do the totals of of intercatch caton and canum match?
+Do these total match that displayed in the adviec sheet? 
+
+All data should be in tonnes. 
+
+For COD all sources in recent years. Historical differences are due to the absence of discards data. 
 ```{r}
 ggplot(all_dat[all_dat$stock == "cod.27.7e-k",], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
 
@@ -149,7 +154,7 @@ ggplot(all_dat[all_dat$stock == "cod.27.7e-k",], aes(year, total, colour = sourc
 ggplot(all_dat[all_dat$stock == "cod.27.7e-k",], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
 ```
 
-For had all sources in recent years. Historical differences are due to the absence of discards data. 
+For HAD all sources in recent years. Historical differences are due to the absence of discards data. 
 ```{r}
 ggplot(all_dat[all_dat$stock == "had.27.7b-k" ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
 
@@ -188,13 +193,17 @@ ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = sou
 ```
 
 
-For meg nothing matches!!!  
+For HKE- units area in kg in intercatch and tonnes in advice sheet at stock object. But the landings in the canum are much higher then Caton. 
 ```{r}
-ggplot(all_dat[all_dat$stock == "meg.27.7b-k8abd"  ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
+ggplot(all_dat[all_dat$stock == "hke.27.3a46-8abd"  ,], aes(year, total, colour = catch_cat)) + geom_line() +facet_wrap(~source) + theme_classic()
 
-ggplot(all_dat[all_dat$stock == "meg.27.7b-k8abd"  ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
+ggplot(all_dat[all_dat$stock == "hke.27.3a46-8abd"  ,], aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
 
-ggplot(all_dat[all_dat$stock == "mon.27.78abd" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+ggplot(all_dat[all_dat$stock == "hke.27.3a46-8abd" ,], aes(year, total, colour = source)) + geom_bar(stat="identity") +facet_wrap(~catch_cat) + theme_classic()
+
+
+newdat_hke <- all_dat[all_dat$stock == "hke.27.3a46-8abd" & all_dat$source %in% c("intercatch canum", "intercatch caton"),]
+ggplot(newdat_hke, aes(year, total, colour = source)) + geom_line() +facet_wrap(~catch_cat) + theme_classic()
 ```
 
 For sol little matches
