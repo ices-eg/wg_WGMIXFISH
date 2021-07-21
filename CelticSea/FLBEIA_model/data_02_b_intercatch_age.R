@@ -19,6 +19,8 @@ library(dplyr)
 library(icesTAF)
 library(ggplot2)
 library(FSA)
+library(FLCore)
+library(ggplotFL)
 
 # 01 - CANUM raised in InterCatch  ####
 taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
@@ -209,49 +211,120 @@ WGCSE_canum <- other_canum %>% select(Year,Country, Area, CatchCat, lvl4, Age, C
 
 # 04 - CANUM raised outside InterCatch - WGBIE ####
 # mon.27.78abd
-# Stock assor supplied anumbers at age and metier info was taken from Caton
+# Stock assesoror supplied anumbers at age and metier info was taken from Caton
 caton <- read.csv("results/clean_data/caton_summary.csv")
-
 caton <- caton[caton$Stock == "mon.27.78abd",] %>% select(Year, Country, Area, lvl4, Discards, Landings)%>% gather(CatchCat, caton, 5:6)
+caton <- caton[!is.na(caton$caton),]
+caton$caton <- caton$caton/1000 #convert into tonnes
 caton_dis <- caton[caton$CatchCat== "Discards",]
-caton_dis %>% select(Year,caton ) %>% group_by(Year) %>% summarise(total = sum(caton, na.rm=T)/1000 )
+caton_dis %>% select(Year,caton ) %>% group_by(Year) %>% summarise(total = sum(caton, na.rm=T) )
 caton_lan <- caton[caton$CatchCat== "Landings",]
-caton_lan%>% select(Year, caton) %>% group_by(Year) %>%summarise(caton = sum(caton, na.rm=T)/1000)
+caton_lan%>% select(Year, caton) %>% group_by(Year) %>% summarise(caton = sum(caton, na.rm=T))
+
+#these values dont match what is in the advice sheet
+lan_total_2017 <- 25634
+lan_total_2018 <- 22345
+lan_total_2019 <- 21266
+
+dis_total_2017 <- 2175
+dis_total_2018 <- 1250
+dis_total_2019 <- 1444
+
+caton_dis$prop[caton_dis$Year == 2017] <- caton_dis$caton[caton_dis$Year == 2017]/sum(caton_dis$caton[caton_dis$Year == 2017], na.rm=T)
+caton_dis$prop[caton_dis$Year == 2018] <- caton_dis$caton[caton_dis$Year == 2018]/sum(caton_dis$caton[caton_dis$Year == 2018], na.rm=T)
+caton_dis$prop[caton_dis$Year == 2019] <- caton_dis$caton[caton_dis$Year == 2019]/sum(caton_dis$caton[caton_dis$Year == 2019], na.rm=T)
+
+caton_dis$caton_corrected <- NaN
+caton_dis$caton_corrected[caton_dis$Year == 2017] <- dis_total_2017*caton_dis$prop[caton_dis$Year == 2017]
+caton_dis$caton_corrected[caton_dis$Year == 2018] <- dis_total_2018*caton_dis$prop[caton_dis$Year == 2018]
+caton_dis$caton_corrected[caton_dis$Year == 2019] <- dis_total_2019*caton_dis$prop[caton_dis$Year == 2019]
+caton_dis%>% select(Year, caton_corrected) %>% group_by(Year) %>% summarise(caton_corrected = sum(caton_corrected, na.rm=T))
+
+caton_lan$prop[caton_lan$Year == 2017] <- caton_lan$caton[caton_lan$Year == 2017]/sum(caton_lan$caton[caton_lan$Year == 2017], na.rm=T)
+caton_lan$prop[caton_lan$Year == 2018] <- caton_lan$caton[caton_lan$Year == 2018]/sum(caton_lan$caton[caton_lan$Year == 2018], na.rm=T)
+caton_lan$prop[caton_lan$Year == 2019] <- caton_lan$caton[caton_lan$Year == 2019]/sum(caton_lan$caton[caton_lan$Year == 2019], na.rm=T)
+
+caton_lan$caton_corrected <- NaN
+caton_lan$caton_corrected[caton_lan$Year == 2017] <- lan_total_2017*caton_lan$prop[caton_lan$Year == 2017]
+caton_lan$caton_corrected[caton_lan$Year == 2018] <- lan_total_2018*caton_lan$prop[caton_lan$Year == 2018]
+caton_lan$caton_corrected[caton_lan$Year == 2019] <- lan_total_2019*caton_lan$prop[caton_lan$Year == 2019]
+caton_lan%>% select(Year, caton_corrected) %>% group_by(Year) %>% summarise(caton_corrected = sum(caton_corrected, na.rm=T))
+caton <- rbind(caton_lan, caton_dis)
 
 
-mon_lan_num <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_landings_n.csv")
-mon_lan_num <- mon_lan_num %>% gather(Season, CANUM, 2:73) %>% data.frame()
-mon_lan_num$Year <- substr(mon_lan_num$Season, 2,5)
-mon_lan_num$Quarter <- substr(mon_lan_num$Season, 7,7)
-mon_lan_num$catch_cat <- "Landings"
+#convert length to age
+# load some functions
+source('funcs/length_to_age_functions.R')
 
-mon_lan_wt <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_landings_wt_.csv")
-mon_lan_wt <- mon_lan_wt %>% gather(Season, Mean_Weight_in_g, 2:73) %>% data.frame()
-mon_lan_wt$Year <- substr(mon_lan_wt$Season, 2,5)
-mon_lan_wt$Quarter <- substr(mon_lan_wt$Season, 7,7)
-mon_lan_wt$catch_cat <- "Landings"
+# VBGF parameters and length data
+ages <- 0:9
+Linf <- 171
+K <- 0.1075
+t0 <- 0
+sd <-  seq(3,10,length=length(ages))
+LWa <- 0.0000303
+LWb <- 2.82
+ln <- read.inputfile("bootstrap/data/ices_intercatch/ALK/mon/mon78_landings_n.csv")
+lw <- read.inputfile("bootstrap/data/ices_intercatch/ALK/mon/mon78_landings_wt_.csv") #note that submission file says that these are in kg but they are in tonnes!
+dn <- read.inputfile("bootstrap/data/ices_intercatch/ALK/mon/mon78_discards_n.csv")
+dw <- read.inputfile("bootstrap/data/ices_intercatch/ALK/mon/mon78_discards_wt.csv")#note that submission file says that these are in kg but they are in tonnes!
 
-mon_dis_num <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_discards_n.csv")
-mon_dis_num <- mon_dis_num %>% gather(Season, CANUM, 2:69) %>% data.frame()
-mon_dis_num$Year <- substr(mon_dis_num$Season, 2,5)
-mon_dis_num$Quarter <- substr(mon_dis_num$Season, 7,7)
-mon_dis_num$catch_cat <- "Discards"
+# convert to FLQuant
+lnq <- makeFLQuant(ln,units=1e-3) # thousands
+lwq <- makeFLQuant(lw,units=1)    # kg
+dnq <- makeFLQuant(dn,units=1e-3) 
+dwq <- makeFLQuant(dw,units=1)
 
-mon_dis_wt <- read.csv ("bootstrap/data/ices_intercatch/ALK/mon/mon78_discards_wt.csv")
-mon_dis_wt <- mon_dis_wt %>% gather(Season, Mean_Weight_in_g , 2:69) %>% data.frame()
-mon_dis_wt$Year <- substr(mon_dis_wt$Season, 2,5)
-mon_dis_wt$Quarter <- substr(mon_dis_wt$Season, 7,7)
-mon_dis_wt$catch_cat <- "Discards"
+# fit cohorts along VBGC to make an ALK 
+# combine landings and discards
+cnq <- lnq+dnq  
+cwq <- (lnq*lwq + dnq*dwq)/(lnq+dnq)
 
-mon_dis <- left_join(mon_dis_num, mon_dis_wt)
-mon_dis <- mon_dis[mon_dis$CANUM>0 & mon_dis$Year>2016,] #caton only covers 2017 - 2019
-mon_dis$samples_weight_kg <- mon_dis$CANUM*mon_dis$Mean_Weight_in_g #this is actually 
-sum(mon_dis$samples_weight_kg) #4837132
+# fit cohorts along VBGC to make an ALK 
+fit <- fitVbgcFlQuant(cnq)
 
-mon_lan <- left_join(mon_lan_num, mon_lan_wt)
-mon_lan <- mon_lan[mon_lan$CANUM>0 & mon_lan$Year>2016,] #caton only covers 2017 - 2019
-mon_lan$samples_weight_kg <- (mon_lan$CANUM*mon_lan$Mean_Weight_in_kg)
-sum(mon_lan$samples_weight_kg) #68934.08
+# apply ALK to landings
+# apply ALK to landings
+landings <- applyAlkFlQuant(nlen=lnq,wlen=lwq,fit)
+landings.n <- apply(landings[['nage']],1:2,sum)
+landings.wt <- apply(landings[['wage']]*landings[['nage']],1:2,sum)/landings.n
+
+landings.n <- as.data.frame(landings.n)
+landings.n <- landings.n %>% select(year, age, data) %>% setNames(c("year", "age", "CANUM"))
+landings.wt <- as.data.frame(landings.wt) 
+landings.wt <- landings.wt %>% select(year, age, data) %>% setNames(c("year", "age", "Mean_weight_kg"))
+
+landings_mon <- left_join(landings.n, landings.wt)
+landings_mon <- landings_mon[landings_mon$CANUM>0,]
+landings_mon$CatchCat <- "Landings"
+
+# apply ALK to discards
+discards <- applyAlkFlQuant(nlen=dnq,wlen=dwq,fit)
+discards.n <- apply(discards[['nage']],1:2,sum)
+discards.wt <- apply(discards[['wage']]*discards[['nage']],1:2,sum)/discards.n
+
+discards.n <- as.data.frame(discards.n)
+discards.n <- discards.n %>% select(year, age, data) %>% setNames(c("year", "age", "CANUM"))
+discards.wt <- as.data.frame(discards.wt) 
+discards.wt <- discards.wt %>% select(year, age, data) %>% setNames(c("year", "age", "Mean_weight_kg"))
+
+discards_mon <- left_join(discards.n, discards.wt)
+discards_mon <- discards_mon[discards_mon$CANUM>0,]
+discards_mon$CatchCat <- "Discards"
+
+mon_age <- rbind(discards_mon, landings_mon) %>% select(year, age, CatchCat, CANUM, Mean_weight_kg)%>% group_by(year, age, CatchCat, CANUM, Mean_weight_kg) %>% summarise(CANUM = sum(CANUM, na.rm=T), Mean_weight_kg = mean(Mean_weight_kg, na.rm=T)) %>% data.frame()
+mon_age$sample_weight_kg <- mon_age$CANUM* mon_age$Mean_weight_kg
+mon_age[mon_age$year>2016,] %>% select(year, CatchCat, sample_weight_kg) %>% group_by(year, CatchCat) %>% summarise(caton = sum(sample_weight_kg, na.rm = T))
+
+#apply alk to metiers
+#landings are close but discards are way out. CANUM supplied by stock asessor matchs Advice sheet. 
+# So we will just calulate a proportion of total landings and discards in caton and then apply ALK 
+
+
+mon_new <- left_join(caton, mon_age, by= c("Year"= "year", "CatchCat" = "CatchCat" ))
+mon_new$CANUM_new <- mon_new$CANUM *mon_new$prop
+mon_new$sample_weight_kg <- mon_new$CANUM_new*mon_new$Mean_weight_kg
+mon_new %>% select(Year, CatchCat, sample_weight_kg) %>% group_by(Year, CatchCat) %>% summarise(caton = sum(sample_weight_kg, na.rm=T))
 
 
 
