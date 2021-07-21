@@ -53,6 +53,7 @@ intercatch_caton[intercatch_caton == 'sol.27.7fg',] %>% select(DataYear,CatchCat
 taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.zip", files="2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
 intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+#This is wher eteh issue is Claire!
 names(intercatch_caton_no_dist) <- names(intercatch_caton)
 intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
 #subset by stocks
@@ -91,7 +92,6 @@ intercatch_caton <- intercatch_caton[-c(15,16,17)]
 intercatch_caton <-intercatch_caton [!intercatch_caton$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
 intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
 names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
-#intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WHG", "HAD"),] # Different data source used for these stocks!
 
 # ~Compare with advice sheet values for last 3 years ####
 advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
@@ -106,9 +106,14 @@ advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advic
 intercatch_caton[intercatch_caton$Stock %in% c("hke.27.3a46-8abd") & intercatch_caton$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
 # Notes - hke.27.3a46-8abd poor match for landings in last 2 years
 
+advice_sheet_values[advice_sheet_values$stock %in% c("mon.27.78abd") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd") & intercatch_caton$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
+# Notes - hke.27.3a46-8abd poor match for landings in last 2 years
+
+
+
 # ~ Convert to tonnes ####
 intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
-
 
 # ~ Calculating discard rates #### 
 intercatch_caton<- intercatch_caton %>% select(Year,Stock, Country,Area,lvl4,CatchCat,CATON_in_kg) %>%
@@ -117,11 +122,10 @@ intercatch_caton<- intercatch_caton %>% select(Year,Stock, Country,Area,lvl4,Cat
 intercatch_caton$Catch<-rowSums(intercatch_caton[c("Discards","Landings")],na.rm=T)
 intercatch_caton$DR<-intercatch_caton$Discards/intercatch_caton$Catch
 
-# 02 - CATON raised outside InterCatch ####
+# 02 - WGCSE CATON raised outside InterCatch ####
 caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
 caton_had <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_HAD_summary.csv")
 caton_whg <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_WHG_summary.csv")
-
 
 # ~ Fix and merge ####
 caton_cod$Stock<-"cod.27.7e-k"
@@ -154,17 +158,14 @@ caton_other[caton_other$Stock %in% c("had.27.7b-k") & caton_other$Year %in% c(20
 
 advice_sheet_values[advice_sheet_values$stock %in% c("whg.27.7b-ce-k") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
 caton_other[caton_other$Stock %in% c("whg.27.7b-ce-k") & caton_other$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, Landings, Discards) %>% gather(CatchCat, CATON, 3:4) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON, na.rm=T)) %>% data.frame()
-# Notes - whg.27.7b-ce-k very poor match, already in tonnes
+# Notes - whg.27.7b-ce-k very poor match but ok, already in tonnes, this difference is due to the inclusion of rectangles from the south of 7a. Tbale in advice sheet assessmen summary was wrong
 
-# ~ Convert to tonnes ####
-intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
+# 04 - Merge ####
+caton_summary<-rbind(intercatch_caton,caton_other)
+caton_summary <- caton_summary[caton_summary$Catch >0,]
 
-
-
-# 03 - Merge data sources and write out
-caton_summary<-rbind(intercatch_caton,caton_other2)
-
-caton_summary[caton_summary$Stock == "mon.27.78abd",] %>% select(Year, Landings) %>% group_by(Year) %>% summarise(total = sum(Landings, na.rm=T)/1000 )
+# 05 - Summary of missing discard rates ####
+# Summary of missing 
 
 # ~ Check for no discard data ---------------------------------------------
 
