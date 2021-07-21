@@ -17,12 +17,37 @@ library(tidyr)
 library(dplyr)
 library(icesTAF)
 library(ggplot2)
+library(icesSAG)
+
+# 00 - Single species advice sheet values ####
+# All intercatch canum should total to these values. 
+# Notes available in each section to describe any differences. 
+stock_list <- c("cod.27.7e-k", "had.27.7b-k" ,"whg.27.7b-ce-k" , "sol.27.7fg"  , "meg.27.7b-k8abd", "mon.27.78abd" ,"hke.27.3a46-8abd")
+
+#Raised total of catchs, landings and discards, used in assessent, taken form advice sheet
+advice_key <- icesSAG::findAssessmentKey( stock = stock_list, year = 2020,  published = TRUE)
+advice_sheet <- icesSAG::getSummaryTable(advice_key)
+cod_advice <- as.data.frame(advice_sheet[1]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+had_advice <- as.data.frame(advice_sheet[2]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+whg_advice <- as.data.frame(advice_sheet[3]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+sol_advice <- as.data.frame(advice_sheet[4]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+meg_advice <- as.data.frame(advice_sheet[5]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+mon_advice <- as.data.frame(advice_sheet[6]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+hke_advice <- as.data.frame(advice_sheet[7]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+advice_sheet_values <- rbind(cod_advice, had_advice, whg_advice, sol_advice, meg_advice, mon_advice, hke_advice)
+advice_sheet_values$source <- "advice sheet"
+advice_sheet_values$catch_cat[advice_sheet_values$catch_cat == "catches"] <- "catch"
+advice_sheet_values <- advice_sheet_values %>% select(Year, fishstock, source, stockSizeUnits,  catch_cat, total)
+names(advice_sheet_values) <- c("year", "stock", "source",  "unit","catch_cat", "total")
+
 
 # 01 - InterCatch CATON ####
 # with distributions 
 taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON Stocks with distributions all WG 2002  2019.zip", files="2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
 intercatch_caton <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
+intercatch_caton[intercatch_caton == 'sol.27.7fg',] %>% select(DataYear,CatchCat, Weight_Total_in_kg ) %>% group_by(DataYear,CatchCat) %>% summarise(Weight_Total_in_kg  = (sum(Weight_Total_in_kg, na.rm=T)/1000))
+intercatch_caton[intercatch_caton == 'sol.27.7fg',] %>% select(DataYear,CatchCat, Weight_Total_in_kg ) %>% group_by(DataYear,CatchCat) %>% summarise(Weight_Total_in_kg  = (sum(Weight_Total_in_kg, na.rm=T)/1000))
 
 # without distributions 
 taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.zip", files="2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
@@ -30,13 +55,9 @@ taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with
 intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 names(intercatch_caton_no_dist) <- names(intercatch_caton)
 intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
-#check niital totals of "mon.27.78abd"
-# x <- intercatch_caton_no_dist[intercatch_caton_no_dist$Stock =="mon.27.78abd",]
-# x %>% select(DataYear,CatchCat, Weight_Total_in_kg ) %>% group_by(DataYear,CatchCat) %>% summarise(Weight_Total_in_kg  = (sum(Weight_Total_in_kg, na.rm=T)/1000))
-
 #subset by stocks
 intercatch_caton <- intercatch_caton %>% filter(Stock %in% c( "hke.27.3a46-8abd","meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg"))
-#intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
+
 intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
 
 # ~ Area fix ####
@@ -70,7 +91,24 @@ intercatch_caton <- intercatch_caton[-c(15,16,17)]
 intercatch_caton <-intercatch_caton [!intercatch_caton$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
 intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
 names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
-intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WHG", "HAD"),] # Different data source used for these stocks!
+#intercatch_caton <- intercatch_caton[!intercatch_caton$Species %in% c("COD", "WHG", "HAD"),] # Different data source used for these stocks!
+
+# ~Compare with advice sheet values for last 3 years ####
+advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+intercatch_caton[intercatch_caton$Stock %in% c("meg.27.7b-k8abd") & intercatch_caton$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
+# Notes - meg.27.7b-k8abd, there is no 2017 in interCatch caton
+
+advice_sheet_values[advice_sheet_values$stock %in% c("sol.27.7fg") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+intercatch_caton[intercatch_caton$Stock %in% c("sol.27.7fg") & intercatch_caton$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
+# Notes - sol.27.7fg there is a good match
+
+advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+intercatch_caton[intercatch_caton$Stock %in% c("hke.27.3a46-8abd") & intercatch_caton$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
+# Notes - hke.27.3a46-8abd poor match for landings in last 2 years
+
+# ~ Convert to tonnes ####
+intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
+
 
 # ~ Calculating discard rates #### 
 intercatch_caton<- intercatch_caton %>% select(Year,Stock, Country,Area,lvl4,CatchCat,CATON_in_kg) %>%
@@ -78,8 +116,6 @@ intercatch_caton<- intercatch_caton %>% select(Year,Stock, Country,Area,lvl4,Cat
   tidyr::spread(CatchCat,CATON_in_kg)
 intercatch_caton$Catch<-rowSums(intercatch_caton[c("Discards","Landings")],na.rm=T)
 intercatch_caton$DR<-intercatch_caton$Discards/intercatch_caton$Catch
-# CM need to compare MON totals to that in stock overview!
-intercatch_caton[intercatch_caton$Stock == "mon.27.78abd",] %>% select(Year, Landings) %>% group_by(Year) %>% summarise(total = sum(Landings, na.rm=T)/1000 )
 
 # 02 - CATON raised outside InterCatch ####
 caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
@@ -92,21 +128,38 @@ caton_cod$Stock<-"cod.27.7e-k"
 caton_had$Stock<-"had.27.7b-k"
 caton_whg$Stock<-"whg.27.7b-ce-k"
 caton_other<-rbind(caton_cod,caton_had,caton_whg)
+caton_other_saftey_check <- caton_other #save for saftey checks later
 names(caton_other)<-c("Year","Country","Area","lvl4","Landings","Discards","Stock")
 caton_other$lvl4<-substr(caton_other$lvl4,1,7)
 
+# ~ Country fix ####
+caton_other <- left_join(caton_other,Country_Lookup)
+dim(caton_other)[1]-dim(caton_other_saftey_check)[1] #safety check - dims should match
+caton_other$Country <- caton_other$CorrectCountry
+caton_other <- caton_other[-8]
+
 # ~ Calculating discard rates #### 
-caton_other <- caton_other %>% group_by(Year, Country, Area, lvl4, Stock) %>% summarise("Landings" = sum(Landings, na.rm=T), "Discards" = sum(Discards, na.rm=T))
 caton_other$Catch <- rowSums(caton_other[c("Discards","Landings")],na.rm=T)
 caton_other$DR <- caton_other$Discards/caton_other$Catch
+caton_other <- caton_other %>% select(Year, Stock, Country, Area, lvl4, Discards, Landings, Catch, DR)
+
+# ~Compare with advice sheet values for last 3 years ####
+advice_sheet_values[advice_sheet_values$stock %in% c("cod.27.7e-k") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+caton_other[caton_other$Stock %in% c("cod.27.7e-k") & caton_other$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, Landings, Discards) %>% gather(CatchCat, CATON, 3:4) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON, na.rm=T)) %>% data.frame()
+# Notes - cod.27.7e-k, good match and already in tonnes
+
+advice_sheet_values[advice_sheet_values$stock %in% c("had.27.7b-k") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+caton_other[caton_other$Stock %in% c("had.27.7b-k") & caton_other$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, Landings, Discards) %>% gather(CatchCat, CATON, 3:4) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON, na.rm=T)) %>% data.frame()
+# Notes - had.27.7b-k good match, already in tonnes
+
+advice_sheet_values[advice_sheet_values$stock %in% c("whg.27.7b-ce-k") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+caton_other[caton_other$Stock %in% c("whg.27.7b-ce-k") & caton_other$Year %in% c(2017, 2018, 2019),] %>% select( Year,Stock, Landings, Discards) %>% gather(CatchCat, CATON, 3:4) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON, na.rm=T)) %>% data.frame()
+# Notes - whg.27.7b-ce-k very poor match, already in tonnes
+
+# ~ Convert to tonnes ####
+intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
 
 
-# ~ fix caton countrys ----------------------------------------------------
-
-caton_other2 <- left_join(caton_other,Country_Lookup)
-dim(caton_other2)[1]-dim(caton_other)[1] #safety check - dims should match
-caton_other2$Country <- caton_other2$CorrectCountry
-table(caton_other2$Country)
 
 # 03 - Merge data sources and write out
 caton_summary<-rbind(intercatch_caton,caton_other2)
