@@ -7,6 +7,10 @@
 # Notes: User must make sure that:  
 # 1 - factors are turned to characters, 
 # 2 - dim of data frame does not change shape during cleaning process
+# 3 - all data sources should be converted to tonnes
+# 4 - subset data by stock and not area so that raising to advice sheet values can be achieved
+# 5 - SOP corrections should eb applied in this file.
+
 # Data sources vary per stock: 
 #       - InterCatch CANUM with distribution: meg.27.7b-k8abd, sol.27.7fg, hke.27.3a46-8abd(lengths only)
 #       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, mon.27.78abd 
@@ -21,14 +25,36 @@ library(ggplot2)
 library(FSA)
 library(FLCore)
 library(ggplotFL)
+library(icesSAG)
+
+# 00 - Single species advice sheet values ####
+# All intercatch canum should total to these values. 
+# Notes available in each section to describe any differences. 
+stock_list <- c("cod.27.7e-k", "had.27.7b-k" ,"whg.27.7b-ce-k" , "sol.27.7fg"  , "meg.27.7b-k8abd", "mon.27.78abd" ,"hke.27.3a46-8abd")
+
+#Raised total of catchs, landings and discards, used in assessent, taken form advice sheet
+advice_key <- icesSAG::findAssessmentKey( stock = stock_list, year = 2020,  published = TRUE)
+advice_sheet <- icesSAG::getSummaryTable(advice_key)
+cod_advice <- as.data.frame(advice_sheet[1]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+had_advice <- as.data.frame(advice_sheet[2]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+whg_advice <- as.data.frame(advice_sheet[3]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+sol_advice <- as.data.frame(advice_sheet[4]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+meg_advice <- as.data.frame(advice_sheet[5]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+mon_advice <- as.data.frame(advice_sheet[6]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+hke_advice <- as.data.frame(advice_sheet[7]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
+advice_sheet_values <- rbind(cod_advice, had_advice, whg_advice, sol_advice, meg_advice, mon_advice, hke_advice)
+advice_sheet_values$source <- "advice sheet"
+advice_sheet_values$catch_cat[advice_sheet_values$catch_cat == "catches"] <- "catch"
+advice_sheet_values <- advice_sheet_values %>% select(Year, fishstock, source, stockSizeUnits,  catch_cat, total)
+names(advice_sheet_values) <- c("year", "stock", "source",  "unit","catch_cat", "total")
 
 # 01 - CANUM raised in InterCatch  ####
 taf.unzip("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.zip", files="2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 intercatch_canum <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2019 06 22 WGMIXFISH CANUM WECA for stocks with distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
-#subset for case study area
-intercatch_canum <- intercatch_canum[intercatch_canum$Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ) & intercatch_canum$CatchCat %in% c("Discards", "Landings") & intercatch_canum$Stock %in% c("hke.27.3a46-8abd", "meg.27.7b-k8abd", "sol.27.7fg" ),]
+#subset by stock (and not area)
+intercatch_canum <- intercatch_canum[intercatch_canum$CatchCat %in% c("Discards", "Landings") & intercatch_canum$Stock %in% c("hke.27.3a46-8abd", "meg.27.7b-k8abd", "sol.27.7fg" ),]
 # ~ Remove unwanted data ####  
-intercatch_canum <- intercatch_canum[intercatch_canum$CANUM>0,] #  CM -a number of hke with no canum, why?
+intercatch_canum <- intercatch_canum[intercatch_canum$CANUM>0,] #  Note - HKE has a number of zeros, not sure why
 intercatch_canum_saftey_check <- intercatch_canum #save for sanity checking later
 intercatch_canum$samples_weight_kg <- (as.numeric(intercatch_canum$CANUM)*as.numeric(intercatch_canum$MeanWeight_in_g))/1000 # put in kg
 intercatch_canum$MeanWeight_in_g <- as.numeric(intercatch_canum$MeanWeight_in_g)
@@ -61,6 +87,19 @@ intercatch_canum <- intercatch_canum[-c(26,27,28)]
 intercatch_canum_hke <- intercatch_canum[intercatch_canum$Stock == "hke.27.3a46-8abd", ]
 intercatch_canum <- intercatch_canum[!intercatch_canum$Stock == "hke.27.3a46-8abd", ]
 
+# ~Compare with advice sheet values for last 3 years ####
+advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+advice_sheet_values[advice_sheet_values$stock %in% c("sol.27.7fg") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+
+intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>% select( Datayear,Stock, CatchCat, samples_weight_kg) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_kg, na.rm=T)/1000)
+intercatch_canum[intercatch_canum$Stock %in% c("sol.27.7fg") & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>% select( Datayear,Stock, CatchCat, samples_weight_kg) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_kg, na.rm=T)/1000)
+
+# Note intercatch meg needs to be converted to tonnes form kg - also total landings dont match, may need to adjust
+# Note intercatch sol needs to be converted to tonnes form kg - also total landings dont match, may need to adjust
+
+#~ baseline data unit correction ####
+intercatch_canum$samples_weight_tonnes <- intercatch_canum$samples_weight_kg/1000
+
 #~ SOP check of baseline data ####
 #needs to be done before you aggregate
 intercatch_canum_checks <- intercatch_canum %>%   group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, CATON_in_kg ) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON_in_kg -samples_weight_kg) , SOP = (samples_weight_kg/ CATON_in_kg)) %>% data.frame() 
@@ -72,8 +111,10 @@ intercatch_canum_checks$Acceptable <- ifelse(intercatch_canum_checks$SOP>1.05, "
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "sol.27.7fg",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")+xlab("")
 ggplot(intercatch_canum_checks[intercatch_canum_checks$Stock == "meg.27.7b-k8abd",], aes(Acceptable, CATON_in_kg)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")+xlab("")
 
-# ~ Adjustment _ I am not sure this is required - CM - need to ask PD and JB
-#And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at)
+# Note sol needs no SOP correction
+# not meg  needs an SOP correction
+
+
 #intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
 
 #~ Remove quarter ~ aggregate ####  
@@ -317,8 +358,8 @@ mon_age$sample_weight_kg <- mon_age$CANUM* mon_age$Mean_weight_kg
 mon_age[mon_age$year>2016,] %>% select(year, CatchCat, sample_weight_kg) %>% group_by(year, CatchCat) %>% summarise(caton = sum(sample_weight_kg, na.rm = T))
 
 #apply alk to metiers
-#landings are close but discards are way out. CANUM supplied by stock asessor matchs Advice sheet. 
-# So we will just calulate a proportion of total landings and discards in caton and then apply ALK 
+#landings are close but discards are way out. CANUM supplied by stock assessor matches Advice sheet. 
+# So we will just calculate a proportion of total landings and discards in caton and then apply ALK 
 
 
 mon_new <- left_join(caton, mon_age, by= c("Year"= "year", "CatchCat" = "CatchCat" ))
