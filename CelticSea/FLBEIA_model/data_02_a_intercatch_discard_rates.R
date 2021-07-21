@@ -30,9 +30,13 @@ taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with
 intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 names(intercatch_caton_no_dist) <- names(intercatch_caton)
 intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
+#check niital totals of "mon.27.78abd"
+# x <- intercatch_caton_no_dist[intercatch_caton_no_dist$Stock =="mon.27.78abd",]
+# x %>% select(DataYear,CatchCat, Weight_Total_in_kg ) %>% group_by(DataYear,CatchCat) %>% summarise(Weight_Total_in_kg  = (sum(Weight_Total_in_kg, na.rm=T)/1000))
 
-#subset for case study area
-intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
+#subset by stocks
+intercatch_caton <- intercatch_caton %>% filter(Stock %in% c( "hke.27.3a46-8abd","meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg"))
+#intercatch_caton <- intercatch_caton %>% filter(Area %in% c("27.7"  , "27.7.b" , "27.7.c","27.7.c.1","27.7.c.2" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j","27.7.j.1","27.7.j.2" , "27.7.k","27.7.k.1","27.7.k.2" ))
 intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
 
 # ~ Area fix ####
@@ -75,6 +79,7 @@ intercatch_caton<- intercatch_caton %>% select(Year,Stock, Country,Area,lvl4,Cat
 intercatch_caton$Catch<-rowSums(intercatch_caton[c("Discards","Landings")],na.rm=T)
 intercatch_caton$DR<-intercatch_caton$Discards/intercatch_caton$Catch
 # CM need to compare MON totals to that in stock overview!
+intercatch_caton[intercatch_caton$Stock == "mon.27.78abd",] %>% select(Year, Landings) %>% group_by(Year) %>% summarise(total = sum(Landings, na.rm=T)/1000 )
 
 # 02 - CATON raised outside InterCatch ####
 caton_cod <-  read.csv("bootstrap/data/ices_intercatch/caton_WG_COD_summary.csv")
@@ -106,16 +111,18 @@ table(caton_other2$Country)
 # 03 - Merge data sources and write out
 caton_summary<-rbind(intercatch_caton,caton_other2)
 
+caton_summary[caton_summary$Stock == "mon.27.78abd",] %>% select(Year, Landings) %>% group_by(Year) %>% summarise(total = sum(Landings, na.rm=T)/1000 )
 
 # ~ Check for no discard data ---------------------------------------------
 
-table(is.na(caton_summary$Discards))
-##note the alternative way to deal with this is is to assign 0 to the NA values and 0 to the DR rate for NA
-## however NA typically implies no data not a zero discard rate so there could be a major assumtion there that 
-## is wrong
-NA_NaN_IC_DR <- caton_summary %>% filter(is.nan(DR)==T | is.na(Discards)==T) 
-caton_summary_fin <- caton_summary %>% filter(is.na(Discards)==F , is.nan(DR)==F) 
-dim(caton_summary)[1]-(dim(caton_summary_fin)[1]+dim(NA_NaN_IC_DR)[1])
+# CM this chunk of code is removing landings that we need!
+# table(is.na(caton_summary$Discards))
+# ##note the alternative way to deal with this is is to assign 0 to the NA values and 0 to the DR rate for NA
+# ## however NA typically implies no data not a zero discard rate so there could be a major assumtion there that 
+# ## is wrong
+# NA_NaN_IC_DR <- caton_summary %>% filter(is.nan(DR)==T | is.na(Discards)==T) 
+# caton_summary_fin <- caton_summary %>% filter(is.na(Discards)==F , is.nan(DR)==F) 
+# dim(caton_summary)[1]-(dim(caton_summary_fin)[1]+dim(NA_NaN_IC_DR)[1])
 
-write.taf(caton_summary_fin,"results/clean_data/caton_summary.csv")
+write.taf(caton_summary,"results/clean_data/caton_summary.csv")
 
