@@ -628,4 +628,12 @@ write.taf(Catch_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessio
 write.taf(Effort_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_effort.csv"))
 
 
+# 06_ some plots and  -----------------------------------------------------
+names(Catch4)
+Catch_Sum <- Catch4 %>% group_by(Year,Stock,Species) %>% summarise(Landings=sum(Landings,na.rm = T)) %>% ungroup()
+
+Catch_Sum_Stocks <- Catch_Sum %>% filter(is.na(Stock)==F)
+
+ggplot(Catch_Sum_Stocks,aes(x=factor(Year),y=Landings))+geom_col()+facet_wrap(~Stock)
+
 
