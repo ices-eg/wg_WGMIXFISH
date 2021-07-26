@@ -169,22 +169,8 @@ ggplot(intercatch_canum_hke, aes(age, samples_weight_tonnes)) + geom_bar(stat="i
 ggplot(intercatch_canum_hke, aes(age,samples_weight_tonnes)) + geom_bar(stat="identity")+ facet_wrap(~Year) + theme_classic()
 ggplot(intercatch_canum_hke, aes(Datayear, CATON)) + geom_bar(stat="identity") + theme_classic()
 
-#conclusion delete all smaple data prior to 2011
+#conclusion delete all sample data prior to 2011
 intercatch_canum_hke <- intercatch_canum_hke[intercatch_canum_hke$Datayear>2010,]
-#rerun sop checks
-intercatch_canum_hke_checks <- intercatch_canum_hke %>%   group_by(Datayear, Stock, Country, Area, CatchCat, CANUMType, CATON_in_kg ) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON_in_kg -samples_weight_kg) , SOP = (samples_weight_kg/ CATON_in_kg)) %>% data.frame() 
-intercatch_canum_hke_checks$Acceptable <- ifelse(intercatch_canum_hke_checks$SOP>0.94, "Acceptable", "Suspect")
-intercatch_canum_hke_checks$Acceptable <- ifelse(intercatch_canum_hke_checks$SOP>1.05, "Suspect", intercatch_canum_hke_checks$Acceptable)
-ggplot(intercatch_canum_hke_checks[intercatch_canum_hke_checks$Stock == "hke.27.3a46-8abd",], aes(CATON_in_kg, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("hke.27.3a46-8abd")
-ggplot(intercatch_canum_hke_checks[intercatch_canum_hke_checks$Stock == "hke.27.3a46-8abd",], aes( Acceptable, CATON_in_kg)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")+xlab("")
-
-#~ Remove quarter ~ aggregate ####  
-intercatch_canum_hke<- intercatch_canum_hke %>% select("Datayear" ,"Stock" ,"Season","SeasonType","Country" ,"CatchCat","lvl4", "Area","CATON_in_kg","CANUMType", "age","CANUM","MeanWeight_in_g", "samples_weight_kg")
-intercatch_canum_hke <- intercatch_canum_hke %>% group_by(Datayear, Stock,  Country, CatchCat, lvl4,  Area, CANUMType, age, CATON_in_kg, samples_weight_kg) %>% summarise(MeanWeight_in_g = weighted.mean(as.numeric(MeanWeight_in_g), CANUM), CANUM=sum(CANUM,na.rm = T),  samples_weight_kg=sum(samples_weight_kg,na.rm = T))%>% data.frame()
-intercatch_canum_hke <- intercatch_canum_hke %>% select(Datayear, Country,Area , CatchCat,lvl4,CANUMType, age,CANUM, MeanWeight_in_g, samples_weight_kg,Stock)
-intercatch_canum_hke <- intercatch_canum_hke %>% select(Datayear, Country,Area , CatchCat,lvl4, age,CANUM, MeanWeight_in_g, samples_weight_kg,Stock)
-names(intercatch_canum_hke) <- c("Year","Country", "Area", "CatchCat", "lvl4", "Age", "CANUM", "Mean_Weight_in_g","samples_weight_kg", "Stock")
-
 
 # 03 - CANUM raised outside InterCatch - WGCSE ####
 canum_cod <-  read.csv("bootstrap/data/ices_intercatch/canum_WG_COD_summary.csv")
@@ -226,7 +212,7 @@ other_canum$Country <- other_canum$CorrectCountry
 other_canum <- other_canum[-c(10)]
 
 #~ SOP check of baseline data ####
-other_caton <- read.csv("results/clean_data/intercatch_caton_summary.csv")
+other_caton <- read.csv("results/clean_data/caton_summary.csv")
 other_caton <- other_caton[other_caton$Stock %in% c("cod.27.7e-k" ,"had.27.7b-k", "whg.27.7b-ce-k"),]
 other_caton$Area <- "27.7"
 other_caton <- other_caton%>% select(Year, Stock, Country, Area,lvl4, Discards, Landings) %>% 
@@ -364,16 +350,14 @@ mon_age[mon_age$year>2016,] %>% select(year, CatchCat, sample_weight_kg) %>% gro
 #landings are close but discards are way out. CANUM supplied by stock assessor matches Advice sheet. 
 # So we will just calculate a proportion of total landings and discards in caton and then apply ALK 
 
-
 mon_new <- left_join(caton, mon_age, by= c("Year"= "year", "CatchCat" = "CatchCat" ))
 mon_new$CANUM_new <- mon_new$CANUM *mon_new$prop
 mon_new$sample_weight_kg <- mon_new$CANUM_new*mon_new$Mean_weight_kg
 mon_new %>% select(Year, CatchCat, sample_weight_kg) %>% group_by(Year, CatchCat) %>% summarise(caton = sum(sample_weight_kg, na.rm=T))
 
 
-
 # 05 _ Merge and write out final CANUM #####
-canum_summary <- rbind(intercatch_canum, intercatch_canum_hke, WGCSE_canum)
+canum_summary <- rbind(intercatch_canum_sol, intercatch_canum_meg, intercatch_canum_hke, WGCSE_canum)
 
 write.taf(canum_summary, file.path("results/clean_data/canum_summary.csv"))
 
