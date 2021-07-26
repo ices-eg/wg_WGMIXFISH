@@ -27,13 +27,19 @@ library(FLCore)
 library(ggplotFL)
 library(icesSAG)
 
+### not gonna edit an entire script everytime we want to update the years
+YEARS <- c(2017:2019)
+####Note there are still some hard coded years as there are year specific fixes Q? how permenant are these 
+#and cany the be moved to a lookup somehow (probably not)
+
+
 # 00 - Single species advice sheet values ####
 # All intercatch canum should total to these values. 
 # Notes available in each section to describe any differences. 
 stock_list <- c("cod.27.7e-k", "had.27.7b-k" ,"whg.27.7b-ce-k" , "sol.27.7fg"  , "meg.27.7b-k8abd", "mon.27.78abd" ,"hke.27.3a46-8abd")
 
 #Raised total of catchs, landings and discards, used in assessent, taken form advice sheet
-advice_key <- icesSAG::findAssessmentKey( stock = stock_list, year = 2020,  published = TRUE)
+advice_key <- icesSAG::findAssessmentKey( stock = stock_list, year = (max(YEARS)+1),  published = TRUE)
 advice_sheet <- icesSAG::getSummaryTable(advice_key)
 cod_advice <- as.data.frame(advice_sheet[1]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
 had_advice <- as.data.frame(advice_sheet[2]) %>% select(fishstock, Year, stockSizeUnits, landings, discards, catches) %>%gather(catch_cat, total, 4:6)
@@ -74,7 +80,7 @@ dim(intercatch_canum)[1]-dim(intercatch_canum_saftey_check)[1] #safety check - d
 intercatch_canum$Country <- intercatch_canum$CorrectCountry
 intercatch_canum <- intercatch_canum[-c(25)]
 
-# ~ Métier level 4 fix #### 
+# ~ M?tier level 4 fix #### 
 intercatch_canum$lvl4 <- substr(intercatch_canum$Fleet,1,7)
 lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
 intercatch_canum <- left_join(intercatch_canum,lvl4_Lookup)
@@ -88,11 +94,11 @@ intercatch_canum_hke <- intercatch_canum[intercatch_canum$Stock == "hke.27.3a46-
 intercatch_canum <- intercatch_canum[!intercatch_canum$Stock == "hke.27.3a46-8abd", ]
 
 # ~Compare with advice sheet values for last 3 years ####
-advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
-advice_sheet_values[advice_sheet_values$stock %in% c("sol.27.7fg") & advice_sheet_values$year %in% c(2017, 2018, 2019),] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+advice_sheet_values[advice_sheet_values$stock %in% c("sol.27.7fg") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
 
-intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>% select( Datayear,Stock, CatchCat, samples_weight_kg) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_kg, na.rm=T)/1000)
-intercatch_canum[intercatch_canum$Stock %in% c("sol.27.7fg") & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>% select( Datayear,Stock, CatchCat, samples_weight_kg) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_kg, na.rm=T)/1000)
+intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, CatchCat, samples_weight_kg) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_kg, na.rm=T)/1000)
+intercatch_canum[intercatch_canum$Stock %in% c("sol.27.7fg") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, CatchCat, samples_weight_kg) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_kg, na.rm=T)/1000)
 
 # Note intercatch meg needs to be converted to tonnes form kg - also total landings dont match, may need to adjust
 # Note intercatch sol needs to be converted to tonnes form kg - also total landings dont match, may need to adjust
@@ -193,13 +199,13 @@ canum_cod$Stock<-"cod.27.7e-k"
 canum_had$Stock<-"had.27.7b-k"
 canum_whg$Stock<-"whg.27.7b-ce-k" 
 
-# ~ Métier level 4 fix
+# ~ M?tier level 4 fix
 canum_cod$lvl4 <- canum_cod$fleet 
 canum_had$lvl4 <- canum_had$fleet 
 canum_whg$lvl4 <- canum_whg$fleet 
 
 # ~ Format fix ####
-canum_cod <- canum_cod[canum_cod$year <2020,] # we only had access to this years file
+canum_cod <- canum_cod[canum_cod$year <(max(YEARS)+1),] # we only had access to this years file
 canum_cod<- canum_cod %>% select(year, country, subArea  , catchCat   , lvl4, Age  , frequency1000  , meanWeightKg, Stock) %>% 
   group_by(year, country, subArea  , catchCat   , lvl4, Age, Stock ) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame() #CM needs to be changed to weighted mean when we get the right file
 names(canum_cod) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age", "Stock", "CANUM", "Mean_Weight_in_g")
@@ -271,24 +277,24 @@ dis_total_2017 <- 2175
 dis_total_2018 <- 1250
 dis_total_2019 <- 1444
 
-caton_dis$prop[caton_dis$Year == 2017] <- caton_dis$caton[caton_dis$Year == 2017]/sum(caton_dis$caton[caton_dis$Year == 2017], na.rm=T)
-caton_dis$prop[caton_dis$Year == 2018] <- caton_dis$caton[caton_dis$Year == 2018]/sum(caton_dis$caton[caton_dis$Year == 2018], na.rm=T)
-caton_dis$prop[caton_dis$Year == 2019] <- caton_dis$caton[caton_dis$Year == 2019]/sum(caton_dis$caton[caton_dis$Year == 2019], na.rm=T)
+caton_dis$prop[caton_dis$Year == YEARS[1]] <- caton_dis$caton[caton_dis$Year == YEARS[1]]/sum(caton_dis$caton[caton_dis$Year == YEARS[1]], na.rm=T)
+caton_dis$prop[caton_dis$Year == YEARS[2]] <- caton_dis$caton[caton_dis$Year == YEARS[2]]/sum(caton_dis$caton[caton_dis$Year == YEARS[2]], na.rm=T)
+caton_dis$prop[caton_dis$Year == YEARS[3]] <- caton_dis$caton[caton_dis$Year == YEARS[3]]/sum(caton_dis$caton[caton_dis$Year == YEARS[3]], na.rm=T)
 
 caton_dis$caton_corrected <- NaN
-caton_dis$caton_corrected[caton_dis$Year == 2017] <- dis_total_2017*caton_dis$prop[caton_dis$Year == 2017]
-caton_dis$caton_corrected[caton_dis$Year == 2018] <- dis_total_2018*caton_dis$prop[caton_dis$Year == 2018]
-caton_dis$caton_corrected[caton_dis$Year == 2019] <- dis_total_2019*caton_dis$prop[caton_dis$Year == 2019]
+caton_dis$caton_corrected[caton_dis$Year == YEARS[1]] <- dis_total_2017*caton_dis$prop[caton_dis$Year == YEARS[1]]
+caton_dis$caton_corrected[caton_dis$Year == YEARS[2]] <- dis_total_2018*caton_dis$prop[caton_dis$Year == YEARS[2]]
+caton_dis$caton_corrected[caton_dis$Year == YEARS[3]] <- dis_total_2019*caton_dis$prop[caton_dis$Year == YEARS[3]]
 caton_dis%>% select(Year, caton_corrected) %>% group_by(Year) %>% summarise(caton_corrected = sum(caton_corrected, na.rm=T))
 
-caton_lan$prop[caton_lan$Year == 2017] <- caton_lan$caton[caton_lan$Year == 2017]/sum(caton_lan$caton[caton_lan$Year == 2017], na.rm=T)
-caton_lan$prop[caton_lan$Year == 2018] <- caton_lan$caton[caton_lan$Year == 2018]/sum(caton_lan$caton[caton_lan$Year == 2018], na.rm=T)
-caton_lan$prop[caton_lan$Year == 2019] <- caton_lan$caton[caton_lan$Year == 2019]/sum(caton_lan$caton[caton_lan$Year == 2019], na.rm=T)
+caton_lan$prop[caton_lan$Year == YEARS[1]] <- caton_lan$caton[caton_lan$Year == YEARS[1]]/sum(caton_lan$caton[caton_lan$Year == YEARS[1]], na.rm=T)
+caton_lan$prop[caton_lan$Year == YEARS[2]] <- caton_lan$caton[caton_lan$Year == YEARS[2]]/sum(caton_lan$caton[caton_lan$Year == YEARS[2]], na.rm=T)
+caton_lan$prop[caton_lan$Year == YEARS[3]] <- caton_lan$caton[caton_lan$Year == YEARS[3]]/sum(caton_lan$caton[caton_lan$Year == YEARS[3]], na.rm=T)
 
 caton_lan$caton_corrected <- NaN
-caton_lan$caton_corrected[caton_lan$Year == 2017] <- lan_total_2017*caton_lan$prop[caton_lan$Year == 2017]
-caton_lan$caton_corrected[caton_lan$Year == 2018] <- lan_total_2018*caton_lan$prop[caton_lan$Year == 2018]
-caton_lan$caton_corrected[caton_lan$Year == 2019] <- lan_total_2019*caton_lan$prop[caton_lan$Year == 2019]
+caton_lan$caton_corrected[caton_lan$Year == YEARS[1]] <- lan_total_2017*caton_lan$prop[caton_lan$Year == YEARS[1]]
+caton_lan$caton_corrected[caton_lan$Year == YEARS[2]] <- lan_total_2018*caton_lan$prop[caton_lan$Year == YEARS[2]]
+caton_lan$caton_corrected[caton_lan$Year == YEARS[3]] <- lan_total_2019*caton_lan$prop[caton_lan$Year == YEARS[3]]
 caton_lan%>% select(Year, caton_corrected) %>% group_by(Year) %>% summarise(caton_corrected = sum(caton_corrected, na.rm=T))
 caton <- rbind(caton_lan, caton_dis)
 
