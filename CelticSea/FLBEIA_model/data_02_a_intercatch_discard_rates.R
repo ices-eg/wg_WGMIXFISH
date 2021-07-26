@@ -53,12 +53,10 @@ intercatch_caton <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2
 taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.zip", files="2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv", exdir="bootstrap/data/ices_intercatch")
 #NB gitignore this file as it is too big
 intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
-#This is wher eteh issue is Claire!
 names(intercatch_caton_no_dist) <- names(intercatch_caton)
 intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
 #subset by stocks
 intercatch_caton <- intercatch_caton %>% filter(Stock %in% c( "hke.27.3a46-8abd","meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg"))
-
 intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
 
 # ~ Area fix ####
@@ -97,7 +95,6 @@ names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "
 intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
 
 # ~ Split out stocks, compare with advice sheet and edit
-
 intercatch_caton_summed <- intercatch_caton %>% filter(Year %in% YEARS) %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(IC_Landings = round(sum(CATON_in_kg, na.rm=T)/1000,2)) %>% data.frame()
 #
 intercatch_caton_summed$CatchCat <- tolower(intercatch_caton_summed$CatchCat)
@@ -169,7 +166,7 @@ intercatch_caton_hke <- intercatch_caton_hke[-c(11,12)]
 # ~~ mon.27.78abd ####
 advice_sheet_values[advice_sheet_values$stock %in% c("mon.27.78abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
 intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd") & intercatch_caton$Year %in% YEARS,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
-# Notes - mon.27.78abd very poor match for landings! There is no unit difference, just some general cumulative differences
+# Notes - mon.27.78abd very poor match for landings and discards! There is no unit difference, just some general cumulative differences
 ggplot(intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd")& intercatch_caton$Year %in% YEARS,], aes(Year, CATON_in_kg/1000, colour = CatchCat)) + geom_bar(stat="identity") +facet_wrap(~Country)+ scale_y_continuous(labels = scales::comma) +theme_classic()
 
 intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd" ) & intercatch_caton$Year %in% YEARS & intercatch_caton$Country == "FRA" ,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
