@@ -94,7 +94,7 @@ names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "
 # ~ Convert to tonnes ####
 intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
 
-# ~ Split out stocks, compare with advice sheet and edit
+# ~ Split out stocks, compare with advice sheet and edit ####
 intercatch_caton_summed <- intercatch_caton %>% filter(Year %in% YEARS) %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(IC_Landings = round(sum(CATON_in_kg, na.rm=T)/1000,2)) %>% data.frame()
 #
 intercatch_caton_summed$CatchCat <- tolower(intercatch_caton_summed$CatchCat)
