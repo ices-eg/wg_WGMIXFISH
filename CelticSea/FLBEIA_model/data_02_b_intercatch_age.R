@@ -93,7 +93,6 @@ intercatch_canum <- intercatch_canum[-c(26,27,28)]
 intercatch_canum$CATON <- intercatch_canum$CATON_in_kg/1000
 intercatch_canum$samples_weight_tonnes <- (intercatch_canum$MeanWeight_in_g/1000000)*intercatch_canum$CANUM
 
-
 # ~ Split out stocks, compare with advice sheet and edit ####
 
 # ~~ sol.27.7fg ####
@@ -117,8 +116,10 @@ ggplot(intercatch_canum_hke_checks, aes(CATON, SOP)) + geom_point() + facet_wrap
 ggplot(intercatch_canum_hke_checks, aes(Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")+xlab("")
 
 # ~~ meg.27.7b-k8abd ####
-advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))%>% data.frame()
 intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, CatchCat, samples_weight_tonnes) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_tonnes)) %>% data.frame()
+intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, Country, CatchCat, samples_weight_tonnes) %>% group_by(Datayear,Stock,Country, CatchCat) %>% summarise(caton = sum(samples_weight_tonnes)) %>% data.frame()
+
 # Notes - meg.27.7b-k8abd not a good match, sometimes too little landings and other time too many discards!
 intercatch_canum_meg_checks <- intercatch_canum[intercatch_canum$Stock == "meg.27.7b-k8abd" & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
 intercatch_canum_meg_checks$Acceptable <- ifelse(intercatch_canum_meg_checks$SOP>0.94, "Acceptable", "Suspect")
@@ -380,11 +381,12 @@ mon_new$CANUM_new <- mon_new$CANUM *mon_new$prop
 mon_new$sample_weight_kg <- mon_new$CANUM_new*mon_new$Mean_weight_kg
 mon_new %>% select(Year, CatchCat, sample_weight_kg) %>% group_by(Year, CatchCat) %>% summarise(caton = sum(sample_weight_kg, na.rm=T))
 
+mon_canum <- mon_new %>% select(Year, Country, Area, CatchCat, lvl4, age, caton_corrected, CANUM_new, Mean_weight_kg, sample_weight_kg)
+mon_canum$Stock <- "mon.27.78abd"
+names(mon_canum) <- c("Year", "Country",  "Area", "CatchCat",    "lvl4", "Age", "CATON", "CANUM", "Mean_Weight_in_g", "samples_weight_tonnes", "Stock")
 
 # 05 _ Merge and write out final CANUM #####
-canum_summary <- rbind(intercatch_canum_sol, gad_canum )#intercatch_canum_meg, intercatch_canum_hke, WGCSE_canum)
-
+canum_summary <- rbind(intercatch_canum_hke, intercatch_canum_meg, intercatch_canum_sol, gad_canum, mon_canum )#intercatch_canum_meg, intercatch_canum_hke, WGCSE_canum)
 canum_summary <- canum_summary %>% select(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON, CANUM,  Mean_Weight_in_g) %>% group_by(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON) %>% summarise(CANUM = sum(CATON, na.rm=T),  Mean_Weight_in_g = mean(Mean_Weight_in_g, na.rm=T))
-
 write.taf(canum_summary, file.path("results/clean_data/canum_summary.csv"))
 
