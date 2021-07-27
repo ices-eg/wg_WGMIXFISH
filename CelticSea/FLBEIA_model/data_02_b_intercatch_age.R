@@ -262,7 +262,7 @@ a <- sop(gad_caton,gad_canum,Country,Year,Area,lvl4,CatchCat,Stock)
 gad_canum <- inner_join(gad_canum,a)
 gad_canum$CANUM <- gad_canum$CANUM/gad_canum$SopR # only run this line once
 gad_canum <- gad_canum[-c(12,13)]
-gad_canum$Mean_Weight_in_g <- gad_canum$Mean_Weight_in_kg/1000 
+gad_canum$Mean_Weight_in_g <- gad_canum$Mean_Weight_in_kg*1000 
 gad_canum <- gad_canum %>% select(Year, Country, Area, CatchCat, lvl4, Age, CATON, CANUM, Mean_Weight_in_g, samples_weight_tonnes, Stock)
 
 # 04 - CANUM raised outside InterCatch - WGBIE ####
@@ -387,6 +387,6 @@ names(mon_canum) <- c("Year", "Country",  "Area", "CatchCat",    "lvl4", "Age", 
 
 # 05 _ Merge and write out final CANUM #####
 canum_summary <- rbind(intercatch_canum_hke, intercatch_canum_meg, intercatch_canum_sol, gad_canum, mon_canum )#intercatch_canum_meg, intercatch_canum_hke, WGCSE_canum)
-canum_summary <- canum_summary %>% select(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON, CANUM,  Mean_Weight_in_g) %>% group_by(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON) %>% summarise(CANUM = sum(CATON, na.rm=T),  Mean_Weight_in_g = mean(Mean_Weight_in_g, na.rm=T))
+canum_summary <- canum_summary %>% select(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON, CANUM,  Mean_Weight_in_g) %>% group_by(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON) %>% summarise(CANUM = sum(CANUM, na.rm=T),  Mean_Weight_in_g = mean(Mean_Weight_in_g, na.rm=T))
 write.taf(canum_summary, file.path("results/clean_data/canum_summary.csv"))
 
