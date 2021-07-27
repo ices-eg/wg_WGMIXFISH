@@ -189,55 +189,80 @@ canum_whg$lvl4 <- canum_whg$fleet
 
 # ~ Format fix ####
 canum_cod <- canum_cod[canum_cod$year <(max(YEARS)+1),] # we only had access to this years file
-canum_cod<- canum_cod %>% select(year, country, subArea  , catchCat   , lvl4, Age  , frequency1000  , meanWeightKg, Stock) %>% 
-  group_by(year, country, subArea  , catchCat   , lvl4, Age, Stock ) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame() #CM needs to be changed to weighted mean when we get the right file
-names(canum_cod) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age", "Stock", "CANUM", "Mean_Weight_in_g")
+canum_cod<- canum_cod %>% select(year, country, subArea  , catchCat   , fleet, Age  , frequency1000  , meanWeightKg, Stock) %>% 
+  group_by(year, country, subArea  , catchCat   , fleet, Age, Stock ) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame() 
+names(canum_cod) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_kg")
 
 canum_had <- canum_had %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg, Stock) %>% 
   group_by(year, country, subArea, catchCat, lvl4, Age, Stock) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame()
-names(canum_had) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_g")
+names(canum_had) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_kg")
 
 canum_whg <- canum_whg %>% select(year, country, subArea, catchCat, lvl4, Age, frequency1000, meanWeightKg, Stock) %>% 
   group_by(year, country, subArea, catchCat, lvl4, Age, Stock) %>% summarise(frequency1000 = sum(frequency1000, na.rm=T), Weight = weighted.mean(meanWeightKg,w=frequency1000,na.rm=T)) %>% data.frame()
-names(canum_whg) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_g")
+names(canum_whg) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stock", "CANUM", "Mean_Weight_in_kg")
 
-other_canum <- rbind(canum_cod, canum_whg, canum_had)
-other_canum$Area <- as.character(other_canum$Area)
-other_canum_saftey_check <- other_canum
+gad_canum <- rbind(canum_cod, canum_whg, canum_had)
+gad_canum$Area <- as.character(gad_canum$Area)
+gad_canum_saftey_check <- gad_canum
 
 # ~ Country fix  ####
-other_canum <- left_join(other_canum,Country_Lookup)
-dim(other_canum)[1]-dim(other_canum_saftey_check)[1] #safety check - dims should match
-other_canum$Country <- other_canum$CorrectCountry
-other_canum <- other_canum[-c(10)]
+gad_canum <- left_join(gad_canum,Country_Lookup)
+dim(gad_canum)[1]-dim(gad_canum_saftey_check)[1] #safety check - dims should match
+gad_canum$Country <- gad_canum$CorrectCountry
+gad_canum <- gad_canum[-c(10)]
 
 #~ SOP check of baseline data ####
-other_caton <- read.csv("results/clean_data/caton_summary.csv")
-other_caton <- other_caton[other_caton$Stock %in% c("cod.27.7e-k" ,"had.27.7b-k", "whg.27.7b-ce-k"),]
-other_caton$Area <- "27.7"
-other_caton <- other_caton%>% select(Year, Stock, Country, Area,lvl4, Discards, Landings) %>% 
+# This section is just to visually spot the problems.
+gad_caton <- read.csv("results/clean_data/caton_summary.csv")
+gad_caton <- gad_caton[gad_caton$Stock %in% c("cod.27.7e-k" ,"had.27.7b-k", "whg.27.7b-ce-k"),]
+gad_caton$Area <- "27.7"
+gad_caton <- gad_caton%>% select(Year, Stock, Country, Area,lvl4, Discards, Landings) %>% 
   group_by(Year, Stock, Country, Area,lvl4) %>% 
   summarise(Discards =sum(Discards, na.rm=T), Landings = sum(Landings ,na.rm=T))
-other_caton <- gather(other_caton, key = CatchCat, value = "CATON", 6:7)
-other_canum <- left_join(other_canum, other_caton, by= c("Year" = "Year", "Stock" = "Stock", "Country" = "Country", "Area" = "Area", "lvl4" = "lvl4", "CatchCat"= "CatchCat"))
-other_canum$samples_weight_kg <- (other_canum$CANUM*other_canum$Mean_Weight_in_g)/1000 # put in kg
+gad_caton <- gather(gad_caton, key = CatchCat, value = "CATON", 6:7)
+gad_canum <- left_join(gad_canum, gad_caton, by= c("Year" = "Year", "Stock" = "Stock", "Country" = "Country", "Area" = "Area", "lvl4" = "lvl4", "CatchCat"= "CatchCat"))
+gad_canum$samples_weight_tonnes <- (gad_canum$CANUM*gad_canum$Mean_Weight_in_kg)/1000 # put in tonnes (they are actually in kg not g!)
 
-other_canum_checks <- other_canum %>% 
-  group_by(Year, Stock, Country, Area, CatchCat, CATON) %>% summarise(samples_weight_kg = sum(samples_weight_kg, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_kg) , SOP = (samples_weight_kg/ CATON)) %>% data.frame() 
-ggplot(other_canum_checks[other_canum_checks$Stock == "cod.27.7e-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("cod.27.7e-k")
-ggplot(other_canum_checks[other_canum_checks$Stock == "had.27.7b-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("had.27.7b-k")
-ggplot(other_canum_checks[other_canum_checks$Stock == "whg.27.7b-ce-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("whg.27.7b-ce-k")
+gad_canum_checks <- gad_canum %>% 
+  group_by(Year, Stock, Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/ CATON)) %>% data.frame() 
+ggplot(gad_canum_checks[gad_canum_checks$Stock == "cod.27.7e-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic() +ggtitle("cod.27.7e-k")
+ggplot(gad_canum_checks[gad_canum_checks$Stock == "had.27.7b-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("had.27.7b-k")
+ggplot(gad_canum_checks[gad_canum_checks$Stock == "whg.27.7b-ce-k",], aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("whg.27.7b-ce-k")
 # sanity check - assuming we consider SOP between 0.95 and 1.05 as acceptable
-other_canum_checks$Acceptable <- ifelse(other_canum_checks$SOP>0.94, "Acceptable", "Suspect")
-other_canum_checks$Acceptable <- ifelse(other_canum_checks$SOP>1.05, "Suspect", other_canum_checks$Acceptable)
-ggplot(other_canum_checks[other_canum_checks$Stock == "cod.27.7e-k",], aes( Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("cod.27.7e-k")+xlab("")
-ggplot(other_canum_checks[other_canum_checks$Stock == "had.27.7b-k",], aes(Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("had.27.7b-k")+xlab("")
-ggplot(other_canum_checks[other_canum_checks$Stock == "whg.27.7b-ce-k",], aes(Acceptable, CATON)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("whg.27.7b-ce-k")+xlab("")
+gad_canum_checks$Acceptable <- ifelse(gad_canum_checks$SOP>0.94, "Acceptable", "Suspect")
+gad_canum_checks$Acceptable <- ifelse(gad_canum_checks$SOP>1.05, "Suspect", gad_canum_checks$Acceptable)
+ggplot(gad_canum_checks[gad_canum_checks$Stock == "cod.27.7e-k",], aes( Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("cod.27.7e-k")+xlab("")
+ggplot(gad_canum_checks[gad_canum_checks$Stock == "had.27.7b-k",], aes(Acceptable, CATON)) + geom_bar(stat="identity") + facet_wrap(~Country) + theme_classic()+ggtitle("had.27.7b-k")+xlab("")
+ggplot(gad_canum_checks[gad_canum_checks$Stock == "whg.27.7b-ce-k",], aes(Acceptable, CATON)) + geom_bar(stat="identity")+ facet_wrap(~Country) + theme_classic()+ggtitle("whg.27.7b-ce-k")+xlab("")
 
-# ~ Adjustment _ I am not sure this is required - CM - need to ask PD and JB
-#And they are not so now we take a ratio of of the unique(SOP_SUM over the caton to give us a ratio to multiply the No_at_age at)
-# intercatch_canum3 <- intercatch_canum3 %>% group_by_at(vars(-SOP,-MeanWeight_in_g,-Number_at_age,-Age)) %>%  mutate(diff_ratio=unique(SOP_SUM)/unique(CATON_in_kg)) %>% ungroup() %>% mutate(No_At_Age_ADJ=Number_at_age*diff_ratio)
-WGCSE_canum <- other_canum %>% select(Year,Country, Area, CatchCat, lvl4, Age, CANUM, Mean_Weight_in_g,samples_weight_kg, Stock) 
+# ~ SOP correct
+# Hans Gerritsen function
+sop <- function(gad_caton,gad_canum,...){
+  a <- gad_caton %>% group_by(...) %>% summarise(CATON=sum(CATON))
+  b <- gad_canum %>% group_by(...) %>% summarise(SOP=sum(CANUM*Mean_Weight_in_kg)) 
+  c <- inner_join(a,b)
+  c$SopR <- c$SOP/c$CATON
+  return(c)
+}
+
+a <- sop(gad_caton,gad_canum,Country,Year,Area,lvl4,CatchCat,Stock)
+g <- ggplot(a, aes(x=CATON,y=SopR,col=Country)) + geom_point() + facet_wrap(~CatchCat)
+g
+
+b <- a %>% group_by(Year,CatchCat) %>% summarise(CATON=sum(CATON),SOP=sum(SOP))
+ggplot(b, aes(x=Year,y=SOP/CATON,col=CatchCat)) + geom_point() + geom_line()
+
+# SOP correction
+a %>% group_by(CatchCat) %>% summarise(SopR=sum(SOP)/sum(CATON))
+
+# sop correction
+a <- sop(gad_caton,gad_canum,Country,Year,Area,lvl4,CatchCat,Stock)
+#gad_canum$CANUM <- canum$Frequency
+gad_canum <- inner_join(gad_canum,a)
+gad_canum$CANUM <- gad_canum$CANUM/gad_canum$SopR # only run this line once
+gad_canum <- gad_canum[-c(12,13)]
+gad_canum$Mean_Weight_in_g <- gad_canum$Mean_Weight_in_kg/1000 
+gad_canum <- gad_canum %>% select(Year, Country, Area, CatchCat, lvl4, Age, CATON, CANUM, Mean_Weight_in_g, samples_weight_tonnes, Stock)
 
 # 04 - CANUM raised outside InterCatch - WGBIE ####
 # mon.27.78abd
@@ -357,7 +382,9 @@ mon_new %>% select(Year, CatchCat, sample_weight_kg) %>% group_by(Year, CatchCat
 
 
 # 05 _ Merge and write out final CANUM #####
-canum_summary <- rbind(intercatch_canum_sol, intercatch_canum_meg, intercatch_canum_hke, WGCSE_canum)
+canum_summary <- rbind(intercatch_canum_sol, gad_canum )#intercatch_canum_meg, intercatch_canum_hke, WGCSE_canum)
+
+canum_summary <- canum_summary %>% select(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON, CANUM,  Mean_Weight_in_g) %>% group_by(Year, Stock, Country,Area,CatchCat,lvl4, Age, CATON) %>% summarise(CANUM = sum(CATON, na.rm=T),  Mean_Weight_in_g = mean(Mean_Weight_in_g, na.rm=T))
 
 write.taf(canum_summary, file.path("results/clean_data/canum_summary.csv"))
 
