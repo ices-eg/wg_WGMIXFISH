@@ -92,6 +92,9 @@ fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stks
                                        effort.models= effort.models,catch.models=catch.models,
                                        capital.models=capital.models, price.models=price.models,flq=flq)
 
+#NB stock specific effort. 
+#Just do default a loop through after 
+
 for(i in names(fleets)) {
   fleets.ctrl[[i]]$effort.restr <- restrictionTable[restrictionTable$fleet == i, "eff.restriction"]
 }
