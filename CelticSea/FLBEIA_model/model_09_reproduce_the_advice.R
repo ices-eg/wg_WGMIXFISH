@@ -68,6 +68,7 @@ rm(fleets_sub,biols_sub)
 }
 
 # Control object ####
+# fleets.ctrl  -- see bim script 04
 
 LO <- FALSE 
 
@@ -96,8 +97,7 @@ for(i in names(fleets)) {
 }
 
 
-#
-# fleets.ctrl  -- see bim script 04
+
 # advice       -- see bim script 05
 # advice.ctrl  -- see bim script 05, create.advice.ctrl()
 # biols.ctrl   -- see bim script 03, create.biols.ctrl() 
