@@ -216,6 +216,8 @@ accessions_landings5$Vessel_length[accessions_landings5$Country=="ES"& accession
 accessions_landings5$Vessel_length[accessions_landings5$Country=="UKS"& accessions_landings5$Vessel_length==""] <- "all"
 unique(accessions_landings5$Vessel_length[accessions_landings5$Country=="UKS"])
 
+#french fix sledgehammer be carefull
+accessions_landings5$Vessel_length[accessions_landings5$Country == "FRA" & accessions_landings5$Vessel_length %in% c("", "10<24m", "24<40m")] <- "10<40m"
 
 # ~some checks -------------------------------------------------------------
 unique(accessions_landings5$Country)
@@ -479,6 +481,12 @@ accessions_effort5$Metier[accessions_effort5$Country=="FRA"& accessions_effort5$
 accessions_effort5$Metier[accessions_effort5$Country=="FRA"& accessions_effort5$Year == 2018 & accessions_effort5$Metier =="PS_SPF_"] <- "OTB_SPF"
 accessions_effort5$Metier[accessions_effort5$Country=="FRA"& accessions_effort5$Year == 2018 & accessions_effort5$Metier =="OTT-DEF"] <- "OTT_DEF"
 
+
+
+# Specific fix for missing or wrong french  -------------------------------
+#vessel lengths this will affect a large chunk of data 
+accessions_effort5$Vessel_length[accessions_effort5$Country == "FRA" & accessions_effort5$Vessel_length %in% c("", "10<24m", "24<40m")] <- "10<40m"
+
 #scotland
 accessions_effort5$Vessel_length[accessions_effort5$Country=="UKS"& accessions_effort5$Year == 2018 & accessions_effort5$Metier =="FPO_CRU"] <- "<10m"
 accessions_effort5$Vessel_length[accessions_effort5$Country=="UKS"& accessions_effort5$Year == 2018 & accessions_effort5$Metier =="GNS_DEF"] <- "<10m"
@@ -551,8 +559,8 @@ effort2 <- effort
 
 
 # ~ summaries data --------------------------------------------------------
-catch2 <- catch2 %>% group_by_at(vars(-Landings,-Value)) %>% summarise(Landings=sum(Landings),Value=sum(Value)) %>% ungroup()
-effort2 <- effort2 %>% group_by_at(vars(-kw_days,-Days_at_sea,-No_vessels)) %>% summarise(kw_days=sum(kw_days),Days_at_sea=sum(Days_at_sea),No_vessels=sum(No_vessels)) %>% ungroup()
+catch2 <- catch2 %>% select(-Quarter)%>% group_by_at(vars(-Landings,-Value)) %>% summarise(Landings=sum(Landings),Value=sum(Value)) %>% ungroup()
+effort2 <- effort2 %>% select(-Quarter) %>% group_by_at(vars(-kw_days,-Days_at_sea,-No_vessels)) %>% summarise(kw_days=sum(kw_days),Days_at_sea=sum(Days_at_sea),No_vessels=sum(No_vessels)) %>% ungroup()
 
 catch2 <- catch2 %>% mutate(check=1:nrow(catch2))
 
@@ -620,8 +628,8 @@ write.taf(Catch4, file = file.path(Data_path_out,"clean_data/Unmatched_clean_acc
 write.taf(effort3, file = file.path(Data_path_out,"clean_data/Unmatched_clean_accessions_effort.csv"))
 
 # ~Write out data with NA values ------------------------------------------
-write.taf(Catch_effort_NA,file.path(Data_path_out,"Intermediate_products/NA_Catch.csv"))
-write.taf(Effort_Na,file.path(Data_path_out,"Intermediate_products/NA_Effort.csv"))
+write.taf(Catch_effort_NA,file.path(Data_path_out,"intermediate_products/NA_Catch.csv"))
+write.taf(Effort_Na,file.path(Data_path_out,"intermediate_products/NA_Effort.csv"))
 
 # ~Write out data that can be matched -------------------------------------
 write.taf(Catch_MATCH,file.path(Data_path_out,"clean_data/Matched_clean_accessions_landings.csv"))
