@@ -149,6 +149,67 @@ effort_start <-read.csv(file.path(Data_path,"clean_data/Unmatched_clean_accessio
 Stock_lookup <- read.csv(file.path(LookupPath,"data/supporting_files/Stock_lookup.csv"))
 nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE/nep.all/nep.stock.wgmixfish_2020.csv"))
 
+
+# Moniter for differences -------------------------------------------------
+
+
+names(InterCatch)
+check_IC <- InterCatch %>% select(Year,Stock,Country,Landings,Discards) %>% group_by(Year,Stock,Country) %>% summarise(Landing_IC=sum(Landings)) %>% ungroup()
+names(catch_start)
+check_AC <- catch_start %>% select(Year,Stock,Country,Landings) %>% group_by(Year,Stock,Country)%>% summarise(Landing_AC=sum(Landings)) %>% ungroup()
+
+CHECK_IC_AC <- full_join(check_AC,check_IC)
+
+CHECK_IC_AC <- CHECK_IC_AC %>% filter(is.na(Stock)==F)
+
+wg.stock <- FLStocks(lapply(list.files("results/clean_data/clean_stock_objects/"), function(x) {
+  load(paste("results/clean_data/clean_stock_objects/","/",x,sep=""))
+  res<-get("stock")
+  name(res) <- x
+  res
+}))
+
+
+res.out <- as.data.frame(landings(
+  wg.stock$`cod.27.7e-k.RData`
+))
+res.out <- res.out %>% mutate(stock="cod.27.7e-k")
+for(i in 2:length(wg.stock)){
+  
+  stock <- wg.stock[[i]]
+  res <- as.data.frame(landings(stock))
+  res <- res %>% mutate(stock=gsub(".RData","",names(wg.stock)[i]))
+  res.out <- rbind(res.out,res)
+  
+}
+
+res.out <- res.out %>% select(stock,year,data)
+names(res.out) <- c("Stock","Year","SObj_Landings")
+
+CHECK_IC_AC_OBJ <- full_join(CHECK_IC_AC,res.out)
+
+
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ %>% group_by(Year,Stock) %>% summarise(Landing_AC=sum(Landing_AC,na.rm = T),Landing_IC=sum(Landing_IC,na.rm = T),SObj_Landings=unique(SObj_Landings)) %>% ungroup()
+
+
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% filter(Year %in% c(2017:2020)) %>% mutate(diff_AC=Landing_AC-SObj_Landings,diff_IC=Landing_IC-SObj_Landings )
+
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB=ifelse(diff_AC > ((SObj_Landings/100)*10)|diff_AC < -((SObj_Landings/100)*10),"YES","NO"),IC_PROB=ifelse(diff_IC > ((SObj_Landings/100)*10)|diff_IC < -((SObj_Landings/100)*10),"YES","NO")) %>% ungroup()
+
+
+
+Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB),names_to ="Prob")
+
+ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()
+
+
+Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC) %>% pivot_longer(cols =c(diff_AC,diff_IC),names_to ="Diff")
+
+ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+ 
+  scale_y_continuous(breaks = seq(-7000,1100,500),limits =c(-7000,1100))
+
+
+#  3.0 script starts -----------------------------------------------------------
 #allows us to keep the orignal object in GE for specific checks 
 catch <- catch_start
 effort<- effort_start
@@ -160,13 +221,13 @@ effort<- effort[effort$Area %in% c("27.7"  , "27.7.b" , "27.7.c" , "27.7.d",  "2
 dim(catch)
 dim(catch)
 
-# 3.0 apply corrections  ------------------------------------------------
+# 4.0 apply corrections  ------------------------------------------------
 #Clean Country Names
 # select the last three Year
 # effort<- subset(effort,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
 # catch<- subset(catch,Year %in% c(Yearwg-3,Yearwg-2,Yearwg-1))
 
-# 4.0 Combine catch and effort ------------------------------------------------
+# 5.0 Combine catch and effort ------------------------------------------------
 catch2 <- catch
 effort2 <- effort
 
@@ -197,7 +258,7 @@ names(nep_data)[names(nep_data) =="discard.rate.wgt"] <-"DR"
 nep_data$Stock <- paste("nep.",nep_data$Stock,sep="")
 nep_data$Stock[nep_data$Stock=="nep.out7.fu"] <- "nep.out.7"
 
-# 5.0Create discard ID in catch and effort ---------------------------------
+# 6.0Create discard ID in catch and effort ---------------------------------
 ###all
 ###Remove area
 ###Remove metier keep area
@@ -241,7 +302,7 @@ discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER)
 ##no country but with everything elese
 Discard_ID_NO_COUNTRY<- Discard_ID_NO_COUNTRY %>% group_by(Discard_ID_NO_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 
-# 6.0 Join discard and catch --------------------------------------------------
+# 7.0 Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
 table(grepl("NEP",Catch3$Species)==T)
 Catch3_NEP <- Catch3 %>% filter(grepl("NEP",Catch3$Species)==T)
@@ -365,7 +426,7 @@ table(Catch3_NA_Stocks$Species,Catch3_NA_Stocks$Area)
 table(Catch3$Species,Catch3$Area)
 table(Catch3$Species,Catch3$Stock)
 
-# 7.0 Catch per country -------------------------------------------------------------
+# 8.0 Catch per country -------------------------------------------------------------
 summa <- Catch3 %>% select(Landings,Country,Year,Stock) %>% group_by_at(vars(-Landings)) %>% summarise(Landings=sum(Landings,na.rm = T)) %>% ungroup()
 
 summa<-summa[,c(3,2,1,4)]
@@ -378,7 +439,7 @@ write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per
 # Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
 Catch3<-mutate(Catch3,Discards=(Landings*DR)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
 
-# 8.0 Assigning a fleet ------------------------------------------------------
+# 9.0 Assigning a fleet ------------------------------------------------------
 
 Catch3$Potential_fleets <- substr(Catch3$Metier, 1,3)
 Catch3$GeneralGrouping <- NA
@@ -411,7 +472,7 @@ Catch4<- Catch3 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter,Spec
 # Now aggregate to make sure
 effort3 <- effort2 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter) %>%dplyr::summarise("kw_days"=sum(kw_days,na.rm=T),"Days_at_sea"=sum(Days_at_sea,na.rm=T)) %>% ungroup()
 
-# 9.0 FIN df created and setting of fleet and metier aggregations  -------------------------------------
+# 10.0 FIN df created and setting of fleet and metier aggregations  -------------------------------------
 Effort_FIN <- effort3
 
 Catch_FIN <- Catch4
@@ -466,7 +527,7 @@ dim(Effort_FIN)
 Catch_FIN$Metier[Catch_FIN$OTH=="OTH"] <- "OTH_OTH"
 Effort_FIN$Metier[Effort_FIN$OTH=="OTH"] <- "OTH_OTH"
 
-# 10.0 Final steps -------------------------------------------------------------
+# 11.0 Final steps -------------------------------------------------------------
 catch <- Catch_FIN %>%   ungroup() %>%    select(Discards,Landings,Value,Fleet,Metier,Year,Stock) %>%  group_by(Fleet,Metier,Year,Stock)%>%
   summarise(Discards=sum(Discards),Landings=sum(Landings),Value=sum(Value)) %>%  ungroup()
 
@@ -481,7 +542,7 @@ sort(unique(catch$Fleet))
 sort(unique(effort$Fleet))
 
 
-# 11.0 Write out to clean_data --------------------------------------------
+# 12.0 Write out to clean_data --------------------------------------------
 write.taf(catch,file = file.path(Data_path,"clean_data/Catch_4_Makefleets.csv"))
 write.taf(effort,file = file.path(Data_path,"clean_data/Effort_4_Makefleets.csv"))
 
