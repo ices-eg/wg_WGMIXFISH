@@ -99,9 +99,8 @@ for(i in names(fleets)) {
   fleets.ctrl[[i]]$effort.restr <- restrictionTable[restrictionTable$fleet == i, "eff.restriction"]
 }
 
-
-
 # advice       -- see bim script 05
+
 # advice.ctrl  -- see bim script 05, create.advice.ctrl()
 # biols.ctrl   -- see bim script 03, create.biols.ctrl() 
 # obs.ctrl     -- see bim script 03, create.obs.ctrl()
