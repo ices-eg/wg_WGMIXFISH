@@ -1,0 +1,3664 @@
+stock,Year,CatchCategory,Country,Area,tons
+HKE,2013,Discards,Belgium,8,44
+HKE,2014,Discards,Belgium,8,158
+HKE,2015,Discards,Belgium,8,86
+HKE,2013,Landings,Belgium,8,7
+HKE,2014,Landings,Belgium,8,18
+HKE,2015,Landings,Belgium,8,18
+HKE,2017,Landings,Belgium,8,0
+HKE,2017,Discards,Denmark,8,0
+HKE,2017,Landings,Denmark,8,0
+HKE,2019,Landings,Denmark,8,0
+HKE,2013,Discards,France,8,4017
+HKE,2014,Discards,France,8,1121
+HKE,2015,Discards,France,8,2425
+HKE,2016,Discards,France,8,3488
+HKE,2017,Discards,France,8,2787
+HKE,2018,Discards,France,8,2758
+HKE,2019,Discards,France,8,1472
+HKE,2013,Landings,France,8,13083
+HKE,2014,Landings,France,8,16068
+HKE,2015,Landings,France,8,17530
+HKE,2016,Landings,France,8,16749
+HKE,2017,Landings,France,8,17467
+HKE,2018,Landings,France,8,16438
+HKE,2019,Landings,France,8,13598
+HKE,2017,Landings,Ireland,8,1
+HKE,2018,Landings,Ireland,8,3
+HKE,2014,Landings,Netherlands,8,4
+HKE,2015,Landings,Netherlands,8,14
+HKE,2019,Landings,Netherlands,8,2
+HKE,2014,Discards,Spain,8,183
+HKE,2015,Discards,Spain,8,589
+HKE,2016,Discards,Spain,8,665
+HKE,2017,Discards,Spain,8,905
+HKE,2018,Discards,Spain,8,347
+HKE,2019,Discards,Spain,8,586
+HKE,2013,Landings,Spain,8,6795
+HKE,2014,Landings,Spain,8,9311
+HKE,2015,Landings,Spain,8,10762
+HKE,2016,Landings,Spain,8,9741
+HKE,2017,Landings,Spain,8,11377
+HKE,2018,Landings,Spain,8,9262
+HKE,2019,Landings,Spain,8,7775
+HKE,2015,Landings,UK (England),8,6
+HKE,2016,Landings,UK (England),8,1
+HKE,2017,Landings,UK (England),8,9
+HKE,2018,Landings,UK (England),8,64
+HKE,2019,Landings,UK (England),8,0
+HKE,2014,Landings,UK(Scotland),8,154
+HKE,2015,Landings,UK(Scotland),8,168
+HKE,2016,Landings,UK(Scotland),8,0
+HKE,2018,Landings,UK(Scotland),8,128
+HKE,2019,Landings,UK(Scotland),8,115
+HKE,2013,Discards,all,oth,11388
+HKE,2014,Discards,all,oth,8372
+HKE,2015,Discards,all,oth,7821
+HKE,2016,Discards,all,oth,6965
+HKE,2017,Discards,all,oth,3409
+HKE,2018,Discards,all,oth,3931
+HKE,2019,Discards,all,oth,2880
+HKE,2013,Landings,all,oth,66257
+HKE,2014,Landings,all,oth,64383
+HKE,2015,Landings,all,oth,66545
+HKE,2016,Landings,all,oth,81055
+HKE,2017,Landings,all,oth,75814
+HKE,2018,Landings,all,oth,63801
+HKE,2019,Landings,all,oth,60802
+SOL,2019,landings,France,8ab,3048.32
+SOL,2019,landings,Belgium,8ab,327.904
+SOL,2018,landings,France,8ab,3119
+SOL,2018,landings,Belgium,8ab,294.9
+WHB,2018,BMSLand,all,oth,15.615
+WHB,2019,BMSLand,all,oth,33.791
+WHB,2017,Discards,all,oth,1069.07579
+WHB,2018,Discards,all,oth,2434.01276
+WHB,2019,Discards,all,oth,1748.98616
+WHB,2017,Discards,France,8,92.74627
+WHB,2018,Discards,France,8,292.40231
+WHB,2017,Discards,Spain,8,868.529
+WHB,2018,Discards,Spain,8,1583.0166
+WHB,2019,Discards,Spain,8,816.41931
+WHB,2017,Landings,all,oth,1535197.046
+WHB,2018,Landings,all,oth,1689613.949
+WHB,2019,Landings,all,oth,1492657.46
+WHB,2017,Landings,France,8,30.71049
+WHB,2018,Landings,France,8,10.04263
+WHB,2019,Landings,France,8,446.8161
+WHB,2019,Landings,Germany,8,732.576
+WHB,2018,Landings,Ireland,8,0.77
+WHB,2019,Landings,Ireland,8,8.1
+WHB,2018,Landings,Netherlands,8,0.828
+WHB,2019,Landings,Netherlands,8,391.67
+WHB,2019,Landings,Poland,8,2029.977
+WHB,2019,Landings,Portugal,8,1204
+WHB,2017,Landings,Spain,8,20802.69
+WHB,2018,Landings,Spain,8,17525.50227
+WHB,2019,Landings,Spain,8,15451.90096
+WHB,2018,Landings,UK (England),8,0.86
+MEG,2015,Landings,France,8,0.57472
+MEG,2015,Landings,France,oth,44.63818
+MEG,2015,Landings,France,oth,0.17968
+MEG,2015,Landings,France,8,0.24265
+MEG,2015,Landings,France,oth,0.49765
+MEG,2015,Landings,France,oth,5.1135
+MEG,2015,Landings,France,oth,0.04487
+MEG,2015,Landings,France,8,6.51818
+MEG,2015,Landings,France,oth,0.03425
+MEG,2015,Landings,France,oth,0.00901
+MEG,2015,Landings,France,oth,0.005
+MEG,2015,Landings,France,oth,0.22662
+MEG,2015,Landings,France,oth,0.75331
+MEG,2015,Landings,France,oth,2.55049
+MEG,2015,Landings,France,oth,1.49206
+MEG,2015,Landings,France,oth,16.80203
+MEG,2015,Landings,France,oth,28.81734
+MEG,2015,Landings,France,oth,2.92821
+MEG,2015,Landings,France,oth,10.20915
+MEG,2015,Landings,France,8,0.02873
+MEG,2015,Landings,France,oth,15.41507
+MEG,2015,Landings,France,oth,0.01737
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,oth,0.81313
+MEG,2015,Landings,France,oth,70.9481
+MEG,2015,Discards,France,oth,0.03081
+MEG,2015,Landings,France,8,4.3838
+MEG,2015,Discards,France,8,77.76727
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,oth,0.02124
+MEG,2015,Discards,France,oth,0.11767
+MEG,2015,Landings,France,8,0.00751
+MEG,2015,Discards,France,oth,0.22037
+MEG,2015,Landings,France,oth,0.06976
+MEG,2015,Landings,France,8,0.49874
+MEG,2015,Landings,France,oth,0.39008
+MEG,2015,Discards,France,oth,0.13065
+MEG,2015,Discards,France,oth,0.39872
+MEG,2015,Landings,France,oth,9.61029
+MEG,2015,Landings,France,8,0.93928
+MEG,2015,Landings,Belgium,oth,0
+MEG,2015,Landings,Belgium,oth,0
+MEG,2015,Landings,Belgium,oth,234.37
+MEG,2015,Landings,Belgium,oth,0.841
+MEG,2015,Landings,Belgium,oth,0.415
+MEG,2015,Landings,France,8,0.03358
+MEG,2015,Landings,France,oth,4.0542
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,oth,0.01407
+MEG,2015,Landings,France,oth,1.63799
+MEG,2015,Landings,France,oth,4.05637
+MEG,2015,Landings,France,oth,2.2679
+MEG,2015,Landings,France,oth,8.37954
+MEG,2015,Landings,France,8,26.3966
+MEG,2015,Landings,France,oth,0.09194
+MEG,2015,Landings,France,oth,11.29976
+MEG,2015,Discards,France,8,41.92247
+MEG,2015,Landings,France,oth,2.04503
+MEG,2015,Discards,France,oth,21.10692
+MEG,2015,Landings,France,8,8.22024
+MEG,2015,Discards,France,oth,0
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,8,0.03685
+MEG,2015,Landings,France,oth,0.05335
+MEG,2015,Landings,France,oth,0.00045
+MEG,2015,Landings,France,oth,3.96858
+MEG,2015,Landings,France,8,0.58811
+MEG,2015,Discards,France,oth,0
+MEG,2015,Landings,France,8,0.56071
+MEG,2015,Landings,France,oth,10.04165
+MEG,2015,Landings,France,oth,39.72439
+MEG,2015,Landings,France,oth,14.51473
+MEG,2015,Landings,France,oth,0.25363
+MEG,2015,Discards,UK (England),oth,4.08619
+MEG,2015,Landings,UK (England),oth,13.0254
+MEG,2015,Landings,France,8,7.29462
+MEG,2015,Landings,France,oth,0.11005
+MEG,2015,Landings,France,oth,0.10924
+MEG,2015,Discards,France,8,115.54017
+MEG,2015,Landings,France,oth,2.53255
+MEG,2015,Discards,France,oth,47.74164
+MEG,2015,Landings,France,8,0.30737
+MEG,2015,Discards,France,8,12.15775
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,oth,0.78142
+MEG,2015,Landings,France,8,0.00021
+MEG,2015,Landings,France,oth,0.01929
+MEG,2015,Landings,France,oth,1.40808
+MEG,2015,Landings,France,8,0.41041
+MEG,2015,Landings,France,8,0.27426
+MEG,2015,Discards,France,oth,0.57958
+MEG,2015,Discards,France,oth,0
+MEG,2015,Landings,France,oth,0.01056
+MEG,2015,Landings,France,oth,0.37235
+MEG,2015,Landings,France,8,4.60026
+MEG,2015,Landings,France,oth,0.08563
+MEG,2015,Landings,France,oth,0.22842
+MEG,2015,Landings,France,8,156.08792
+MEG,2015,Discards,France,oth,0.00418
+MEG,2015,Landings,France,oth,0.83583
+MEG,2015,Landings,France,oth,3.17172
+MEG,2015,Landings,France,oth,2.35189
+MEG,2015,Landings,France,8,109.75154
+MEG,2015,Landings,France,8,2.22277
+MEG,2015,Landings,France,oth,0.08278
+MEG,2015,Landings,France,oth,0.2435
+MEG,2015,Discards,France,8,4.78886
+MEG,2015,Landings,France,oth,0.13342
+MEG,2015,Landings,France,oth,1.01241
+MEG,2015,Landings,France,8,3.91761
+MEG,2015,Landings,France,8,5.38716
+MEG,2015,Landings,France,oth,8.34006
+MEG,2015,Landings,France,oth,18.40723
+MEG,2015,Landings,France,oth,24.75431
+MEG,2015,Landings,France,8,31.9826
+MEG,2015,Landings,Belgium,8,0.186
+MEG,2015,Landings,Belgium,oth,0.001
+MEG,2015,Landings,Belgium,oth,0.01
+MEG,2015,Landings,Belgium,oth,0.616
+MEG,2015,Discards,France,8,0.35568
+MEG,2015,Landings,France,oth,0.19325
+MEG,2015,Landings,France,8,2.01941
+MEG,2015,Landings,France,oth,8.07969
+MEG,2015,Landings,France,oth,5.66405
+MEG,2015,Discards,France,oth,0
+MEG,2015,Discards,France,oth,1.11746
+MEG,2015,Landings,France,oth,3.05454
+MEG,2015,Landings,France,oth,13.81952
+MEG,2015,Landings,France,oth,15.40246
+MEG,2015,Landings,France,oth,14.42253
+MEG,2015,Landings,France,8,19.5652
+MEG,2015,Landings,France,oth,0.44073
+MEG,2015,Landings,France,oth,285.42876
+MEG,2015,Landings,France,oth,3.3608
+MEG,2015,Landings,France,oth,1.32015
+MEG,2015,Landings,France,8,5.59553
+MEG,2015,Landings,France,oth,0.00107
+MEG,2015,Discards,France,oth,1.60123
+MEG,2015,Landings,France,oth,0.3869
+MEG,2015,Landings,France,oth,0.05572
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,oth,0.78571
+MEG,2015,Discards,France,8,0.74293
+MEG,2015,Discards,France,oth,0.83202
+MEG,2015,Discards,France,oth,0
+MEG,2015,Landings,France,oth,7.3279
+MEG,2015,Landings,France,oth,0.69372
+MEG,2015,Landings,France,8,23.33611
+MEG,2015,Landings,UK (England),oth,0.0999
+MEG,2015,Landings,UK (England),oth,0.0064
+MEG,2015,Discards,France,8,1.3181
+MEG,2015,Landings,France,oth,1.28238
+MEG,2015,Landings,France,oth,9.55728
+MEG,2015,Landings,France,8,120.29814
+MEG,2015,Landings,France,oth,0.26789
+MEG,2015,Landings,France,oth,228.07565
+MEG,2015,Landings,France,8,1.73146
+MEG,2015,Landings,France,8,110.31358
+MEG,2015,Landings,France,8,5.77233
+MEG,2015,Landings,France,oth,0.0228
+MEG,2015,Discards,France,8,4.53029
+MEG,2015,Landings,France,oth,0.11703
+MEG,2015,Landings,France,oth,1.8658
+MEG,2015,Landings,France,8,0.45892
+MEG,2015,Landings,France,8,9.02449
+MEG,2015,Landings,France,oth,18.40619
+MEG,2015,Landings,France,oth,15.46404
+MEG,2015,Landings,France,oth,4.64712
+MEG,2015,Landings,France,oth,7.67316
+MEG,2015,Landings,France,8,14.98634
+MEG,2015,Landings,France,oth,1.81164
+MEG,2015,Landings,France,oth,0.15381
+MEG,2015,Landings,France,oth,0.11281
+MEG,2015,Landings,France,oth,0.02034
+MEG,2015,Landings,France,oth,5.89986
+MEG,2015,Discards,France,oth,48.25944
+MEG,2015,Discards,France,oth,0.00229
+MEG,2015,Landings,France,oth,2.14812
+MEG,2015,Discards,France,8,0.35208
+MEG,2015,Discards,France,oth,0
+MEG,2015,Discards,France,oth,1.16001
+MEG,2015,Landings,France,8,0.60612
+MEG,2015,Landings,France,oth,0.00413
+MEG,2015,Landings,France,oth,0.02218
+MEG,2015,Landings,France,oth,0.89096
+MEG,2015,Landings,France,oth,0.01114
+MEG,2015,Discards,France,oth,0.35299
+MEG,2015,Discards,France,oth,0.34007
+MEG,2015,Landings,France,oth,3.44873
+MEG,2015,Landings,France,oth,29.55102
+MEG,2015,Landings,Belgium,oth,0
+MEG,2015,Landings,Belgium,oth,5.373
+MEG,2015,Landings,Belgium,oth,0.018
+MEG,2015,Landings,Belgium,oth,0.105
+MEG,2015,Landings,France,8,0.77954
+MEG,2015,Landings,France,oth,0.17195
+MEG,2015,Landings,France,oth,5.44729
+MEG,2015,Landings,France,8,0.04919
+MEG,2015,Landings,France,8,0.01841
+MEG,2015,Landings,France,oth,3.44696
+MEG,2015,Landings,France,oth,46.66859
+MEG,2015,Landings,France,oth,9.50693
+MEG,2015,Landings,France,oth,0.51262
+MEG,2015,Landings,France,8,2.55833
+MEG,2015,Landings,France,oth,0.02239
+MEG,2015,Landings,France,oth,0.29914
+MEG,2015,Landings,France,oth,0.19926
+MEG,2015,Landings,France,oth,24.18049
+MEG,2015,Landings,France,oth,0.0755
+MEG,2015,Landings,France,oth,0.11544
+MEG,2015,Discards,France,8,2.4751
+MEG,2015,Discards,France,8,1.27415
+MEG,2015,Landings,France,oth,0.06551
+MEG,2015,Landings,France,oth,0.00782
+MEG,2015,Landings,France,oth,0.19815
+MEG,2015,Landings,France,8,0.95855
+MEG,2015,Landings,France,8,0.11591
+MEG,2015,Landings,France,8,3.99984
+MEG,2015,Landings,France,oth,13.20662
+MEG,2015,Landings,France,oth,7.4462
+MEG,2015,Landings,France,oth,1.51959
+MEG,2015,Discards,France,oth,2.105
+MEG,2015,Discards,France,oth,0.6119
+MEG,2015,Discards,UK (England),oth,0
+MEG,2015,Landings,UK (England),oth,0.0208
+MEG,2015,Landings,France,oth,11.95226
+MEG,2015,Discards,France,oth,5.93589
+MEG,2015,Landings,France,oth,0.03422
+MEG,2015,Landings,France,8,0.00309
+MEG,2015,Landings,France,oth,44.06642
+MEG,2015,Landings,France,oth,0.17244
+MEG,2015,Landings,France,oth,1.15452
+MEG,2015,Discards,France,8,1.84079
+MEG,2015,Discards,France,oth,0.05994
+MEG,2015,Landings,France,8,0.21532
+MEG,2015,Landings,France,oth,0.02839
+MEG,2015,Landings,France,oth,0.01196
+MEG,2015,Landings,France,oth,2.34432
+MEG,2015,Landings,France,oth,0.08055
+MEG,2015,Landings,France,oth,11.29486
+MEG,2015,Discards,France,oth,0
+MEG,2015,Discards,France,oth,2.2704
+MEG,2015,Landings,France,oth,16.33631
+MEG,2015,Discards,France,oth,0
+MEG,2015,Landings,France,oth,8.5819
+MEG,2015,Landings,France,oth,15.13936
+MEG,2015,Landings,France,oth,0.07217
+MEG,2015,Landings,France,8,0.37932
+MEG,2015,Discards,France,oth,0.0199
+MEG,2015,Landings,France,oth,169.5295
+MEG,2015,Landings,France,oth,0.20627
+MEG,2015,Landings,France,oth,0.01682
+MEG,2015,Landings,France,8,10.70506
+MEG,2015,Landings,France,oth,0.36965
+MEG,2015,Landings,France,oth,3.2581
+MEG,2015,Landings,France,oth,0.0007
+MEG,2015,Landings,France,oth,0.05616
+MEG,2015,Landings,France,oth,0.00058
+MEG,2015,Landings,France,oth,0.00267
+MEG,2015,Landings,France,oth,2.74715
+MEG,2015,Landings,France,oth,17.35827
+MEG,2015,Landings,France,oth,6.62337
+MEG,2015,Landings,France,oth,0.6682
+MEG,2015,Discards,France,oth,0
+MEG,2015,Landings,France,8,0.04213
+MEG,2015,Landings,Belgium,oth,4.059
+MEG,2015,Landings,Belgium,oth,0.108
+MEG,2015,Discards,Belgium,oth,4.313
+MEG,2015,Landings,Belgium,oth,0
+MEG,2015,Landings,Belgium,oth,0
+MEG,2015,Landings,France,oth,0.00114
+MEG,2015,Landings,France,oth,3.36737
+MEG,2015,Landings,France,8,0.38184
+MEG,2015,Landings,France,8,0.14611
+MEG,2015,Landings,France,oth,9.45934
+MEG,2015,Discards,France,oth,0
+MEG,2015,Landings,France,oth,0.0455
+MEG,2015,Landings,France,oth,0.01343
+MEG,2015,Landings,France,8,1.52584
+MEG,2015,Landings,France,oth,0.13026
+MEG,2015,Discards,France,oth,0.84795
+MEG,2015,Landings,France,8,0.00094
+MEG,2015,Landings,France,oth,0.50378
+MEG,2015,Landings,France,oth,3.72641
+MEG,2015,Landings,France,8,1.37438
+MEG,2015,Landings,France,8,179.85398
+MEG,2015,Landings,France,8,28.7563
+MEG,2015,Discards,France,8,0.52605
+MEG,2015,Landings,France,oth,0.1332
+MEG,2015,Landings,France,oth,0.09302
+MEG,2015,Landings,France,oth,1.28897
+MEG,2015,Discards,France,8,0
+MEG,2015,Landings,France,oth,0.0314
+MEG,2015,Landings,France,oth,0.00265
+MEG,2015,Discards,France,oth,0
+MEG,2015,Discards,France,oth,2.05839
+MEG,2015,Landings,France,oth,3.77569
+MEG,2015,Landings,France,oth,23.0637
+MEG,2015,Landings,UK (England),oth,2.5628
+MEG,2015,Discards,UK (England),oth,0.15624
+MEG,2015,Landings,UK (England),oth,0.053
+MEG,2015,Discards,UK (England),oth,0.70623
+MEG,2015,Landings,UK (England),oth,0.6489
+MEG,2015,Landings,UK (England),oth,0.0882
+MEG,2015,Discards,UK (England),oth,0.04589
+MEG,2015,Landings,UK (England),oth,17.7178
+MEG,2015,Landings,UK (England),oth,0.0097
+MEG,2015,Landings,UK (England),oth,0.0848
+MEG,2015,Landings,UK (England),oth,0.0787
+MEG,2015,Discards,UK (England),oth,0.00146
+MEG,2015,Landings,UK (England),oth,32.7363
+MEG,2015,Landings,UK (England),oth,0.349
+MEG,2015,Landings,UK (England),oth,18.1491
+MEG,2015,Landings,UK (England),oth,123.2073
+MEG,2015,Landings,UK (England),oth,0.1002
+MEG,2015,Landings,UK (England),oth,120.4179
+MEG,2015,Landings,UK (England),oth,59.992
+MEG,2015,Landings,UK (England),oth,0.135
+MEG,2015,Landings,UK (England),oth,0.3094
+MEG,2015,Landings,UK (England),oth,134.8394
+MEG,2015,Landings,UK (England),oth,0.0018
+MEG,2015,Landings,UK (England),oth,1.3778
+MEG,2015,Landings,UK (England),oth,1.5686
+MEG,2015,Landings,Spain,oth,9.939
+MEG,2015,Landings,Spain,8,164.57
+MEG,2015,Landings,Spain,oth,2.227
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Discards,Spain,8,0.55
+MEG,2015,Landings,Spain,oth,0.15
+MEG,2015,Landings,Spain,8,0.01
+MEG,2015,Landings,Spain,8,0.83
+MEG,2015,Discards,Spain,8,0.06
+MEG,2015,Landings,Spain,8,0.02
+MEG,2015,Landings,Spain,8,0.02
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,France,oth,0.20305
+MEG,2015,Landings,France,oth,0.03255
+MEG,2015,Landings,France,oth,0.37875
+MEG,2015,Landings,France,oth,55.01234
+MEG,2015,Discards,France,oth,0.16107
+MEG,2015,Landings,France,8,0.47363
+MEG,2015,Discards,France,8,36.7782
+MEG,2015,Landings,Ireland,oth,0.071
+MEG,2015,Landings,Ireland,oth,128.979
+MEG,2015,Landings,Ireland,oth,146.948
+MEG,2015,Landings,Ireland,oth,99.851
+MEG,2015,Landings,Ireland,oth,2.225
+MEG,2015,Landings,Ireland,oth,37.52
+MEG,2015,Discards,Ireland,oth,64.2104
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Landings,UK(Scotland),oth,0.58
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0.551
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,7.069
+MEG,2015,Landings,UK(Scotland),oth,0.765
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK (England),oth,10.988
+MEG,2015,Landings,UK (England),oth,24.6126
+MEG,2015,Landings,UK (England),oth,49.7348
+MEG,2015,Landings,UK (England),oth,35.6771
+MEG,2015,Landings,UK (England),oth,0.0133
+MEG,2015,Landings,UK (England),oth,8.5077
+MEG,2015,Discards,UK (England),oth,0
+MEG,2015,Discards,UK (England),oth,1.18069
+MEG,2015,Landings,UK (England),oth,0.5937
+MEG,2015,Landings,UK (England),oth,0.002
+MEG,2015,Landings,UK (England),oth,8.855
+MEG,2015,Landings,UK (England),oth,33.5041
+MEG,2015,Landings,UK (England),oth,0.0103
+MEG,2015,Landings,UK (England),oth,0.0972
+MEG,2015,Landings,UK (England),oth,0.0341
+MEG,2015,Landings,UK (England),oth,0.1514
+MEG,2015,Landings,UK (England),oth,0.0043
+MEG,2015,Landings,UK (England),oth,0.0395
+MEG,2015,Landings,UK (England),oth,0.0062
+MEG,2015,Landings,UK (England),oth,0.3311
+MEG,2015,Landings,UK (England),oth,4.6821
+MEG,2015,Landings,UK (England),oth,0.0081
+MEG,2015,Landings,UK (England),oth,0.5349
+MEG,2015,Landings,UK (England),oth,21.9961
+MEG,2015,Discards,UK (England),oth,0
+MEG,2015,Landings,UK (England),oth,218.1127
+MEG,2015,Discards,UK (England),oth,0.70751
+MEG,2015,Landings,UK (England),oth,0.0936
+MEG,2015,Discards,UK (England),oth,16.17198
+MEG,2015,Discards,UK (England),oth,3.78099
+MEG,2015,Landings,UK (England),oth,0.0371
+MEG,2015,Landings,UK (England),oth,0.1739
+MEG,2015,Landings,UK (England),oth,16.6661
+MEG,2015,Discards,UK (England),oth,0
+MEG,2015,Landings,UK (England),oth,7.3206
+MEG,2015,Landings,Spain,8,114.51
+MEG,2015,Landings,Spain,8,1.68
+MEG,2015,Landings,Spain,8,107.11
+MEG,2015,Landings,Spain,8,5.41
+MEG,2015,Discards,Spain,8,0.01
+MEG,2015,Landings,Spain,8,0.93
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0.01
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0.33
+MEG,2015,Discards,Spain,8,0.06
+MEG,2015,Landings,France,oth,0.05277
+MEG,2015,Landings,France,8,98.00577
+MEG,2015,Landings,France,oth,0.11597
+MEG,2015,Landings,France,oth,174.17461
+MEG,2015,Landings,France,oth,0.00259
+MEG,2015,Landings,France,oth,0.00202
+MEG,2015,Landings,France,8,7.92349
+MEG,2015,Landings,Ireland,oth,0.534
+MEG,2015,Landings,Ireland,oth,14.109
+MEG,2015,Landings,Ireland,oth,48.739
+MEG,2015,Landings,Ireland,oth,699.665
+MEG,2015,Landings,Ireland,oth,29.028
+MEG,2015,Landings,Ireland,oth,2.246
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Landings,UK(Scotland),oth,3.929
+MEG,2015,Landings,UK(Scotland),oth,0.042
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0.845
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),8,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0.006
+MEG,2015,Landings,UK(Scotland),oth,1.958
+MEG,2015,Landings,UK(Scotland),oth,9.234
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK (England),oth,24.0415
+MEG,2015,Landings,UK (England),oth,35.4773
+MEG,2015,Landings,UK (England),oth,157.9756
+MEG,2015,Landings,UK (England),oth,0.001
+MEG,2015,Landings,UK (England),oth,0.1421
+MEG,2015,Landings,UK (England),oth,0.5524
+MEG,2015,Landings,UK (England),oth,51.39
+MEG,2015,Landings,UK (England),oth,0.2355
+MEG,2015,Landings,UK (England),oth,0.0181
+MEG,2015,Landings,UK (England),oth,0.854
+MEG,2015,Discards,UK (England),oth,0.17986
+MEG,2015,Landings,UK (England),oth,0.0021
+MEG,2015,Landings,UK (England),oth,26.2568
+MEG,2015,Discards,UK (England),oth,0.18593
+MEG,2015,Discards,UK (England),oth,0.00119
+MEG,2015,Landings,UK (England),oth,1.89
+MEG,2015,Discards,UK (England),oth,0.30025
+MEG,2015,Landings,UK (England),oth,0.3818
+MEG,2015,Landings,UK (England),oth,8.8332
+MEG,2015,Discards,UK (England),oth,0.45096
+MEG,2015,Landings,UK (England),oth,0.2981
+MEG,2015,Landings,UK (England),oth,0.049
+MEG,2015,Landings,UK (England),oth,37.2948
+MEG,2015,Landings,UK (England),oth,0.0006
+MEG,2015,Landings,UK (England),oth,4.7227
+MEG,2015,Landings,UK (England),oth,0.1005
+MEG,2015,Landings,UK (England),oth,27.3578
+MEG,2015,Landings,UK (England),oth,0.0154
+MEG,2015,Landings,UK (England),oth,0.0124
+MEG,2015,Landings,UK (England),oth,9.822
+MEG,2015,Landings,UK (England),oth,270.6395
+MEG,2015,Landings,UK (England),oth,205.2783
+MEG,2015,Landings,UK (England),oth,16.8068
+MEG,2015,Landings,UK (England),oth,0.9413
+MEG,2015,Discards,Spain,oth,507.346
+MEG,2015,Landings,Spain,oth,611.448
+MEG,2015,Landings,Spain,oth,2.757
+MEG,2015,Landings,Spain,8,90.22
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,oth,0
+MEG,2015,Discards,Spain,8,3.29
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Discards,Spain,8,0.64
+MEG,2015,Landings,Spain,oth,0
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,France,oth,0.11713
+MEG,2015,Landings,France,oth,5.27007
+MEG,2015,Landings,France,8,0.11413
+MEG,2015,Landings,France,oth,2.79976
+MEG,2015,Landings,France,oth,2.11623
+MEG,2015,Landings,France,8,14.31822
+MEG,2015,Landings,France,8,198.8075
+MEG,2015,Landings,France,8,4.2095
+MEG,2015,Landings,Ireland,oth,106.86
+MEG,2015,Landings,Ireland,oth,5.932
+MEG,2015,Landings,Ireland,oth,479.331
+MEG,2015,Landings,Ireland,oth,4.063
+MEG,2015,Landings,Ireland,oth,291.486
+MEG,2015,Discards,Ireland,oth,174.92285
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Landings,UK(Scotland),oth,0.228
+MEG,2015,Landings,UK(Scotland),oth,23.673
+MEG,2015,Landings,UK(Scotland),oth,0.127
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),8,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,28.928
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK (England),oth,32.9463
+MEG,2015,Landings,UK (England),oth,8.3327
+MEG,2015,Landings,UK (England),oth,33.2979
+MEG,2015,Landings,UK (England),oth,10.1563
+MEG,2015,Landings,UK (England),oth,0.0019
+MEG,2015,Landings,UK (England),oth,0.0043
+MEG,2015,Landings,UK (England),oth,11.576
+MEG,2015,Landings,UK (England),oth,27.4908
+MEG,2015,Discards,UK (England),oth,0
+MEG,2015,Landings,UK (England),oth,0.0124
+MEG,2015,Landings,UK (England),oth,23.4845
+MEG,2015,Discards,UK (England),oth,6.07405
+MEG,2015,Landings,UK (England),oth,0.1145
+MEG,2015,Landings,UK (England),oth,1.4746
+MEG,2015,Landings,UK (England),oth,2.8097
+MEG,2015,Landings,UK (England),oth,0.1889
+MEG,2015,Landings,UK (England),oth,0.2015
+MEG,2015,Landings,UK (England),oth,38.6773
+MEG,2015,Landings,UK (England),oth,0.3194
+MEG,2015,Landings,UK (England),oth,0.1611
+MEG,2015,Landings,UK (England),oth,9.9138
+MEG,2015,Landings,UK (England),oth,16.7697
+MEG,2015,Landings,UK (England),oth,19.9545
+MEG,2015,Landings,UK (England),oth,0.009
+MEG,2015,Landings,UK (England),oth,0.4872
+MEG,2015,Discards,UK (England),oth,10.57077
+MEG,2015,Landings,UK (England),oth,60.1537
+MEG,2015,Landings,UK (England),oth,0.0049
+MEG,2015,Landings,UK (England),oth,3.1985
+MEG,2015,Landings,UK (England),oth,68.5384
+MEG,2015,Landings,UK (England),oth,284.9312
+MEG,2015,Landings,UK (England),oth,21.4001
+MEG,2015,Landings,UK (England),oth,8.9596
+MEG,2015,Landings,UK (England),oth,0.0685
+MEG,2015,Landings,UK (England),oth,5.6275
+MEG,2015,Landings,Spain,oth,619.334
+MEG,2015,Landings,Spain,oth,4.538
+MEG,2015,Landings,Spain,oth,628.849
+MEG,2015,Landings,Spain,oth,498.578
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,8,0.06
+MEG,2015,Discards,Spain,8,0.35
+MEG,2015,Landings,Spain,8,0.03
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,Spain,oth,0.09
+MEG,2015,Discards,Spain,8,0.86
+MEG,2015,Landings,Spain,8,0
+MEG,2015,Landings,France,oth,15.39699
+MEG,2015,Landings,France,oth,20.31217
+MEG,2015,Discards,France,8,172.2611
+MEG,2015,Landings,France,oth,7.62528
+MEG,2015,Discards,France,oth,20.58628
+MEG,2015,Landings,France,oth,4.11859
+MEG,2015,Landings,France,oth,2.42506
+MEG,2015,Discards,France,8,0.62124
+MEG,2015,Landings,Ireland,oth,12.277
+MEG,2015,Landings,Ireland,oth,14.161
+MEG,2015,Landings,Ireland,oth,176.782
+MEG,2015,Landings,Ireland,oth,2.317
+MEG,2015,Landings,Ireland,oth,132.919
+MEG,2015,Discards,Ireland,oth,69.01377
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Discards,Ireland,oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,32.879
+MEG,2015,Landings,UK(Scotland),oth,0.502
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),8,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,0
+MEG,2015,Landings,UK(Scotland),oth,32.487
+MEG,2015,Landings,UK(Scotland),oth,3
+MEG,2015,Landings,UK (England),oth,68.5198
+MEG,2015,Landings,UK (England),oth,1.132
+MEG,2015,Landings,UK (England),oth,8.3376
+MEG,2015,Landings,UK (England),oth,103.6568
+MEG,2015,Landings,UK (England),oth,0.0046
+MEG,2015,Landings,UK (England),oth,0.0344
+MEG,2015,Discards,UK (England),oth,0
+MEG,2015,Discards,UK (England),oth,2.14562
+MEG,2015,Landings,UK (England),oth,44.0783
+MEG,2015,Landings,UK (England),oth,0.0593
+MEG,2015,Discards,UK (England),oth,0.46072
+MEG,2015,Landings,UK (England),oth,34.9882
+MEG,2016,Landings,Spain,8,23.05
+MEG,2016,Discards,Spain,oth,143.16
+MEG,2016,Landings,Spain,oth,700.63
+MEG,2016,Landings,Spain,oth,578.83
+MEG,2016,Landings,Spain,8,1.09
+MEG,2016,Landings,Spain,oth,7.81
+MEG,2016,Landings,Spain,oth,0.004
+MEG,2016,Landings,Spain,oth,0.395
+MEG,2016,Discards,France,oth,3.48685
+MEG,2016,Discards,France,oth,7.2102
+MEG,2016,Discards,France,oth,8.19436
+MEG,2016,Discards,France,8,4.75438
+MEG,2016,Landings,France,oth,10.53727
+MEG,2016,Landings,France,oth,20.20843
+MEG,2016,Landings,France,oth,0.15151
+MEG,2016,Landings,France,oth,33.0499
+MEG,2016,Landings,France,oth,14.87472
+MEG,2016,Landings,France,oth,19.96682
+MEG,2016,Landings,France,oth,25.7869
+MEG,2016,Landings,France,8,1.34241
+MEG,2016,Landings,France,8,0.00014
+MEG,2016,Landings,France,8,2.67895
+MEG,2016,Discards,France,oth,13.64972
+MEG,2016,Discards,France,8,8.0859
+MEG,2016,Landings,France,oth,0.00924
+MEG,2016,Landings,France,oth,11.82112
+MEG,2016,Landings,France,oth,0.15951
+MEG,2016,Landings,France,oth,13.58449
+MEG,2016,Landings,France,oth,17.30298
+MEG,2016,Landings,France,oth,0.02493
+MEG,2016,Landings,France,8,11.81588
+MEG,2016,Discards,France,oth,3.91212
+MEG,2016,Discards,France,8,155.85511
+MEG,2016,Landings,France,oth,16.65362
+MEG,2016,Landings,France,oth,0.38138
+MEG,2016,Landings,France,oth,0.02105
+MEG,2016,Landings,France,oth,295.58832
+MEG,2016,Landings,France,8,4.52272
+MEG,2016,Landings,France,8,0.00463
+MEG,2016,Landings,France,8,36.81735
+MEG,2016,Discards,France,oth,2.76725
+MEG,2016,Discards,France,oth,5.40989
+MEG,2016,Discards,France,8,0
+MEG,2016,Landings,France,oth,0.03753
+MEG,2016,Landings,France,oth,0.45916
+MEG,2016,Landings,France,oth,24.84222
+MEG,2016,Landings,France,oth,0.81316
+MEG,2016,Landings,France,oth,254.21765
+MEG,2016,Landings,France,oth,7.2281
+MEG,2016,Landings,France,8,0.21938
+MEG,2016,Landings,UK (England),oth,69.07
+MEG,2016,Landings,UK (England),oth,46.074
+MEG,2016,Landings,UK (England),oth,0.184
+MEG,2016,Landings,UK (England),oth,217.401
+MEG,2016,Landings,UK (England),oth,29.638
+MEG,2016,Discards,UK (England),oth,1.007
+MEG,2016,Landings,UK (England),oth,0.062
+MEG,2016,Landings,UK (England),oth,16.889
+MEG,2016,Landings,UK (England),oth,40.354
+MEG,2016,Landings,UK (England),oth,0.002
+MEG,2016,Landings,UK (England),oth,7.134
+MEG,2016,Landings,UK (England),oth,0.037
+MEG,2016,Landings,UK (England),oth,19.838
+MEG,2016,Landings,UK (England),oth,1.999
+MEG,2016,Discards,UK (England),oth,2.222
+MEG,2016,Discards,UK (England),oth,8.251
+MEG,2016,Landings,UK (England),oth,15.035
+MEG,2016,Landings,Spain,oth,460.14
+MEG,2016,Landings,Spain,oth,0.59
+MEG,2016,Landings,Spain,oth,2.56
+MEG,2016,Landings,Spain,oth,49.88
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,8,1.3
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Discards,France,oth,2.52689
+MEG,2016,Discards,France,oth,0.36784
+MEG,2016,Discards,France,8,0
+MEG,2016,Landings,France,oth,0.56561
+MEG,2016,Landings,France,oth,1.04857
+MEG,2016,Landings,France,oth,0.04596
+MEG,2016,Landings,France,oth,1.16045
+MEG,2016,Landings,France,oth,6.18117
+MEG,2016,Landings,France,oth,1.19995
+MEG,2016,Landings,France,oth,4.25315
+MEG,2016,Landings,France,oth,0.56411
+MEG,2016,Landings,France,oth,0.14092
+MEG,2016,Landings,France,8,0.0285
+MEG,2016,Landings,France,8,0.00224
+MEG,2016,Discards,France,oth,1.72638
+MEG,2016,Discards,France,oth,3.78196
+MEG,2016,Landings,France,oth,0.00042
+MEG,2016,Landings,France,oth,7.54817
+MEG,2016,Landings,France,oth,15.08601
+MEG,2016,Landings,France,oth,0.64302
+MEG,2016,Landings,France,oth,206.47704
+MEG,2016,Landings,France,oth,7.23904
+MEG,2016,Landings,France,oth,0.00016
+MEG,2016,Discards,France,oth,0
+MEG,2016,Discards,France,8,224.48005
+MEG,2016,Landings,France,oth,0.05169
+MEG,2016,Landings,France,oth,15.94627
+MEG,2016,Landings,France,oth,1.43416
+MEG,2016,Landings,France,oth,0.13146
+MEG,2016,Landings,France,oth,0.43027
+MEG,2016,Landings,France,8,201.76629
+MEG,2016,Landings,France,8,1.29414
+MEG,2016,Discards,France,oth,0.79046
+MEG,2016,Discards,France,oth,12.31684
+MEG,2016,Discards,France,8,14.16206
+MEG,2016,Landings,France,oth,4.73699
+MEG,2016,Landings,France,oth,0.00049
+MEG,2016,Landings,France,oth,2.31757
+MEG,2016,Landings,France,oth,0.23833
+MEG,2016,Landings,France,oth,41.13116
+MEG,2016,Landings,France,oth,5.21198
+MEG,2016,Landings,France,oth,1.01521
+MEG,2016,Landings,UK (England),oth,34.771
+MEG,2016,Landings,UK (England),oth,0.032
+MEG,2016,Landings,UK (England),oth,57.727
+MEG,2016,Landings,UK (England),oth,4.022
+MEG,2016,Landings,UK (England),oth,0.001
+MEG,2016,Discards,UK (England),oth,4.391
+MEG,2016,Landings,UK (England),oth,0.024
+MEG,2016,Landings,UK (England),oth,0.039
+MEG,2016,Landings,UK (England),oth,1.508
+MEG,2016,Landings,UK (England),oth,0
+MEG,2016,Landings,UK (England),oth,41.054
+MEG,2016,Landings,UK (England),oth,32.316
+MEG,2016,Landings,UK (England),oth,62.567
+MEG,2016,Landings,UK (England),oth,38.982
+MEG,2016,Discards,UK (England),oth,6.497
+MEG,2016,Discards,UK (England),oth,0
+MEG,2016,Landings,UK (England),oth,0.056
+MEG,2016,Landings,Spain,oth,6.34
+MEG,2016,Landings,Spain,8,44.52
+MEG,2016,Discards,Spain,oth,144.49
+MEG,2016,Discards,Spain,oth,293.641
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Discards,France,oth,0
+MEG,2016,Discards,France,oth,135.71797
+MEG,2016,Discards,France,oth,3.86872
+MEG,2016,Landings,France,oth,0.2589
+MEG,2016,Landings,France,oth,17.94
+MEG,2016,Landings,France,oth,0.25238
+MEG,2016,Landings,France,oth,0.34714
+MEG,2016,Landings,France,oth,104.85658
+MEG,2016,Landings,France,oth,7.15141
+MEG,2016,Landings,France,oth,2.48644
+MEG,2016,Landings,France,oth,0.04473
+MEG,2016,Landings,France,8,157.58109
+MEG,2016,Landings,France,8,17.29107
+MEG,2016,Discards,France,oth,0.20809
+MEG,2016,Discards,France,oth,3.98615
+MEG,2016,Discards,France,8,5.88379
+MEG,2016,Landings,France,oth,0.02465
+MEG,2016,Landings,France,oth,0.35504
+MEG,2016,Landings,France,oth,0.01669
+MEG,2016,Landings,France,oth,0.10315
+MEG,2016,Landings,France,oth,1.26209
+MEG,2016,Landings,France,oth,0.01664
+MEG,2016,Landings,France,8,288.27205
+MEG,2016,Discards,France,oth,5.32731
+MEG,2016,Discards,France,8,16.80393
+MEG,2016,Landings,France,oth,0.23459
+MEG,2016,Landings,France,oth,0.16759
+MEG,2016,Landings,France,oth,0.21158
+MEG,2016,Landings,France,oth,21.84045
+MEG,2016,Landings,France,8,32.99343
+MEG,2016,Landings,France,8,0.69362
+MEG,2016,Landings,France,8,11.18282
+MEG,2016,Discards,France,oth,4.89835
+MEG,2016,Discards,France,8,135.87622
+MEG,2016,Discards,France,8,0
+MEG,2016,Landings,France,oth,0.0158
+MEG,2016,Landings,France,oth,0.45193
+MEG,2016,Landings,France,oth,64.27636
+MEG,2016,Landings,France,oth,0.00104
+MEG,2016,Landings,France,oth,1.02146
+MEG,2016,Landings,France,oth,0.00433
+MEG,2016,Landings,France,8,136.67558
+MEG,2016,Landings,UK (England),oth,0.074
+MEG,2016,Landings,UK (England),oth,0.5
+MEG,2016,Landings,UK (England),oth,0.029
+MEG,2016,Landings,UK (England),oth,172.651
+MEG,2016,Landings,UK (England),oth,15.013
+MEG,2016,Discards,UK (England),oth,9.895
+MEG,2016,Landings,UK (England),oth,33.076
+MEG,2016,Landings,UK (England),oth,0.145
+MEG,2016,Landings,UK (England),oth,0.184
+MEG,2016,Landings,UK (England),oth,0.173
+MEG,2016,Landings,UK (England),oth,57.881
+MEG,2016,Landings,UK (England),oth,99.749
+MEG,2016,Landings,UK (England),oth,0.051
+MEG,2016,Landings,UK (England),oth,0.74
+MEG,2016,Discards,UK (England),oth,0.792
+MEG,2016,Landings,UK (England),oth,0.01
+MEG,2016,Landings,UK (England),oth,26.351
+MEG,2016,Landings,Spain,oth,675.37
+MEG,2016,Landings,Spain,8,45.7
+MEG,2016,Discards,Spain,oth,67.951
+MEG,2016,Landings,Spain,8,73.54
+MEG,2016,Landings,Spain,oth,0.281
+MEG,2016,Landings,Spain,8,1.24
+MEG,2016,Landings,Spain,8,0.64
+MEG,2016,Landings,Spain,oth,5.77
+MEG,2016,Discards,France,oth,0
+MEG,2016,Discards,France,oth,20.89482
+MEG,2016,Discards,France,8,164.78483
+MEG,2016,Landings,France,oth,0.00207
+MEG,2016,Landings,France,oth,2.84609
+MEG,2016,Landings,France,oth,0.10232
+MEG,2016,Landings,France,oth,0.01917
+MEG,2016,Landings,France,oth,58.00584
+MEG,2016,Landings,France,oth,0.00035
+MEG,2016,Landings,France,oth,154.69722
+MEG,2016,Landings,France,oth,0.73952
+MEG,2016,Landings,France,oth,0.25176
+MEG,2016,Landings,France,8,181.13259
+MEG,2016,Landings,France,8,0.72146
+MEG,2016,Discards,France,oth,0.40215
+MEG,2016,Discards,France,oth,31.56431
+MEG,2016,Landings,France,oth,0.04337
+MEG,2016,Landings,France,oth,14.93862
+MEG,2016,Landings,France,oth,0.15033
+MEG,2016,Landings,France,oth,3.03894
+MEG,2016,Landings,France,oth,3.15069
+MEG,2016,Landings,France,oth,0.24844
+MEG,2016,Landings,France,oth,0.01471
+MEG,2016,Discards,France,oth,0.08846
+MEG,2016,Discards,France,8,65.9062
+MEG,2016,Landings,France,oth,0.3657
+MEG,2016,Landings,France,oth,7.04101
+MEG,2016,Landings,France,oth,0.33124
+MEG,2016,Landings,France,oth,14.87831
+MEG,2016,Landings,France,oth,24.17573
+MEG,2016,Landings,France,8,132.83943
+MEG,2016,Landings,France,8,11.51471
+MEG,2016,Landings,France,8,2.31569
+MEG,2016,Discards,France,oth,104.66956
+MEG,2016,Discards,France,8,101.31357
+MEG,2016,Landings,France,oth,0.00119
+MEG,2016,Landings,France,oth,0.06921
+MEG,2016,Landings,France,oth,16.57974
+MEG,2016,Landings,France,oth,106.14399
+MEG,2016,Landings,France,oth,0.07834
+MEG,2016,Landings,France,oth,16.25207
+MEG,2016,Landings,France,oth,0.52829
+MEG,2016,Landings,UK (England),oth,36.523
+MEG,2016,Landings,UK (England),oth,0.1
+MEG,2016,Landings,UK (England),oth,7.109
+MEG,2016,Landings,UK (England),oth,0.199
+MEG,2016,Landings,UK (England),oth,0.567
+MEG,2016,Landings,UK (England),oth,0.022
+MEG,2016,Landings,UK (England),oth,0.002
+MEG,2016,Landings,UK (England),oth,14.313
+MEG,2016,Landings,UK (England),oth,0.778
+MEG,2016,Landings,UK (England),oth,107.703
+MEG,2016,Landings,UK (England),oth,45.718
+MEG,2016,Landings,UK (England),oth,92.404
+MEG,2016,Landings,UK (England),oth,163.635
+MEG,2016,Discards,UK (England),oth,0.027
+MEG,2016,Discards,UK (England),oth,0
+MEG,2016,Landings,UK (England),oth,0.009
+MEG,2016,Landings,UK (England),oth,0.183
+MEG,2016,Landings,UK (England),oth,0.189
+MEG,2016,Landings,UK (England),oth,0.417
+MEG,2016,Landings,UK (England),oth,2.604
+MEG,2016,Landings,UK (England),oth,15.269
+MEG,2016,Landings,UK (England),oth,97.09
+MEG,2016,Landings,UK (England),oth,0.016
+MEG,2016,Discards,UK (England),oth,0.197
+MEG,2016,Landings,Netherlands,oth,0.01
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,4.121
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0.89
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Landings,France,8,11.4725
+MEG,2016,Landings,Belgium,oth,279.841
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Discards,Ireland,oth,3.08285
+MEG,2016,Discards,Ireland,oth,1.72525
+MEG,2016,Discards,Ireland,oth,3.46955
+MEG,2016,Discards,Ireland,oth,27.6297
+MEG,2016,Discards,Ireland,oth,76.18801
+MEG,2016,Discards,Ireland,oth,47.07955
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0.01
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,3.71
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Ireland,oth,9.364
+MEG,2016,Landings,Ireland,oth,2.562
+MEG,2016,Landings,Ireland,oth,713.344
+MEG,2016,Landings,Ireland,oth,100.401
+MEG,2016,Landings,Ireland,oth,0.217
+MEG,2016,Landings,Ireland,oth,53.076
+MEG,2016,Landings,Ireland,oth,32.827
+MEG,2016,Landings,Ireland,oth,3.333
+MEG,2016,Landings,UK (England),oth,0.001
+MEG,2016,Landings,UK (England),oth,0.153
+MEG,2016,Landings,UK (England),oth,0.908
+MEG,2016,Landings,UK (England),oth,6.155
+MEG,2016,Landings,UK (England),oth,0.289
+MEG,2016,Landings,UK (England),oth,0.138
+MEG,2016,Landings,UK (England),oth,27.958
+MEG,2016,Discards,UK (England),oth,17.292
+MEG,2016,Discards,UK (England),oth,0.003
+MEG,2016,Landings,UK (England),oth,3.306
+MEG,2016,Landings,UK (England),oth,1.641
+MEG,2016,Landings,UK (England),oth,29.353
+MEG,2016,Landings,UK (England),oth,0.006
+MEG,2016,Landings,UK (England),oth,0.432
+MEG,2016,Landings,UK (England),oth,26.68
+MEG,2016,Landings,UK (England),oth,43.295
+MEG,2016,Landings,UK (England),oth,0.049
+MEG,2016,Landings,UK (England),oth,283.731
+MEG,2016,Discards,UK (England),oth,0
+MEG,2016,Landings,Netherlands,oth,0.007
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,1.207
+MEG,2016,Landings,UK(Scotland),oth,6.701
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,47.068
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Landings,France,8,0.54081
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0.005
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0.026
+MEG,2016,Discards,Belgium,oth,41.889
+MEG,2016,Discards,Ireland,oth,0.51602
+MEG,2016,Discards,Ireland,oth,113.19152
+MEG,2016,Discards,Ireland,oth,4.3501
+MEG,2016,Discards,Ireland,oth,5.25063
+MEG,2016,Discards,Ireland,oth,8.014
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,8,0.54
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0.05
+MEG,2016,Landings,Spain,8,0.02
+MEG,2016,Landings,Ireland,oth,12.628
+MEG,2016,Landings,Ireland,oth,7.067
+MEG,2016,Landings,Ireland,oth,11.655
+MEG,2016,Landings,Ireland,oth,98.704
+MEG,2016,Landings,Ireland,oth,28.372
+MEG,2016,Landings,Ireland,oth,0.258
+MEG,2016,Landings,Ireland,oth,0.457
+MEG,2016,Landings,Ireland,oth,75.807
+MEG,2016,Landings,UK (England),oth,0.002
+MEG,2016,Landings,UK (England),oth,16.09
+MEG,2016,Landings,UK (England),oth,0.909
+MEG,2016,Landings,UK (England),oth,0.964
+MEG,2016,Landings,UK (England),oth,30.949
+MEG,2016,Landings,UK (England),oth,101.566
+MEG,2016,Landings,UK (England),oth,0.117
+MEG,2016,Landings,UK (England),oth,2.047
+MEG,2016,Discards,UK (England),oth,0
+MEG,2016,Landings,UK (England),oth,54.955
+MEG,2016,Landings,UK (England),oth,17.472
+MEG,2016,Landings,UK (England),oth,29.312
+MEG,2016,Landings,UK (England),oth,18.712
+MEG,2016,Landings,UK (England),oth,0.032
+MEG,2016,Landings,UK (England),oth,50.093
+MEG,2016,Landings,UK (England),oth,34.89
+MEG,2016,Landings,UK (England),oth,49.061
+MEG,2016,Landings,UK (England),oth,0.316
+MEG,2016,Discards,UK (England),oth,0.148
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,2.453
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,69.35
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0.489
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,5.801
+MEG,2016,Landings,UK(Scotland),oth,6.179
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Landings,France,8,144.41382
+MEG,2016,Landings,France,8,10.53212
+MEG,2016,Landings,Belgium,oth,6.118
+MEG,2016,Landings,Belgium,oth,2.2
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0.909
+MEG,2016,Discards,Ireland,oth,2.28602
+MEG,2016,Discards,Ireland,oth,0.62546
+MEG,2016,Discards,Ireland,oth,9.76445
+MEG,2016,Discards,Ireland,oth,9.63891
+MEG,2016,Discards,Ireland,oth,4.58937
+MEG,2016,Discards,Ireland,oth,0.32972
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,1.13
+MEG,2016,Landings,Spain,8,0.45
+MEG,2016,Landings,Spain,8,0.08
+MEG,2016,Landings,Spain,8,0.72
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,2.9
+MEG,2016,Landings,Spain,8,0.01
+MEG,2016,Landings,Spain,8,0.05
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Ireland,oth,139.712
+MEG,2016,Landings,Ireland,oth,0.026
+MEG,2016,Landings,Ireland,oth,35.072
+MEG,2016,Landings,Ireland,oth,43.973
+MEG,2016,Landings,Ireland,oth,113.177
+MEG,2016,Landings,Ireland,oth,312.082
+MEG,2016,Landings,Ireland,oth,0.031
+MEG,2016,Landings,Ireland,oth,1.14
+MEG,2016,Landings,UK (England),oth,44.499
+MEG,2016,Landings,UK (England),oth,0.012
+MEG,2016,Landings,UK (England),oth,0.343
+MEG,2016,Landings,UK (England),oth,14.351
+MEG,2016,Landings,UK (England),oth,0.677
+MEG,2016,Landings,UK (England),oth,0.051
+MEG,2016,Landings,UK (England),oth,5.614
+MEG,2016,Discards,UK (England),oth,0.37
+MEG,2016,Discards,UK (England),oth,5.881
+MEG,2016,Landings,UK (England),oth,0.091
+MEG,2016,Landings,UK (England),oth,0.063
+MEG,2016,Landings,UK (England),oth,0
+MEG,2016,Landings,UK (England),oth,0.044
+MEG,2016,Landings,UK (England),oth,5.177
+MEG,2016,Landings,UK (England),oth,0.562
+MEG,2016,Landings,UK (England),oth,0.038
+MEG,2016,Landings,UK (England),oth,2.128
+MEG,2016,Discards,UK (England),oth,15.091
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0.575
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),oth,0
+MEG,2016,Landings,UK(Scotland),8,0
+MEG,2016,Landings,UK(Scotland),oth,0.547
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Logbook Registered Discard,Ireland,oth,0
+MEG,2016,Landings,France,8,0.02803
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,6.926
+MEG,2016,Landings,Belgium,oth,4.598
+MEG,2016,Landings,Belgium,oth,0
+MEG,2016,Landings,Belgium,oth,1.461
+MEG,2016,Discards,Ireland,oth,13.82123
+MEG,2016,Discards,Ireland,oth,23.78028
+MEG,2016,Discards,Ireland,oth,9.93233
+MEG,2016,Discards,Ireland,oth,0.04094
+MEG,2016,Discards,Ireland,oth,0.11157
+MEG,2016,Discards,Ireland,oth,38.92282
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0.02
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0.11
+MEG,2016,Landings,Spain,oth,0
+MEG,2016,Landings,Spain,8,0
+MEG,2016,Landings,Spain,8,0.58
+MEG,2016,Landings,Spain,oth,0.35
+MEG,2016,Landings,Ireland,oth,3.252
+MEG,2016,Landings,Ireland,oth,97.409
+MEG,2016,Landings,Ireland,oth,2.84
+MEG,2016,Landings,Ireland,oth,0.101
+MEG,2016,Landings,Ireland,oth,39.483
+MEG,2016,Landings,Ireland,oth,18.799
+MEG,2016,Landings,Ireland,oth,475.904
+MEG,2016,Landings,Ireland,oth,159.436
+MEG,2016,Landings,UK (England),oth,6.239
+MEG,2016,Landings,UK (England),oth,0.074
+MEG,2016,Landings,UK (England),oth,0.008
+MEG,2016,Landings,UK (England),oth,30.584
+MEG,2016,Landings,UK (England),oth,0.042
+MEG,2016,Landings,UK (England),oth,4.056
+MEG,2016,Landings,UK (England),oth,2.027
+MEG,2016,Discards,UK (England),oth,1.475
+MEG,2016,Discards,UK (England),oth,0
+MEG,2016,Landings,UK (England),oth,15.211
+MEG,2016,Landings,UK (England),oth,2.562
+MEG,2017,Landings,UK (England),oth,0.002
+MEG,2017,Landings,UK (England),oth,0.002
+MEG,2017,Landings,UK (England),oth,0.178
+MEG,2017,Landings,France,oth,1.37049
+MEG,2017,Landings,France,oth,1.28945
+MEG,2017,Landings,France,oth,0.49458
+MEG,2017,Landings,Spain,8,133.87
+MEG,2017,Landings,Spain,8,188.87
+MEG,2017,Landings,Spain,8,151.38
+MEG,2017,Landings,Spain,8,181.72
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,France,oth,0.76886
+MEG,2017,Landings,Belgium,oth,0.001
+MEG,2017,Landings,Spain,8,0.05
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0.01
+MEG,2017,Landings,Spain,8,0.06
+MEG,2017,Landings,Spain,8,0.2
+MEG,2017,Landings,Spain,8,0.09
+MEG,2017,Landings,France,oth,0.07258
+MEG,2017,Landings,France,oth,0.28968
+MEG,2017,Landings,France,oth,0
+MEG,2017,Landings,France,oth,0.15736
+MEG,2017,Landings,France,oth,0.29117
+MEG,2017,Landings,France,oth,2.31052
+MEG,2017,Landings,France,oth,7.85183
+MEG,2017,Landings,France,oth,2.68189
+MEG,2017,Landings,France,oth,0.84775
+MEG,2017,Landings,France,oth,0.61428
+MEG,2017,Landings,France,oth,53.62965
+MEG,2017,Landings,France,oth,108.20486
+MEG,2017,Landings,France,oth,5.62023
+MEG,2017,Landings,France,oth,73.64939
+MEG,2017,Landings,France,oth,90.25972
+MEG,2017,Discards,France,oth,0.31741
+MEG,2017,Landings,France,oth,27.88167
+MEG,2017,Landings,France,oth,0.04695
+MEG,2017,Landings,France,oth,0.25824
+MEG,2017,Landings,France,oth,0.15985
+MEG,2017,Landings,France,oth,19.49448
+MEG,2017,Landings,France,oth,0.30473
+MEG,2017,Landings,France,oth,0.02965
+MEG,2017,Landings,France,oth,28.13442
+MEG,2017,Landings,France,oth,95.47103
+MEG,2017,Landings,France,oth,0.72869
+MEG,2017,Landings,France,oth,1.1935
+MEG,2017,Landings,France,oth,26.21658
+MEG,2017,Landings,France,oth,0.72511
+MEG,2017,Landings,France,oth,0.16442
+MEG,2017,Landings,France,oth,71.65066
+MEG,2017,Landings,France,oth,52.90274
+MEG,2017,Landings,France,oth,0.01196
+MEG,2017,Landings,France,oth,2.31613
+MEG,2017,Landings,France,oth,176.17148
+MEG,2017,Landings,France,oth,120.26169
+MEG,2017,Landings,France,oth,226.73802
+MEG,2017,Landings,France,oth,0.19577
+MEG,2017,Landings,France,oth,0.28792
+MEG,2017,Discards,France,oth,11.80747
+MEG,2017,Discards,France,oth,12.46966
+MEG,2017,Discards,France,oth,22.56497
+MEG,2017,Landings,France,oth,0.29815
+MEG,2017,Landings,France,oth,4.11664
+MEG,2017,Landings,France,8,13.01754
+MEG,2017,Discards,France,8,0.02453
+MEG,2017,Discards,France,oth,0.29478
+MEG,2017,Discards,France,8,80.87176
+MEG,2017,Discards,France,8,0.10314
+MEG,2017,Landings,France,oth,28.45089
+MEG,2017,Landings,France,8,100.25025
+MEG,2017,Landings,France,oth,47.52835
+MEG,2017,Landings,France,8,108.09396
+MEG,2017,Discards,France,oth,8.98513
+MEG,2017,Discards,France,oth,85.54542
+MEG,2017,Discards,France,8,77.49005
+MEG,2017,Discards,France,8,233.19652
+MEG,2017,Discards,France,8,0.24569
+MEG,2017,Landings,France,oth,0.00253
+MEG,2017,Landings,France,oth,0.20957
+MEG,2017,Landings,France,oth,0.00081
+MEG,2017,Landings,France,oth,0.28968
+MEG,2017,Landings,France,oth,0.47879
+MEG,2017,Landings,France,oth,0.00194
+MEG,2017,Landings,France,oth,0.05816
+MEG,2017,Landings,France,oth,1.71636
+MEG,2017,Landings,France,oth,12.72778
+MEG,2017,Landings,France,oth,0.00197
+MEG,2017,Landings,France,oth,1.26365
+MEG,2017,Landings,France,oth,0.17835
+MEG,2017,Landings,France,oth,2.57207
+MEG,2017,Landings,France,oth,3.10169
+MEG,2017,Landings,France,oth,69.02005
+MEG,2017,Landings,France,oth,13.93366
+MEG,2017,Landings,France,oth,195.31756
+MEG,2017,Landings,France,oth,40.29794
+MEG,2017,Landings,France,oth,7.52541
+MEG,2017,Landings,France,oth,8.0739
+MEG,2017,Landings,France,8,90.11412
+MEG,2017,Landings,France,8,0.04572
+MEG,2017,Landings,France,8,0.36411
+MEG,2017,Landings,France,8,126.56005
+MEG,2017,Landings,France,oth,2.86242
+MEG,2017,Landings,France,oth,6.01581
+MEG,2017,Landings,France,oth,6.3177
+MEG,2017,Landings,France,oth,2.39232
+MEG,2017,Landings,France,8,18.21245
+MEG,2017,Discards,France,oth,0.38679
+MEG,2017,Discards,France,oth,5.70534
+MEG,2017,Discards,France,oth,0.51374
+MEG,2017,Discards,France,oth,5.58584
+MEG,2017,Discards,France,oth,4.76836
+MEG,2017,Discards,France,oth,8.9338
+MEG,2017,Discards,France,8,2.43982
+MEG,2017,Discards,France,8,0.03208
+MEG,2017,Landings,France,8,0.16974
+MEG,2017,Landings,France,8,1.41107
+MEG,2017,Landings,France,8,0.01072
+MEG,2017,Landings,France,8,0.18629
+MEG,2017,Landings,France,8,0.04344
+MEG,2017,Landings,France,8,1.9793
+MEG,2017,Landings,France,8,0.25829
+MEG,2017,Landings,France,8,0.32658
+MEG,2017,Landings,France,8,0.13791
+MEG,2017,Landings,France,8,0.31172
+MEG,2017,Landings,France,8,0.02667
+MEG,2017,Landings,France,oth,0.02943
+MEG,2017,Landings,France,oth,0.06998
+MEG,2017,Landings,France,oth,4.25538
+MEG,2017,Landings,France,oth,0.174
+MEG,2017,Landings,France,oth,1.73667
+MEG,2017,Landings,France,oth,0.02244
+MEG,2017,Landings,France,oth,27.19328
+MEG,2017,Landings,France,oth,28.30772
+MEG,2017,Landings,France,oth,25.30125
+MEG,2017,Landings,France,oth,0.57005
+MEG,2017,Landings,France,oth,0.04994
+MEG,2017,Landings,France,oth,40.86592
+MEG,2017,Landings,France,oth,34.80822
+MEG,2017,Landings,France,oth,0.31816
+MEG,2017,Landings,France,oth,0.15852
+MEG,2017,Landings,France,oth,0.77461
+MEG,2017,Landings,France,oth,13.84066
+MEG,2017,Landings,France,oth,9.24686
+MEG,2017,Landings,France,oth,26.45951
+MEG,2017,Landings,France,oth,3.15442
+MEG,2017,Landings,France,oth,0.00901
+MEG,2017,Landings,France,oth,0.25747
+MEG,2017,Landings,France,8,281.89985
+MEG,2017,Landings,France,8,12.72276
+MEG,2017,Landings,France,8,0.15574
+MEG,2017,Landings,France,oth,49.12013
+MEG,2017,Landings,France,8,29.91166
+MEG,2017,Discards,France,oth,9.78607
+MEG,2017,Discards,France,oth,0.23396
+MEG,2017,Discards,France,oth,0.35462
+MEG,2017,Discards,France,oth,22.0398
+MEG,2017,Discards,France,oth,5.68313
+MEG,2017,Discards,France,oth,10.21704
+MEG,2017,Landings,France,oth,0.43398
+MEG,2017,Landings,France,oth,0.41513
+MEG,2017,Landings,France,oth,0.00004
+MEG,2017,Landings,France,oth,5.94925
+MEG,2017,Landings,France,oth,3.32604
+MEG,2017,Landings,France,oth,0.01264
+MEG,2017,Landings,France,oth,0.01771
+MEG,2017,Landings,France,oth,25.08723
+MEG,2017,Landings,France,oth,15.74937
+MEG,2017,Landings,France,oth,0.0491
+MEG,2017,Landings,France,oth,2.01113
+MEG,2017,Landings,France,oth,28.70777
+MEG,2017,Landings,France,oth,19.92142
+MEG,2017,Landings,France,oth,36.68873
+MEG,2017,Landings,France,oth,0.00118
+MEG,2017,Landings,France,oth,0.05383
+MEG,2017,Landings,France,oth,0.04286
+MEG,2017,Landings,France,oth,0.07312
+MEG,2017,Landings,France,oth,0.03611
+MEG,2017,Landings,France,oth,79.56795
+MEG,2017,Landings,France,oth,41.21884
+MEG,2017,Landings,France,oth,39.442
+MEG,2017,Landings,France,oth,6.8111
+MEG,2017,Landings,France,oth,0.3937
+MEG,2017,Landings,France,oth,5.86281
+MEG,2017,Landings,France,8,1.01273
+MEG,2017,Landings,France,oth,0.21784
+MEG,2017,Landings,France,oth,223.30643
+MEG,2017,Landings,France,oth,131.0235
+MEG,2017,Landings,France,oth,8.91817
+MEG,2017,Landings,France,8,10.99877
+MEG,2017,Landings,France,8,97.10438
+MEG,2017,Landings,France,8,31.95356
+MEG,2017,Landings,France,8,2.19045
+MEG,2017,Landings,France,8,1.59063
+MEG,2017,Landings,France,8,0.49083
+MEG,2017,Landings,France,8,0.00091
+MEG,2017,Landings,France,8,0.00129
+MEG,2017,Landings,France,8,5.4837
+MEG,2017,Landings,France,8,3.09925
+MEG,2017,Landings,France,8,5.0955
+MEG,2017,Landings,France,8,0.05213
+MEG,2017,Landings,France,8,0.11472
+MEG,2017,Landings,France,8,0.0607
+MEG,2017,Landings,France,8,6.13925
+MEG,2017,Landings,France,8,7.87041
+MEG,2017,Discards,France,oth,3.21985
+MEG,2017,Discards,France,8,12.20434
+MEG,2017,Discards,France,8,17.76056
+MEG,2017,Discards,France,8,22.99158
+MEG,2017,Landings,France,oth,2.31244
+MEG,2017,Landings,France,oth,3.99396
+MEG,2017,Landings,France,oth,10.44142
+MEG,2017,Landings,France,oth,31.56848
+MEG,2017,Landings,France,oth,8.42694
+MEG,2017,Landings,France,oth,45.70227
+MEG,2017,Landings,France,oth,0.45037
+MEG,2017,Landings,France,oth,28.44042
+MEG,2017,Landings,France,oth,12.44469
+MEG,2017,Landings,France,oth,1.24251
+MEG,2017,Landings,France,oth,0.23509
+MEG,2017,Landings,France,oth,1.00682
+MEG,2017,Landings,France,oth,182.14573
+MEG,2017,Landings,France,oth,0.04693
+MEG,2017,Landings,France,oth,0.31875
+MEG,2017,Landings,France,oth,6.16917
+MEG,2017,Landings,France,oth,3.04128
+MEG,2017,Landings,France,8,22.29665
+MEG,2017,Landings,France,oth,0.00213
+MEG,2017,Landings,France,oth,7.0746
+MEG,2017,Landings,France,oth,0.21173
+MEG,2017,Landings,France,oth,0.00393
+MEG,2017,Landings,France,8,40.74287
+MEG,2017,Landings,France,8,0.50765
+MEG,2017,Landings,France,8,12.15619
+MEG,2017,Landings,France,8,0.03998
+MEG,2017,Landings,France,8,2.31471
+MEG,2017,Landings,France,8,11.9364
+MEG,2017,Landings,France,8,18.12717
+MEG,2017,Landings,France,8,1.36671
+MEG,2017,Discards,France,oth,51.67512
+MEG,2017,Discards,France,8,30.26636
+MEG,2017,Discards,France,8,22.39466
+MEG,2017,Discards,France,8,0.18741
+MEG,2017,Landings,France,oth,6.34257
+MEG,2017,Landings,France,oth,35.71932
+MEG,2017,Landings,France,oth,2.3612
+MEG,2017,Landings,France,oth,250.4426
+MEG,2017,Landings,France,oth,87.07633
+MEG,2017,Landings,France,oth,38.75184
+MEG,2017,Landings,France,oth,92.43612
+MEG,2017,Landings,France,oth,17.41491
+MEG,2017,Discards,France,oth,7.43288
+MEG,2017,Discards,France,8,1.50012
+MEG,2017,Landings,France,8,217.53531
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0.148
+MEG,2017,Landings,UK(Scotland),oth,1.025
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0.296
+MEG,2017,Landings,UK(Scotland),oth,15.808
+MEG,2017,Landings,Ireland,oth,1.914
+MEG,2017,Landings,Ireland,oth,3.25
+MEG,2017,Landings,Ireland,oth,275.009
+MEG,2017,Landings,Ireland,oth,73.38
+MEG,2017,Landings,Ireland,oth,90.774
+MEG,2017,Landings,Ireland,oth,569.082
+MEG,2017,Landings,Ireland,oth,32.598
+MEG,2017,Landings,Ireland,oth,89.798
+MEG,2017,Landings,Ireland,oth,188.248
+MEG,2017,Landings,Ireland,oth,503.484
+MEG,2017,Landings,Ireland,oth,103.749
+MEG,2017,Landings,UK (England),oth,48.037
+MEG,2017,Landings,UK (England),oth,0.016
+MEG,2017,Landings,UK (England),oth,0.119
+MEG,2017,Landings,UK (England),oth,0.33
+MEG,2017,Landings,UK (England),oth,0.002
+MEG,2017,Landings,UK (England),oth,25.912
+MEG,2017,Landings,UK (England),oth,3.831
+MEG,2017,Landings,UK (England),oth,32.916
+MEG,2017,Landings,UK (England),oth,13.249
+MEG,2017,Landings,UK (England),oth,17.035
+MEG,2017,Landings,UK (England),oth,0.138
+MEG,2017,Landings,UK (England),oth,0.123
+MEG,2017,Landings,UK (England),oth,0.002
+MEG,2017,Landings,UK (England),oth,8.851
+MEG,2017,Landings,UK (England),oth,3.113
+MEG,2017,Landings,UK (England),oth,30.675
+MEG,2017,Landings,UK (England),oth,5.243
+MEG,2017,Landings,UK (England),oth,0.104
+MEG,2017,Landings,UK (England),oth,0.03
+MEG,2017,Landings,UK (England),oth,2.242
+MEG,2017,Landings,UK (England),oth,26.115
+MEG,2017,Landings,UK (England),oth,13.384
+MEG,2017,Landings,UK (England),oth,15.531
+MEG,2017,Landings,UK (England),oth,48.718
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Landings,UK (England),oth,0.522
+MEG,2017,Landings,UK (England),oth,0.71
+MEG,2017,Landings,UK (England),oth,0.039
+MEG,2017,Landings,UK (England),oth,1.625
+MEG,2017,Landings,UK (England),oth,4.296
+MEG,2017,Landings,UK (England),oth,113.178
+MEG,2017,Landings,UK (England),oth,0.001
+MEG,2017,Discards,UK (England),oth,1.313
+MEG,2017,Discards,UK (England),oth,10.099
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Discards,UK (England),oth,4.15
+MEG,2017,Landings,UK (England),oth,29.557
+MEG,2017,Landings,UK (England),oth,18.233
+MEG,2017,Landings,UK (England),oth,12.955
+MEG,2017,Landings,UK (England),oth,0.125
+MEG,2017,Landings,UK (England),oth,5.285
+MEG,2017,Landings,UK (England),oth,1.511
+MEG,2017,Landings,UK (England),oth,13.079
+MEG,2017,Landings,UK (England),oth,7.107
+MEG,2017,Landings,UK (England),oth,49.902
+MEG,2017,Landings,UK (England),oth,78.419
+MEG,2017,Landings,UK (England),oth,11.898
+MEG,2017,Landings,UK (England),oth,10.644
+MEG,2017,Landings,UK (England),oth,0.021
+MEG,2017,Landings,UK (England),oth,1.105
+MEG,2017,Landings,UK (England),oth,25.019
+MEG,2017,Landings,UK (England),oth,77.922
+MEG,2017,Landings,UK (England),oth,0.172
+MEG,2017,Landings,UK (England),oth,0.015
+MEG,2017,Landings,UK (England),oth,0.004
+MEG,2017,Landings,UK (England),oth,1.077
+MEG,2017,Landings,UK (England),oth,2.442
+MEG,2017,Landings,UK (England),oth,267.451
+MEG,2017,Landings,UK (England),oth,161.365
+MEG,2017,Landings,UK (England),oth,0.282
+MEG,2017,Landings,UK (England),oth,19.956
+MEG,2017,Landings,UK (England),oth,3.087
+MEG,2017,Landings,UK (England),oth,0.662
+MEG,2017,Landings,UK (England),oth,49.488
+MEG,2017,Landings,UK (England),oth,4.461
+MEG,2017,Landings,UK (England),oth,1.297
+MEG,2017,Landings,UK (England),oth,8.61
+MEG,2017,Landings,UK (England),oth,23.601
+MEG,2017,Landings,UK (England),oth,0.149
+MEG,2017,Landings,UK (England),oth,0.002
+MEG,2017,Landings,UK (England),oth,34.119
+MEG,2017,Landings,UK (England),oth,0.008
+MEG,2017,Landings,UK (England),oth,1.714
+MEG,2017,Landings,UK (England),oth,26.106
+MEG,2017,Landings,UK (England),oth,0.234
+MEG,2017,Landings,UK (England),oth,0.366
+MEG,2017,Landings,UK (England),oth,0.034
+MEG,2017,Landings,UK (England),oth,0.001
+MEG,2017,Landings,UK (England),oth,0.093
+MEG,2017,Landings,UK (England),oth,25.125
+MEG,2017,Landings,UK (England),oth,33.435
+MEG,2017,Landings,UK (England),oth,8.033
+MEG,2017,Landings,UK (England),oth,34.474
+MEG,2017,Landings,UK (England),oth,42.419
+MEG,2017,Landings,UK (England),oth,19.122
+MEG,2017,Landings,UK (England),oth,22.301
+MEG,2017,Landings,UK (England),oth,0.32
+MEG,2017,Landings,UK (England),oth,0.049
+MEG,2017,Landings,UK (England),oth,60.583
+MEG,2017,Landings,UK (England),oth,45.804
+MEG,2017,Landings,UK (England),oth,0.097
+MEG,2017,Landings,UK (England),oth,4.323
+MEG,2017,Landings,UK (England),oth,15.159
+MEG,2017,Landings,UK (England),oth,146.457
+MEG,2017,Landings,UK (England),oth,24.192
+MEG,2017,Landings,UK (England),oth,1.559
+MEG,2017,Landings,UK (England),oth,82.204
+MEG,2017,Discards,UK (England),oth,5.807
+MEG,2017,Discards,UK (England),oth,187.634
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Discards,UK (England),oth,6.554
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Discards,UK (England),oth,3.827
+MEG,2017,Discards,UK (England),oth,23.636
+MEG,2017,Landings,UK (England),oth,0.245
+MEG,2017,Landings,UK (England),oth,32.598
+MEG,2017,Landings,UK (England),oth,0.319
+MEG,2017,Landings,UK (England),oth,0.005
+MEG,2017,Landings,UK (England),oth,0
+MEG,2017,Landings,UK (England),oth,0.865
+MEG,2017,Landings,UK (England),oth,1.445
+MEG,2017,Landings,UK (England),oth,0.062
+MEG,2017,Landings,UK (England),oth,2.941
+MEG,2017,Landings,UK (England),oth,0.157
+MEG,2017,Landings,UK (England),oth,0.139
+MEG,2017,Landings,UK (England),oth,1.113
+MEG,2017,Landings,UK (England),oth,21.894
+MEG,2017,Landings,UK (England),oth,7.567
+MEG,2017,Landings,UK (England),oth,25.124
+MEG,2017,Landings,UK (England),oth,25.655
+MEG,2017,Landings,UK (England),oth,55.9
+MEG,2017,Landings,UK (England),oth,30.876
+MEG,2017,Landings,UK (England),oth,15.546
+MEG,2017,Landings,UK (England),oth,0.398
+MEG,2017,Landings,UK (England),oth,90.787
+MEG,2017,Landings,UK (England),oth,34.773
+MEG,2017,Landings,UK (England),oth,0.029
+MEG,2017,Landings,UK (England),oth,0.026
+MEG,2017,Landings,UK (England),oth,220.379
+MEG,2017,Landings,UK (England),oth,0.025
+MEG,2017,Landings,UK (England),oth,0.076
+MEG,2017,Landings,UK (England),oth,5.784
+MEG,2017,Discards,UK (England),oth,0.79
+MEG,2017,Discards,UK (England),oth,3.686
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Discards,UK (England),oth,3.03
+MEG,2017,Discards,UK (England),oth,0
+MEG,2017,Discards,UK (England),oth,14.583
+MEG,2017,Landings,UK(Northern Ireland),oth,0.086
+MEG,2017,Landings,UK(Northern Ireland),oth,0.132
+MEG,2017,Landings,UK(Northern Ireland),oth,1.378
+MEG,2017,Landings,UK(Northern Ireland),oth,0.765
+MEG,2017,Landings,UK(Northern Ireland),oth,0.146
+MEG,2017,Landings,UK(Northern Ireland),oth,0.132
+MEG,2017,Landings,UK(Northern Ireland),oth,0.15
+MEG,2017,Landings,UK(Northern Ireland),oth,0.091
+MEG,2017,Landings,UK(Northern Ireland),oth,0.779
+MEG,2017,Landings,UK(Northern Ireland),oth,0.028
+MEG,2017,Landings,UK(Northern Ireland),oth,0.042
+MEG,2017,Landings,UK(Northern Ireland),oth,0.56
+MEG,2017,Landings,UK(Northern Ireland),oth,0.108
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0.24
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,3.82
+MEG,2017,Landings,Spain,8,0.62
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0.15
+MEG,2017,Landings,Spain,8,0.03
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,Spain,8,8.9
+MEG,2017,Landings,Spain,8,0
+MEG,2017,Landings,France,oth,0.10637
+MEG,2017,Landings,France,oth,0.3362
+MEG,2017,Landings,France,oth,1.66805
+MEG,2017,Landings,France,oth,1.4651
+MEG,2017,Landings,France,oth,1.12616
+MEG,2017,Landings,France,8,0.03814
+MEG,2017,Landings,France,8,0.08522
+MEG,2017,Landings,France,8,19.77459
+MEG,2017,Landings,France,8,0.02189
+MEG,2017,Landings,France,8,0.93965
+MEG,2017,Landings,France,8,0.29273
+MEG,2017,Landings,France,oth,3.75648
+MEG,2017,Landings,France,oth,0.03058
+MEG,2017,Landings,France,oth,0.06652
+MEG,2017,Landings,France,oth,97.85912
+MEG,2017,Landings,France,oth,170.44671
+MEG,2017,Landings,France,oth,0.00804
+MEG,2017,Landings,France,oth,1.0853
+MEG,2017,Landings,France,oth,8.23351
+MEG,2017,Landings,France,oth,0.67936
+MEG,2017,Landings,France,oth,9.02416
+MEG,2017,Landings,France,8,6.10888
+MEG,2017,Landings,France,8,0.08015
+MEG,2017,Landings,France,8,2.27118
+MEG,2017,Landings,France,8,0.19253
+MEG,2017,Landings,France,8,0.07676
+MEG,2017,Landings,France,oth,0.08135
+MEG,2017,Landings,France,oth,0.08285
+MEG,2017,Landings,France,oth,0.41714
+MEG,2017,Landings,France,oth,0.01253
+MEG,2017,Landings,France,oth,4.82763
+MEG,2017,Landings,France,oth,0.58548
+MEG,2017,Landings,France,8,0.80439
+MEG,2017,Landings,France,8,0.00016
+MEG,2017,Landings,France,8,0.29498
+MEG,2017,Discards,France,8,2.45993
+MEG,2017,Landings,France,oth,0
+MEG,2017,Landings,France,oth,0.01117
+MEG,2017,Landings,France,oth,0.55492
+MEG,2017,Landings,France,oth,0.12209
+MEG,2017,Landings,France,8,0.00033
+MEG,2017,Landings,France,oth,1.40806
+MEG,2017,Landings,France,oth,0.06541
+MEG,2017,Landings,France,oth,1.47862
+MEG,2017,Landings,France,oth,1.59729
+MEG,2017,Landings,France,oth,0.02178
+MEG,2017,Landings,France,oth,0.03217
+MEG,2017,Landings,France,oth,0.02645
+MEG,2017,Landings,France,oth,0.37608
+MEG,2017,Landings,France,8,0.14207
+MEG,2017,Landings,Belgium,oth,1.376
+MEG,2017,Landings,Belgium,8,0.009
+MEG,2017,Landings,Belgium,oth,0.286
+MEG,2017,Landings,Belgium,oth,0.419
+MEG,2017,Landings,Belgium,oth,5.942
+MEG,2017,Landings,Belgium,8,0.013
+MEG,2017,Discards,Belgium,oth,40.427
+MEG,2017,Landings,Belgium,oth,349.401
+MEG,2017,Landings,Belgium,oth,2.438
+MEG,2017,Discards,Ireland,oth,108.26896
+MEG,2017,Discards,Ireland,oth,23.68263
+MEG,2017,Discards,Ireland,oth,59.1378
+MEG,2017,Discards,Ireland,oth,19.31012
+MEG,2017,Discards,Ireland,oth,11.41986
+MEG,2017,Discards,Ireland,oth,79.91701
+MEG,2017,Discards,Ireland,oth,7.00986
+MEG,2017,Discards,Ireland,oth,9.2316
+MEG,2017,Landings,Spain,oth,0.74
+MEG,2017,Landings,Spain,oth,720.62
+MEG,2017,Discards,Spain,oth,210.423
+MEG,2017,Discards,Spain,oth,280.831
+MEG,2017,Landings,Spain,oth,1.47
+MEG,2017,Landings,Spain,oth,627.07
+MEG,2017,Discards,Spain,oth,104.1
+MEG,2017,Landings,Spain,oth,1.92
+MEG,2017,Landings,Spain,oth,3.73
+MEG,2017,Landings,Spain,oth,713.76
+MEG,2017,Landings,Spain,oth,438.63
+MEG,2017,Discards,Spain,oth,111.052
+MEG,2017,Landings,UK(Scotland),oth,1.444
+MEG,2017,Landings,UK(Scotland),oth,8.231
+MEG,2017,Landings,UK(Scotland),oth,0.216
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,7.483
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0.65
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0.299
+MEG,2017,Landings,UK(Scotland),oth,0.73
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,1.434
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,9.066
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,4.028
+MEG,2017,Landings,UK(Scotland),oth,31.476
+MEG,2017,Landings,UK(Scotland),oth,0.226
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,1.078
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,6.173
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0
+MEG,2017,Landings,UK(Scotland),oth,0.179
+MEG,2017,Landings,UK(Scotland),oth,5.126
+MEG,2017,Landings,UK(Scotland),oth,0.847
+MEG,2017,Landings,UK(Scotland),oth,65.712
+MEG,2017,Landings,UK(Scotland),oth,13.532
+MEG,2017,Landings,UK(Scotland),oth,0.303
+MEG,2017,Landings,Ireland,oth,2.995
+MEG,2017,Landings,Ireland,oth,13.767
+MEG,2017,Landings,Ireland,oth,0.375
+MEG,2017,Landings,Ireland,oth,39.752
+MEG,2017,Landings,Ireland,oth,0.9
+MEG,2017,Landings,Ireland,oth,1.89
+MEG,2017,Landings,Ireland,oth,3.168
+MEG,2017,Landings,Ireland,oth,448.382
+MEG,2017,Landings,Ireland,oth,10.457
+MEG,2017,Landings,Ireland,oth,0.05
+MEG,2017,Landings,Ireland,oth,5.319
+MEG,2017,Landings,UK (England),oth,0.354
+MEG,2017,Landings,UK (England),oth,1.107
+MEG,2017,Landings,UK(Northern Ireland),oth,0.061
+MEG,2017,Landings,France,oth,0.02758
+MEG,2017,Landings,France,oth,0.22697
+MEG,2017,Landings,France,oth,0.74711
+MEG,2017,Discards,Ireland,oth,1.31555
+MEG,2017,Discards,Ireland,oth,0.11323
+MEG,2017,Discards,Ireland,oth,0.00702
+MEG,2017,Discards,Ireland,oth,1.73196
+MEG,2017,Discards,Ireland,oth,0.66916
+MEG,2017,Discards,Ireland,oth,56.4089
+MEG,2018,Discards,France,oth,0
+MEG,2018,Discards,France,oth,0
+MEG,2018,Landings,France,oth,0.53307
+MEG,2018,Discards,France,oth,0.29314
+MEG,2018,Landings,France,oth,0.02527
+MEG,2018,Landings,UK (England),oth,0.116
+MEG,2018,Landings,France,8,17.40396
+MEG,2018,Landings,France,oth,0.14496
+MEG,2018,Discards,France,oth,0
+MEG,2018,Landings,France,oth,0.08982
+MEG,2018,Landings,UK (England),oth,0.047
+MEG,2018,Discards,UK (England),oth,0
+MEG,2018,Landings,UK (England),oth,0.15
+MEG,2018,Landings,UK (England),oth,0.03
+MEG,2018,Landings,France,8,15.69541
+MEG,2018,Landings,France,8,37.58301
+MEG,2018,Landings,France,8,271.51405
+MEG,2018,Landings,France,8,0.91628
+MEG,2018,Discards,France,8,31.25929
+MEG,2018,Discards,France,8,21.41196
+MEG,2018,Landings,France,8,21.67678
+MEG,2018,Landings,France,8,11.66905
+MEG,2018,Discards,France,8,6.35105
+MEG,2018,Landings,France,8,20.24151
+MEG,2018,Landings,France,8,2.71936
+MEG,2018,Landings,France,8,0.86048
+MEG,2018,Landings,France,8,10.53043
+MEG,2018,Discards,France,8,1.12322
+MEG,2018,Landings,France,8,270.92728
+MEG,2018,Landings,France,8,2.28004
+MEG,2018,Landings,France,8,78.79109
+MEG,2018,Landings,France,8,44.18496
+MEG,2018,Discards,France,8,0.03312
+MEG,2018,Discards,France,8,114.17505
+MEG,2018,Landings,France,8,8.16801
+MEG,2018,Landings,France,8,2.00096
+MEG,2018,Landings,France,8,1.33595
+MEG,2018,Landings,France,8,0.16217
+MEG,2018,Landings,France,8,6.13635
+MEG,2018,Discards,France,8,0
+MEG,2018,Discards,France,8,1.8853
+MEG,2018,Discards,France,8,76.40273
+MEG,2018,Discards,France,8,2.58143
+MEG,2018,Discards,France,8,50.18834
+MEG,2018,Landings,France,8,100.85723
+MEG,2018,Landings,France,8,10.52763
+MEG,2018,Landings,France,8,15.48497
+MEG,2018,Landings,France,8,0.40696
+MEG,2018,Landings,France,8,3.68825
+MEG,2018,Landings,France,8,27.07482
+MEG,2018,Landings,France,8,1.42445
+MEG,2018,Discards,France,8,88.04497
+MEG,2018,Landings,France,8,88.25583
+MEG,2018,Landings,France,8,125.13546
+MEG,2018,Landings,France,8,154.44421
+MEG,2018,Landings,France,8,2.79276
+MEG,2018,Landings,France,8,12.97696
+MEG,2018,Discards,France,8,107.30672
+MEG,2018,Discards,France,8,40.50394
+MEG,2018,Landings,France,8,22.46609
+MEG,2018,Landings,France,8,0.00065
+MEG,2018,Landings,France,8,1.76924
+MEG,2018,Landings,France,oth,155.43955
+MEG,2018,Landings,France,oth,3.6846
+MEG,2018,Landings,France,oth,0.49592
+MEG,2018,Landings,France,oth,7.99369
+MEG,2018,Discards,France,oth,0
+MEG,2018,Discards,France,oth,3.25059
+MEG,2018,Discards,France,oth,3.14914
+MEG,2018,Discards,France,oth,2.32058
+MEG,2018,Landings,France,oth,10.46635
+MEG,2018,Landings,France,oth,4.95352
+MEG,2018,Landings,France,oth,6.06686
+MEG,2018,Landings,France,oth,28.90659
+MEG,2018,Landings,France,oth,45.86948
+MEG,2018,Landings,France,oth,2.6394
+MEG,2018,Landings,France,oth,10.74896
+MEG,2018,Landings,France,oth,1.58037
+MEG,2018,Landings,France,oth,0.07656
+MEG,2018,Landings,France,oth,27.30424
+MEG,2018,Landings,France,oth,0.13087
+MEG,2018,Landings,France,oth,25.03086
+MEG,2018,Landings,France,oth,124.68533
+MEG,2018,Landings,France,oth,9.08207
+MEG,2018,Landings,France,8,0.08697
+MEG,2018,Discards,France,oth,8.67539
+MEG,2018,Landings,France,oth,29.43137
+MEG,2018,Landings,France,oth,137.93436
+MEG,2018,Landings,France,oth,0.09801
+MEG,2018,Landings,France,oth,1.8626
+MEG,2018,Landings,France,oth,2.4273
+MEG,2018,Landings,France,oth,74.76362
+MEG,2018,Landings,France,oth,6.99451
+MEG,2018,Landings,France,oth,109.62961
+MEG,2018,Landings,France,oth,0.45903
+MEG,2018,Landings,France,oth,11.84321
+MEG,2018,Landings,France,oth,4.59088
+MEG,2018,Landings,France,oth,13.41725
+MEG,2018,Landings,France,oth,0.00004
+MEG,2018,Landings,France,oth,2.99954
+MEG,2018,Landings,France,oth,7.45729
+MEG,2018,Discards,France,oth,0
+MEG,2018,Discards,France,oth,0
+MEG,2018,Discards,France,oth,4.95336
+MEG,2018,Landings,France,oth,102.36112
+MEG,2018,Landings,France,oth,0.7113
+MEG,2018,Landings,France,oth,9.67275
+MEG,2018,Landings,France,oth,0.06253
+MEG,2018,Landings,France,oth,28.26402
+MEG,2018,Landings,France,oth,8.4318
+MEG,2018,Landings,France,8,3.59045
+MEG,2018,Landings,France,8,9.454
+MEG,2018,Landings,France,oth,109.85359
+MEG,2018,Landings,France,oth,0.37767
+MEG,2018,Discards,France,oth,9.44808
+MEG,2018,Landings,France,oth,21.61351
+MEG,2018,Landings,France,oth,0.82164
+MEG,2018,Landings,France,oth,21.56721
+MEG,2018,Landings,France,oth,11.30014
+MEG,2018,Discards,Belgium,oth,65.845
+MEG,2018,Landings,Belgium,oth,3.83
+MEG,2018,Landings,Belgium,oth,6.434
+MEG,2018,Landings,Belgium,oth,2.585
+MEG,2018,Landings,Belgium,oth,4.79
+MEG,2018,Landings,Belgium,oth,325.267
+MEG,2018,Landings,Belgium,oth,3.913
+MEG,2018,Landings,France,oth,9.29411
+MEG,2018,Landings,France,oth,3.54815
+MEG,2018,Discards,France,oth,1.04814
+MEG,2018,Discards,France,oth,0
+MEG,2018,Discards,France,oth,24.33299
+MEG,2018,Discards,France,oth,20.17046
+MEG,2018,Landings,France,oth,0.39738
+MEG,2018,Landings,France,oth,11.41078
+MEG,2018,Landings,France,oth,15.24741
+MEG,2018,Landings,France,oth,76.81352
+MEG,2018,Landings,France,oth,2.05569
+MEG,2018,Landings,France,oth,1.26654
+MEG,2018,Landings,France,oth,7.64731
+MEG,2018,Landings,France,oth,0.27082
+MEG,2018,Landings,France,oth,0.2385
+MEG,2018,Landings,France,oth,0.06325
+MEG,2018,Landings,France,oth,0.09603
+MEG,2018,Landings,France,oth,0.10422
+MEG,2018,Landings,France,8,0.11347
+MEG,2018,Discards,France,oth,4.54754
+MEG,2018,Discards,France,oth,0
+MEG,2018,Discards,France,oth,2.77004
+MEG,2018,Landings,France,oth,7.60295
+MEG,2018,Landings,France,oth,0.04724
+MEG,2018,Landings,France,oth,238.72869
+MEG,2018,Landings,France,oth,0.18215
+MEG,2018,Landings,France,oth,1.46594
+MEG,2018,Landings,France,oth,0.53523
+MEG,2018,Landings,France,oth,20.9553
+MEG,2018,Landings,France,oth,10.00506
+MEG,2018,Landings,France,oth,3.71819
+MEG,2018,Landings,France,oth,7.36263
+MEG,2018,Landings,France,oth,30.08995
+MEG,2018,Landings,France,8,1.30586
+MEG,2018,Landings,France,oth,177.89972
+MEG,2018,Landings,France,oth,198.58267
+MEG,2018,Landings,France,oth,0.13996
+MEG,2018,Landings,France,oth,4.02756
+MEG,2018,Discards,France,oth,0.17355
+MEG,2018,Discards,France,oth,3.35178
+MEG,2018,Discards,France,oth,5.59049
+MEG,2018,Discards,France,oth,2.61227
+MEG,2018,Landings,France,oth,0.57885
+MEG,2018,Landings,France,oth,4.96651
+MEG,2018,Landings,France,oth,157.35287
+MEG,2018,Landings,France,oth,30.69089
+MEG,2018,Landings,France,oth,14.1738
+MEG,2018,Landings,France,oth,0.96724
+MEG,2018,Landings,France,oth,0.54607
+MEG,2018,Landings,France,oth,0.56314
+MEG,2018,Landings,France,oth,0.00195
+MEG,2018,Landings,France,oth,10.86589
+MEG,2018,Landings,France,oth,15.37086
+MEG,2018,Landings,France,oth,2.33612
+MEG,2018,Landings,France,oth,1.20465
+MEG,2018,Landings,France,oth,31.64361
+MEG,2018,Landings,France,oth,11.9168
+MEG,2018,Landings,France,oth,9.27663
+MEG,2018,Landings,France,oth,54.03303
+MEG,2018,Landings,France,oth,11.91136
+MEG,2018,Landings,France,oth,0.91241
+MEG,2018,Discards,France,oth,8.39586
+MEG,2018,Discards,France,oth,80.0963
+MEG,2018,Landings,France,oth,36.04273
+MEG,2018,Landings,France,oth,39.32797
+MEG,2018,Landings,France,oth,41.10965
+MEG,2018,Landings,France,oth,3.16362
+MEG,2018,Landings,France,oth,15.11231
+MEG,2018,Landings,France,oth,216.44157
+MEG,2018,Landings,France,oth,129.61798
+MEG,2018,Landings,France,oth,174.60781
+MEG,2018,Landings,France,oth,0.44066
+MEG,2018,Landings,France,oth,0.97385
+MEG,2018,Landings,France,oth,2.5883
+MEG,2018,Landings,France,oth,0.4602
+MEG,2018,Landings,France,oth,3.63076
+MEG,2018,Landings,France,oth,11.31067
+MEG,2018,Landings,France,oth,0.13227
+MEG,2018,Landings,France,oth,3.88984
+MEG,2018,Landings,France,oth,24.60139
+MEG,2018,Landings,France,oth,39.95447
+MEG,2018,Landings,France,oth,1.85028
+MEG,2018,Landings,France,oth,1.00051
+MEG,2018,Landings,France,oth,26.38923
+MEG,2018,Landings,France,oth,95.41561
+MEG,2018,Landings,France,oth,14.30899
+MEG,2018,Landings,France,oth,46.40479
+MEG,2018,Landings,France,oth,68.78152
+MEG,2018,Landings,France,oth,10.77931
+MEG,2018,Landings,France,oth,0.25069
+MEG,2018,Landings,France,oth,22.11067
+MEG,2018,Landings,UK (England),oth,17.724
+MEG,2018,Landings,UK (England),oth,28.726
+MEG,2018,Landings,UK (England),oth,1.153
+MEG,2018,Landings,UK (England),oth,51.74
+MEG,2018,Landings,UK (England),oth,4.143
+MEG,2018,Landings,UK (England),oth,28.429
+MEG,2018,Discards,UK (England),oth,2.029
+MEG,2018,Landings,UK (England),oth,35.11
+MEG,2018,Landings,UK (England),oth,0.514
+MEG,2018,Landings,UK (England),oth,0.816
+MEG,2018,Landings,UK (England),oth,0.303
+MEG,2018,Landings,UK (England),oth,0.598
+MEG,2018,Discards,UK (England),oth,8.629
+MEG,2018,Landings,UK (England),oth,1.809
+MEG,2018,Landings,UK (England),oth,7.287
+MEG,2018,Landings,UK (England),oth,16.988
+MEG,2018,Landings,UK (England),oth,0.001
+MEG,2018,Landings,UK (England),oth,0.888
+MEG,2018,Landings,UK (England),oth,3.6
+MEG,2018,Landings,UK (England),oth,0.004
+MEG,2018,Landings,UK (England),oth,28.565
+MEG,2018,Landings,UK (England),oth,28.648
+MEG,2018,Landings,UK (England),oth,15.645
+MEG,2018,Landings,UK (England),oth,6.017
+MEG,2018,Landings,UK (England),oth,0.163
+MEG,2018,Landings,UK (England),oth,0.165
+MEG,2018,Landings,UK (England),oth,2.945
+MEG,2018,Landings,UK (England),oth,2.895
+MEG,2018,Landings,UK (England),oth,24.5
+MEG,2018,Landings,UK (England),oth,0.026
+MEG,2018,Landings,UK (England),oth,4.966
+MEG,2018,Landings,UK (England),oth,26.521
+MEG,2018,Landings,UK (England),oth,0.391
+MEG,2018,Landings,UK (England),oth,4.443
+MEG,2018,Landings,UK (England),oth,5.41
+MEG,2018,Discards,UK (England),oth,6.103
+MEG,2018,Discards,UK (England),oth,1.808
+MEG,2018,Landings,Spain,oth,37.57
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Landings,Spain,oth,2.49
+MEG,2018,Landings,Spain,oth,67.69
+MEG,2018,Landings,Spain,oth,0.07
+MEG,2018,Landings,Spain,oth,1.17
+MEG,2018,Landings,Spain,oth,0.28
+MEG,2018,Landings,Spain,oth,0
+MEG,2018,Landings,Spain,oth,152.14
+MEG,2018,Landings,Spain,oth,68.82
+MEG,2018,Landings,Spain,oth,0
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Landings,Spain,oth,3.798
+MEG,2018,Landings,Spain,oth,13.17
+MEG,2018,Landings,Spain,oth,0.46
+MEG,2018,Landings,Spain,oth,0.17
+MEG,2018,Landings,Spain,oth,134.33
+MEG,2018,Landings,Spain,oth,0.09
+MEG,2018,Landings,Spain,oth,1.21
+MEG,2018,Landings,Spain,oth,553.09
+MEG,2018,Landings,Spain,oth,44.34
+MEG,2018,Landings,Spain,oth,254.77
+MEG,2018,Landings,Spain,oth,0.77
+MEG,2018,Landings,Spain,oth,7.19
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Landings,Spain,oth,4.25
+MEG,2018,Landings,Spain,oth,4.199
+MEG,2018,Landings,Spain,oth,51.44
+MEG,2018,Landings,Spain,oth,0.29
+MEG,2018,Landings,Spain,oth,374.74
+MEG,2018,Landings,Spain,oth,102.08
+MEG,2018,Landings,Spain,oth,0.36
+MEG,2018,Landings,Spain,oth,0.67
+MEG,2018,Landings,Spain,oth,15.34
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Landings,Spain,oth,37.41
+MEG,2018,Landings,Spain,oth,5.65
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Landings,Spain,oth,2.89
+MEG,2018,Landings,Spain,oth,26.75
+MEG,2018,Landings,Spain,oth,5.83
+MEG,2018,Logbook Registered Discard,Spain,oth,0
+MEG,2018,Discards,Spain,oth,5.184
+MEG,2018,Discards,Spain,oth,1.296
+MEG,2018,Discards,Spain,oth,2.593
+MEG,2018,Discards,Spain,oth,3.888
+MEG,2018,Discards,Spain,oth,1.798
+MEG,2018,Discards,Spain,oth,36.286
+MEG,2018,Discards,Spain,oth,37.278
+MEG,2018,Discards,Spain,oth,158.188
+MEG,2018,Discards,Spain,oth,1.798
+MEG,2018,Discards,Spain,oth,23.371
+MEG,2018,Discards,Spain,oth,45.358
+MEG,2018,Discards,Spain,oth,2.593
+MEG,2018,Discards,Spain,oth,8.989
+MEG,2018,Discards,Spain,oth,1.398
+MEG,2018,Discards,Spain,oth,23.339
+MEG,2018,Discards,Spain,oth,111.462
+MEG,2018,Discards,Spain,oth,1.864
+MEG,2018,Discards,Spain,oth,2.593
+MEG,2018,Landings,France,oth,0.28055
+MEG,2018,Landings,France,8,0.08252
+MEG,2018,Discards,Ireland,oth,0.06315
+MEG,2018,Discards,Ireland,oth,29.55719
+MEG,2018,Discards,Ireland,oth,0.10254
+MEG,2018,Discards,Ireland,oth,8.73257
+MEG,2018,Discards,Ireland,oth,6.50792
+MEG,2018,Discards,Ireland,oth,44.72582
+MEG,2018,Discards,Ireland,oth,65.70033
+MEG,2018,Discards,Ireland,oth,2.2693
+MEG,2018,Discards,Ireland,oth,17.06373
+MEG,2018,Discards,Ireland,oth,0.66927
+MEG,2018,Discards,Ireland,oth,0.00033
+MEG,2018,Discards,Ireland,oth,23.93961
+MEG,2018,Discards,Ireland,oth,151.70908
+MEG,2018,Discards,Ireland,oth,12.55911
+MEG,2018,Discards,Ireland,oth,2.31591
+MEG,2018,Discards,Ireland,oth,73.98366
+MEG,2018,Discards,Ireland,oth,1.32661
+MEG,2018,Discards,Ireland,oth,0.09972
+MEG,2018,Discards,Ireland,oth,53.98988
+MEG,2018,Landings,UK(Scotland),oth,0.156
+MEG,2018,Landings,UK(Scotland),oth,3.526
+MEG,2018,Landings,UK(Scotland),oth,0.746
+MEG,2018,Landings,UK(Scotland),oth,30.372
+MEG,2018,Landings,UK(Scotland),oth,23.204
+MEG,2018,Landings,UK(Scotland),oth,0.464
+MEG,2018,Landings,UK(Scotland),oth,0.181
+MEG,2018,Landings,UK(Scotland),oth,2.275
+MEG,2018,Landings,UK(Scotland),oth,0.61
+MEG,2018,Landings,UK(Scotland),oth,19.774
+MEG,2018,Landings,UK(Scotland),oth,0.233
+MEG,2018,Landings,UK(Scotland),oth,2.199
+MEG,2018,Landings,UK(Scotland),oth,0.034
+MEG,2018,Landings,UK(Scotland),oth,3.528
+MEG,2018,Landings,UK(Scotland),oth,1.232
+MEG,2018,Landings,UK(Scotland),oth,23.383
+MEG,2018,Landings,UK(Scotland),oth,0.101
+MEG,2018,Landings,UK(Scotland),oth,0.156
+MEG,2018,Landings,Belgium,oth,0.023
+MEG,2018,Landings,Belgium,oth,0.121
+MEG,2018,Landings,Ireland,oth,4.385
+MEG,2018,Landings,Ireland,oth,0.208
+MEG,2018,Landings,Ireland,oth,9.608
+MEG,2018,Landings,Ireland,oth,172.579
+MEG,2018,Landings,Ireland,oth,30.412
+MEG,2018,Landings,Ireland,oth,431.977
+MEG,2018,Landings,Ireland,oth,84.244
+MEG,2018,Landings,Ireland,oth,0.797
+MEG,2018,Landings,Ireland,oth,21.146
+MEG,2018,Landings,Ireland,oth,15.759
+MEG,2018,Landings,Ireland,oth,5.608
+MEG,2018,Landings,Ireland,oth,4.827
+MEG,2018,Landings,Ireland,oth,15.171
+MEG,2018,Landings,Ireland,oth,130.737
+MEG,2018,Landings,Ireland,oth,0.37
+MEG,2018,Landings,Ireland,oth,0.074
+MEG,2018,Landings,Ireland,oth,0.05
+MEG,2018,Landings,Ireland,oth,57.97
+MEG,2018,Landings,Ireland,oth,108.304
+MEG,2018,Landings,Ireland,oth,510.679
+MEG,2018,Landings,Ireland,oth,13.25
+MEG,2018,Landings,Ireland,oth,99.632
+MEG,2018,Landings,Ireland,oth,367.365
+MEG,2018,Landings,Ireland,oth,42.501
+MEG,2018,Landings,UK (England),oth,0.09
+MEG,2018,Landings,UK (England),oth,0
+MEG,2018,Landings,UK (England),oth,7.961
+MEG,2018,Landings,UK (England),oth,3.069
+MEG,2018,Landings,UK (England),oth,0.048
+MEG,2018,Landings,UK (England),oth,0.403
+MEG,2018,Landings,UK (England),oth,18.238
+MEG,2018,Landings,UK (England),oth,0
+MEG,2018,Landings,UK (England),oth,0.021
+MEG,2018,Landings,UK (England),oth,3.203
+MEG,2018,Landings,UK (England),oth,1.653
+MEG,2018,Landings,UK (England),oth,0.176
+MEG,2018,Landings,UK (England),oth,0.571
+MEG,2018,Landings,UK (England),oth,0
+MEG,2018,Landings,UK (England),oth,0.286
+MEG,2018,Landings,UK (England),oth,0.139
+MEG,2018,Landings,UK (England),oth,14.126
+MEG,2018,Landings,UK (England),oth,0.949
+MEG,2018,Landings,UK (England),oth,71.165
+MEG,2018,Landings,UK (England),oth,3.523
+MEG,2018,Landings,UK (England),oth,31.104
+MEG,2018,Landings,UK (England),oth,17.906
+MEG,2018,Landings,UK (England),oth,37.662
+MEG,2018,Landings,UK (England),oth,1.566
+MEG,2018,Landings,UK (England),oth,0.01
+MEG,2018,Landings,UK (England),oth,0.154
+MEG,2018,Landings,UK (England),oth,81.734
+MEG,2018,Landings,UK (England),oth,59.539
+MEG,2018,Landings,UK (England),oth,0.004
+MEG,2018,Landings,UK (England),oth,281.921
+MEG,2018,Landings,UK (England),oth,0.262
+MEG,2018,Landings,UK (England),oth,0.014
+MEG,2018,Landings,UK (England),oth,1.02
+MEG,2018,Landings,UK (England),oth,1.829
+MEG,2018,Landings,UK (England),oth,0.601
+MEG,2018,Discards,UK (England),oth,0
+MEG,2018,Discards,UK (England),oth,0
+MEG,2018,Discards,UK (England),oth,0.219
+MEG,2018,Discards,UK (England),oth,0
+MEG,2018,Discards,UK (England),oth,1.697
+MEG,2018,Discards,UK (England),oth,12.298
+MEG,2018,Landings,UK (England),oth,0.222
+MEG,2018,Landings,UK (England),oth,2.632
+MEG,2018,Landings,UK (England),oth,3.329
+MEG,2018,Landings,UK (England),oth,0.02
+MEG,2018,Landings,UK (England),oth,13.559
+MEG,2018,Landings,UK (England),oth,0.024
+MEG,2018,Landings,UK (England),oth,0.491
+MEG,2018,Landings,UK (England),oth,4.227
+MEG,2018,Landings,UK (England),oth,0.186
+MEG,2018,Landings,UK (England),oth,0.001
+MEG,2018,Landings,UK (England),oth,0.811
+MEG,2018,Landings,UK (England),oth,32.82
+MEG,2018,Landings,UK (England),oth,33.434
+MEG,2018,Landings,UK (England),oth,3.745
+MEG,2018,Landings,UK (England),oth,33.775
+MEG,2018,Landings,UK (England),oth,50.086
+MEG,2018,Landings,UK (England),oth,0.655
+MEG,2018,Landings,UK (England),oth,20.242
+MEG,2018,Landings,UK (England),oth,1.121
+MEG,2018,Landings,UK (England),oth,46.929
+MEG,2018,Landings,UK (England),oth,61.05
+MEG,2018,Landings,UK (England),oth,20.451
+MEG,2018,Landings,UK (England),oth,0.142
+MEG,2018,Landings,UK (England),oth,0.848
+MEG,2018,Landings,UK (England),oth,12.245
+MEG,2018,Landings,UK (England),oth,140.08
+MEG,2018,Landings,UK (England),oth,29.889
+MEG,2018,Landings,UK (England),oth,8.685
+MEG,2018,Landings,UK (England),8,0.04
+MEG,2018,Discards,UK (England),oth,4.813
+MEG,2018,Discards,UK (England),oth,2.558
+MEG,2018,Discards,UK (England),oth,4.74
+MEG,2018,Discards,UK (England),oth,13.456
+MEG,2018,Landings,UK (England),oth,31.502
+MEG,2018,Landings,UK (England),oth,1.043
+MEG,2018,Landings,UK (England),oth,5.882
+MEG,2018,Landings,UK (England),oth,0.254
+MEG,2018,Landings,UK (England),oth,12.305
+MEG,2018,Landings,UK (England),oth,11.55
+MEG,2018,Landings,UK (England),oth,30.423
+MEG,2018,Landings,UK (England),oth,38.209
+MEG,2018,Landings,UK (England),oth,3.841
+MEG,2018,Landings,UK (England),oth,2.587
+MEG,2018,Landings,UK (England),oth,35.449
+MEG,2018,Landings,UK (England),oth,0.002
+MEG,2018,Landings,UK (England),oth,39.388
+MEG,2018,Landings,UK (England),oth,0.26
+MEG,2018,Landings,UK (England),oth,0.044
+MEG,2018,Landings,UK (England),oth,0.934
+MEG,2018,Landings,UK (England),oth,265.232
+MEG,2018,Landings,UK (England),oth,109.293
+MEG,2018,Landings,UK (England),oth,8.933
+MEG,2018,Landings,UK (England),oth,3.715
+MEG,2018,Landings,UK (England),oth,0.025
+MEG,2018,Discards,UK (England),oth,1.587
+MEG,2018,Discards,UK (England),oth,15.416
+MEG,2018,Landings,UK (England),oth,28.245
+MEG,2018,Landings,UK (England),oth,26.179
+MEG,2018,Landings,UK (England),oth,0.327
+MEG,2018,Landings,UK (England),oth,57.698
+MEG,2018,Landings,UK (England),oth,0.261
+MEG,2018,Landings,UK (England),oth,30.624
+MEG,2018,Landings,UK (England),oth,0.61
+MEG,2018,Landings,UK (England),oth,76.974
+MEG,2018,Landings,UK (England),oth,0.105
+MEG,2018,Landings,UK (England),oth,0.666
+MEG,2018,Discards,UK (England),oth,9.158
+MEG,2018,Discards,UK (England),oth,0
+MEG,2018,Landings,UK(Northern Ireland),oth,0.06
+MEG,2018,Landings,UK(Northern Ireland),oth,1.16
+MEG,2018,Landings,UK(Northern Ireland),oth,0.16
+MEG,2018,Landings,UK(Northern Ireland),oth,0.07
+MEG,2018,Landings,UK(Northern Ireland),oth,0.32
+MEG,2018,Landings,UK(Northern Ireland),oth,0.09
+MEG,2018,Landings,UK(Northern Ireland),oth,1.37
+MEG,2018,Landings,UK(Northern Ireland),oth,0.02
+MEG,2018,Landings,UK(Northern Ireland),oth,0.68
+MEG,2018,Landings,UK(Northern Ireland),oth,0.02
+MEG,2018,Landings,UK(Northern Ireland),oth,0.47
+MEG,2018,Landings,UK(Northern Ireland),oth,0.87
+MEG,2018,Landings,UK(Northern Ireland),oth,0.34
+MEG,2018,Landings,UK(Northern Ireland),oth,0.08
+MEG,2018,Landings,UK(Northern Ireland),oth,0.21
+MEG,2018,Landings,UK(Northern Ireland),oth,0.02
+MEG,2018,Landings,UK(Northern Ireland),oth,0.08
+MEG,2018,Landings,Spain,8,92.93
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0.06496
+MEG,2018,Landings,Spain,8,22.8853
+MEG,2018,Landings,Spain,8,22.9609
+MEG,2018,Landings,Spain,8,21.3169
+MEG,2018,Discards,Spain,8,1.70338
+MEG,2018,Logbook Registered Discard,Spain,8,0
+MEG,2018,Landings,Spain,oth,1
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0.31677
+MEG,2018,Landings,Spain,8,0.70725
+MEG,2018,Discards,Spain,8,0
+MEG,2018,Logbook Registered Discard,Spain,8,0
+MEG,2018,Landings,Spain,8,0.4
+MEG,2018,Landings,Spain,8,96.53
+MEG,2018,Landings,Spain,8,0.18179
+MEG,2018,Landings,Spain,8,0.66856
+MEG,2018,Landings,Spain,8,0.00954
+MEG,2018,Landings,Spain,8,41.669
+MEG,2018,Landings,Spain,8,11.2692
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Discards,Spain,8,4.74513
+MEG,2018,Discards,Spain,8,2.85924
+MEG,2018,Landings,Spain,oth,0.682
+MEG,2018,Landings,Spain,8,0.94531
+MEG,2018,Landings,Spain,8,0.065
+MEG,2018,Discards,Spain,8,0.06083
+MEG,2018,Logbook Registered Discard,Spain,8,0
+MEG,2018,Landings,Spain,8,0.18
+MEG,2018,Landings,Spain,8,98.3
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,24.5325
+MEG,2018,Landings,Spain,8,5.13913
+MEG,2018,Landings,Spain,8,0.585
+MEG,2018,Landings,Spain,8,1.95401
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0.21
+MEG,2018,Discards,Spain,8,3.89344
+MEG,2018,Discards,Spain,8,0
+MEG,2018,Logbook Registered Discard,Spain,8,0
+MEG,2018,Logbook Registered Discard,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0.25
+MEG,2018,Landings,Spain,8,109.81
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0.13444
+MEG,2018,Landings,Spain,8,0.11923
+MEG,2018,Landings,Spain,8,4.33061
+MEG,2018,Landings,Spain,8,1.67378
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0.01507
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Landings,Spain,8,0
+MEG,2018,Discards,Spain,8,0.06083
+MEG,2019,Landings,UK (England),oth,0.208
+MEG,2019,Landings,UK (England),oth,0.332
+MEG,2019,Landings,UK (England),oth,0.538
+MEG,2019,Landings,UK(Scotland),oth,2.197
+MEG,2019,Landings,UK(Scotland),oth,6.115
+MEG,2019,Landings,UK(Scotland),oth,0.243
+MEG,2019,Landings,Ireland,oth,2.488
+MEG,2019,Landings,Ireland,oth,0.041
+MEG,2019,Landings,UK (England),oth,1.725
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,0.081
+MEG,2019,Landings,UK (England),oth,0.001
+MEG,2019,Landings,UK (England),oth,0.001
+MEG,2019,Landings,Ireland,oth,13.471
+MEG,2019,Discards,Ireland,oth,4.12323
+MEG,2019,Landings,Ireland,oth,194.56
+MEG,2019,Discards,Ireland,oth,40.73295
+MEG,2019,Landings,UK (England),oth,5.918
+MEG,2019,Landings,UK (England),oth,8.524
+MEG,2019,Landings,France,oth,0.00056
+MEG,2019,Landings,France,oth,0.04759
+MEG,2019,Landings,France,oth,0.17183
+MEG,2019,Landings,France,oth,0.06572
+MEG,2019,Landings,France,oth,0.02979
+MEG,2019,Landings,France,oth,0.00087
+MEG,2019,Landings,France,oth,0.5375
+MEG,2019,Landings,France,oth,0.1879
+MEG,2019,Landings,France,oth,5.10584
+MEG,2019,Landings,France,oth,2.78479
+MEG,2019,Landings,France,oth,0.66118
+MEG,2019,Landings,France,oth,0.81059
+MEG,2019,Landings,France,oth,5.04738
+MEG,2019,Landings,France,oth,27.30294
+MEG,2019,Landings,France,oth,1.73309
+MEG,2019,Landings,France,oth,0.06826
+MEG,2019,Landings,France,oth,3.36277
+MEG,2019,Landings,France,oth,0.90274
+MEG,2019,Landings,France,oth,0.06311
+MEG,2019,Landings,France,oth,1.10755
+MEG,2019,Landings,France,oth,0.10707
+MEG,2019,Landings,France,oth,0.78873
+MEG,2019,Landings,France,oth,0.02341
+MEG,2019,Landings,France,oth,0.22606
+MEG,2019,Landings,France,oth,0.41286
+MEG,2019,Landings,France,oth,3.85438
+MEG,2019,Discards,France,oth,2.10446
+MEG,2019,Landings,France,oth,0.83583
+MEG,2019,Landings,France,oth,0.03572
+MEG,2019,Landings,France,oth,53.18081
+MEG,2019,Landings,France,oth,49.84186
+MEG,2019,Landings,France,oth,61.26631
+MEG,2019,Landings,France,oth,248.05663
+MEG,2019,Landings,France,oth,159.16816
+MEG,2019,Discards,France,oth,75.62839
+MEG,2019,Landings,France,oth,83.65281
+MEG,2019,Landings,France,oth,75.8602
+MEG,2019,Landings,France,oth,10.78244
+MEG,2019,Landings,France,oth,24.69435
+MEG,2019,Discards,France,oth,5.95452
+MEG,2019,Landings,France,oth,17.68542
+MEG,2019,Landings,France,oth,2.56061
+MEG,2019,Landings,France,oth,0.55633
+MEG,2019,Landings,France,oth,0.37498
+MEG,2019,Landings,France,oth,0.02361
+MEG,2019,Landings,France,oth,0.23283
+MEG,2019,Landings,France,oth,0.38409
+MEG,2019,Landings,France,oth,0.05884
+MEG,2019,Landings,UK (England),oth,0.001
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK(Northern Ireland),oth,1.167
+MEG,2019,Landings,Belgium,oth,14.746
+MEG,2019,Landings,Belgium,oth,1.591
+MEG,2019,Landings,Belgium,oth,8.564
+MEG,2019,Landings,Belgium,oth,0.107
+MEG,2019,Landings,Belgium,oth,0.271
+MEG,2019,Landings,Belgium,oth,0.592
+MEG,2019,Landings,Belgium,oth,8.308
+MEG,2019,Landings,UK(Northern Ireland),oth,0.091
+MEG,2019,Landings,Ireland,oth,31.528
+MEG,2019,Discards,Ireland,oth,9.65015
+MEG,2019,Landings,Ireland,oth,44.79
+MEG,2019,Discards,Ireland,oth,9.3772
+MEG,2019,Landings,UK(Northern Ireland),oth,0.018
+MEG,2019,Landings,UK (England),oth,0.23
+MEG,2019,Landings,UK (England),oth,0.303
+MEG,2019,Landings,UK (England),oth,0.861
+MEG,2019,Landings,UK (England),oth,0.332
+MEG,2019,Landings,UK (England),oth,0.108
+MEG,2019,Landings,UK (England),oth,0.461
+MEG,2019,Landings,UK (England),oth,0.257
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,0.598
+MEG,2019,Landings,UK (England),oth,0.219
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,0.065
+MEG,2019,Landings,UK (England),oth,0.451
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,0.261
+MEG,2019,Landings,UK (England),oth,0.137
+MEG,2019,Landings,UK (England),oth,0.02
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,0.049
+MEG,2019,Landings,UK (England),oth,0.783
+MEG,2019,Landings,UK (England),oth,0.048
+MEG,2019,Landings,UK (England),oth,0.82
+MEG,2019,Landings,UK (England),oth,0.986
+MEG,2019,Landings,UK (England),oth,0.103
+MEG,2019,Landings,UK (England),oth,0.011
+MEG,2019,Landings,UK (England),oth,0.027
+MEG,2019,Landings,UK (England),oth,0.034
+MEG,2019,Landings,UK (England),oth,0.002
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,0.001
+MEG,2019,Landings,UK (England),oth,0.002
+MEG,2019,Landings,UK (England),oth,0.021
+MEG,2019,Landings,UK (England),oth,0.007
+MEG,2019,Landings,UK(Northern Ireland),oth,0.102
+MEG,2019,Landings,Ireland,oth,586.561
+MEG,2019,Discards,Ireland,oth,113.63283
+MEG,2019,Landings,UK(Northern Ireland),oth,0.067
+MEG,2019,Landings,Ireland,oth,482.876
+MEG,2019,Discards,Ireland,oth,19.52461
+MEG,2019,Landings,UK(Northern Ireland),oth,0.036
+MEG,2019,Landings,Ireland,oth,207.203
+MEG,2019,Discards,Ireland,oth,13.70535
+MEG,2019,Landings,Ireland,oth,15.261
+MEG,2019,Landings,Spain,8,0.33
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,Spain,8,2.14
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,Spain,8,0.78
+MEG,2019,Landings,Spain,8,0.1
+MEG,2019,Landings,Spain,8,0.34
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,UK (England),oth,15.915
+MEG,2019,Landings,UK (England),oth,5.811
+MEG,2019,Landings,UK (England),oth,11.829
+MEG,2019,Landings,UK (England),oth,18.158
+MEG,2019,Landings,UK (England),oth,76.908
+MEG,2019,Landings,UK (England),oth,172.457
+MEG,2019,Landings,UK (England),oth,144.968
+MEG,2019,Landings,UK (England),oth,17.739
+MEG,2019,Landings,UK (England),oth,28.162
+MEG,2019,Landings,UK (England),oth,0.429
+MEG,2019,Landings,UK (England),oth,36.988
+MEG,2019,Landings,UK (England),oth,44.298
+MEG,2019,Landings,UK (England),oth,16.702
+MEG,2019,Landings,UK (England),oth,88.057
+MEG,2019,Landings,UK (England),oth,25.605
+MEG,2019,Landings,UK (England),oth,67.173
+MEG,2019,Landings,UK (England),oth,127.191
+MEG,2019,Landings,UK (England),oth,6.076
+MEG,2019,Landings,UK (England),oth,23.401
+MEG,2019,Landings,UK (England),oth,1.811
+MEG,2019,Landings,UK (England),oth,15.711
+MEG,2019,Landings,UK (England),oth,64.106
+MEG,2019,Landings,UK (England),oth,18.542
+MEG,2019,Landings,UK (England),oth,24.158
+MEG,2019,Landings,UK (England),oth,249.878
+MEG,2019,Landings,UK (England),oth,2.845
+MEG,2019,Landings,UK (England),oth,27.132
+MEG,2019,Landings,UK (England),oth,12.217
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK(Scotland),oth,0.484
+MEG,2019,Landings,UK(Scotland),oth,0.996
+MEG,2019,Landings,UK(Scotland),oth,2.75
+MEG,2019,Landings,UK(Scotland),oth,31.445
+MEG,2019,Landings,UK(Scotland),oth,0.117
+MEG,2019,Landings,UK(Scotland),oth,2.584
+MEG,2019,Landings,UK(Scotland),oth,1.266
+MEG,2019,Landings,UK(Scotland),oth,30.002
+MEG,2019,Landings,UK(Scotland),oth,4.314
+MEG,2019,Landings,UK(Scotland),oth,0.717
+MEG,2019,Landings,UK(Scotland),oth,0.138
+MEG,2019,Landings,UK(Scotland),oth,23.775
+MEG,2019,Landings,UK(Scotland),oth,21.703
+MEG,2019,Landings,Ireland,oth,0.025
+MEG,2019,Discards,Ireland,oth,0.00101
+MEG,2019,Landings,UK (England),oth,14.184
+MEG,2019,Landings,UK (England),oth,7.633
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,5.156
+MEG,2019,Landings,UK (England),oth,3.833
+MEG,2019,Landings,Ireland,oth,114.433
+MEG,2019,Discards,Ireland,oth,4.62698
+MEG,2019,Landings,Ireland,oth,176.292
+MEG,2019,Discards,Ireland,oth,34.15256
+MEG,2019,Landings,UK (England),oth,19.482
+MEG,2019,Landings,UK (England),oth,1.1
+MEG,2019,Landings,UK (England),oth,9.29
+MEG,2019,Landings,UK (England),oth,2.026
+MEG,2019,Landings,UK (England),oth,0.172
+MEG,2019,Landings,UK (England),oth,2.203
+MEG,2019,Landings,UK (England),oth,0.911
+MEG,2019,Landings,UK (England),oth,1.405
+MEG,2019,Landings,UK (England),oth,23.281
+MEG,2019,Landings,UK (England),oth,28.705
+MEG,2019,Landings,UK (England),oth,2.228
+MEG,2019,Landings,UK (England),oth,0.804
+MEG,2019,Landings,UK (England),oth,26.944
+MEG,2019,Landings,UK (England),oth,0.77
+MEG,2019,Landings,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,36.582
+MEG,2019,Discards,UK (England),oth,2.509
+MEG,2019,Landings,UK (England),oth,37.137
+MEG,2019,Discards,UK (England),oth,9.654
+MEG,2019,Landings,Belgium,oth,447.049
+MEG,2019,Discards,Belgium,oth,119.934
+MEG,2019,Landings,Ireland,oth,561.541
+MEG,2019,Discards,Ireland,oth,2.49538
+MEG,2019,Landings,UK (England),oth,4.333
+MEG,2019,Discards,UK (England),oth,1.457
+MEG,2019,Landings,UK (England),oth,68.348
+MEG,2019,Discards,UK (England),oth,13.214
+MEG,2019,Landings,UK (England),oth,28.883
+MEG,2019,Discards,UK (England),oth,5.204
+MEG,2019,Landings,UK (England),oth,19.345
+MEG,2019,Discards,UK (England),oth,1.214
+MEG,2019,Landings,UK (England),oth,7.681
+MEG,2019,Landings,UK (England),oth,28.309
+MEG,2019,Landings,UK (England),oth,17.95
+MEG,2019,Discards,UK (England),oth,9.822
+MEG,2019,Landings,UK (England),oth,89.16
+MEG,2019,Discards,UK (England),oth,4.924
+MEG,2019,Landings,UK (England),oth,15.722
+MEG,2019,Discards,UK (England),oth,0
+MEG,2019,Landings,UK (England),oth,24.902
+MEG,2019,Discards,UK (England),oth,3.405
+MEG,2019,Landings,UK (England),oth,25.727
+MEG,2019,Discards,UK (England),oth,1.038
+MEG,2019,Landings,UK (England),oth,0
+MEG,2019,Discards,UK (England),oth,0.022
+MEG,2019,Landings,UK (England),oth,79.759
+MEG,2019,Discards,UK (England),oth,8.063
+MEG,2019,Landings,UK (England),oth,14.832
+MEG,2019,Discards,UK (England),oth,2.485
+MEG,2019,Landings,Ireland,oth,22.514
+MEG,2019,Discards,Ireland,oth,0
+MEG,2019,Landings,Ireland,oth,0.033
+MEG,2019,Landings,France,oth,5.65503
+MEG,2019,Landings,France,oth,0.05666
+MEG,2019,Landings,France,oth,0.015
+MEG,2019,Landings,France,oth,0.05955
+MEG,2019,Landings,France,oth,0.05284
+MEG,2019,Landings,France,oth,3.63974
+MEG,2019,Landings,France,oth,2.07695
+MEG,2019,Landings,France,oth,0.47346
+MEG,2019,Landings,France,oth,1.86243
+MEG,2019,Landings,France,oth,12.15488
+MEG,2019,Landings,France,8,23.62535
+MEG,2019,Landings,France,8,14.39442
+MEG,2019,Landings,France,8,11.35548
+MEG,2019,Landings,France,8,10.14264
+MEG,2019,Landings,France,8,3.34467
+MEG,2019,Landings,France,8,5.37217
+MEG,2019,Landings,France,8,2.05022
+MEG,2019,Landings,France,8,2.12013
+MEG,2019,Landings,France,8,0.41906
+MEG,2019,Landings,France,8,0.10788
+MEG,2019,Landings,France,8,0.04961
+MEG,2019,Landings,France,8,0.28171
+MEG,2019,Landings,France,oth,0.28586
+MEG,2019,Landings,France,oth,0.88778
+MEG,2019,Landings,France,oth,0.70792
+MEG,2019,Landings,France,oth,0.41639
+MEG,2019,Landings,France,oth,0.05088
+MEG,2019,Landings,France,oth,0.15698
+MEG,2019,Landings,France,oth,0.03216
+MEG,2019,Landings,Spain,8,0.07
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,0.24
+MEG,2019,Landings,Spain,8,0.63
+MEG,2019,Landings,Spain,8,0.44
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,0.18
+MEG,2019,Landings,UK (England),oth,32.321
+MEG,2019,Landings,UK (England),oth,4.889
+MEG,2019,Landings,UK (England),oth,44.226
+MEG,2019,Landings,UK (England),oth,7.841
+MEG,2019,Landings,UK (England),oth,6.565
+MEG,2019,Landings,UK (England),oth,11.657
+MEG,2019,Landings,UK (England),oth,0.605
+MEG,2019,Landings,UK (England),oth,1.061
+MEG,2019,Landings,UK (England),oth,18.627
+MEG,2019,Landings,UK (England),oth,4.396
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,1.45284
+MEG,2019,Landings,Spain,8,0.28916
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,0.03167
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Landings,Spain,8,0.48715
+MEG,2019,Landings,Spain,8,0.08586
+MEG,2019,Landings,Spain,8,0.37787
+MEG,2019,Landings,Spain,8,0.25819
+MEG,2019,Landings,Spain,8,40.4308
+MEG,2019,Discards,Spain,8,1.7517
+MEG,2019,Landings,Spain,8,72.7916
+MEG,2019,Discards,Spain,8,13.4606
+MEG,2019,Landings,Spain,8,110.18904
+MEG,2019,Discards,Spain,8,0.00252
+MEG,2019,BMS landing,Spain,8,0.063
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,Spain,8,99.24945
+MEG,2019,Discards,Spain,8,0.09052
+MEG,2019,BMS landing,Spain,8,0.086
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,France,8,49.57998
+MEG,2019,Discards,France,8,11.16118
+MEG,2019,Landings,France,8,34.35477
+MEG,2019,Discards,France,8,0
+MEG,2019,Landings,France,8,0.97174
+MEG,2019,Landings,France,8,18.46338
+MEG,2019,Discards,France,8,0
+MEG,2019,Landings,Spain,8,112.39
+MEG,2019,Discards,Spain,8,0
+MEG,2019,BMS landing,Spain,8,0.08
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,Spain,8,23.1593
+MEG,2019,Discards,Spain,8,0.15143
+MEG,2019,Landings,Spain,8,50.9229
+MEG,2019,Discards,Spain,8,3.34922
+MEG,2019,Landings,Spain,8,117.61684
+MEG,2019,Discards,Spain,8,0.0604
+MEG,2019,BMS landing,Spain,8,0.103
+MEG,2019,Logbook Registered Discard,Spain,8,0
+MEG,2019,Landings,France,8,0.00154
+MEG,2019,Landings,France,8,7.99997
+MEG,2019,Landings,France,8,2.92713
+MEG,2019,Landings,France,8,19.05957
+MEG,2019,Discards,France,8,89.04626
+MEG,2019,Landings,France,8,12.28906
+MEG,2019,Landings,France,8,12.04223
+MEG,2019,Landings,France,8,20.96455
+MEG,2019,Landings,France,8,1.58819
+MEG,2019,Landings,France,8,17.56089
+MEG,2019,Discards,France,8,25.28666
+MEG,2019,Landings,France,8,39.96704
+MEG,2019,Discards,France,8,41.56847
+MEG,2019,Landings,France,8,1.06633
+MEG,2019,Landings,France,oth,0.18048
+MEG,2019,Landings,France,oth,0.17931
+MEG,2019,Landings,France,oth,17.14808
+MEG,2019,Landings,France,oth,0.00008
+MEG,2019,Landings,France,oth,0.17714
+MEG,2019,Landings,France,oth,0.17371
+MEG,2019,Landings,France,oth,1.6056
+MEG,2019,Landings,France,oth,1.80694
+MEG,2019,Landings,France,oth,0.00084
+MEG,2019,Landings,France,oth,0.04682
+MEG,2019,Landings,France,oth,6.61045
+MEG,2019,Landings,France,oth,0.34654
+MEG,2019,Landings,France,oth,0.0003
+MEG,2019,Landings,France,oth,12.00838
+MEG,2019,Landings,France,oth,0.02463
+MEG,2019,Landings,France,oth,0.88732
+MEG,2019,Landings,France,oth,0.01602
+MEG,2019,Landings,France,oth,19.31953
+MEG,2019,Landings,France,oth,10.69978
+MEG,2019,Landings,France,oth,0.09581
+MEG,2019,Landings,France,oth,0.02618
+MEG,2019,Landings,France,oth,3.03477
+MEG,2019,Landings,France,oth,18.34185
+MEG,2019,Landings,France,oth,15.09019
+MEG,2019,Landings,France,oth,0.81757
+MEG,2019,Landings,France,oth,0.00056
+MEG,2019,Landings,France,oth,0.06497
+MEG,2019,Landings,France,oth,0.13142
+MEG,2019,Landings,France,oth,0.00262
+MEG,2019,Landings,France,oth,0.01344
+MEG,2019,Landings,France,oth,0.07797
+MEG,2019,Landings,France,oth,0.00682
+MEG,2019,Landings,France,8,187.65397
+MEG,2019,Landings,France,8,208.67694
+MEG,2019,Discards,France,8,21.41116
+MEG,2019,Landings,France,8,103.14338
+MEG,2019,Landings,France,8,3.22827
+MEG,2019,Landings,France,8,2.62513
+MEG,2019,Landings,France,8,236.49048
+MEG,2019,Discards,France,8,54.26653
+MEG,2019,Landings,France,8,5.59318
+MEG,2019,Landings,France,8,19.83264
+MEG,2019,Landings,France,8,1.20361
+MEG,2019,Landings,France,8,4.14874
+MEG,2019,Landings,France,8,3.03556
+MEG,2019,Landings,France,8,11.12028
+MEG,2019,Landings,Spain,8,4.73959
+MEG,2019,Discards,Spain,8,0.25576
+MEG,2019,Landings,Spain,8,1.3113
+MEG,2019,Discards,Spain,8,0.44758
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Discards,Spain,8,0
+MEG,2019,Landings,Spain,8,0
+MEG,2019,Discards,Spain,8,0
+MEG,2019,Landings,France,8,0
+MEG,2019,Landings,France,8,82.48693
+MEG,2019,Discards,France,8,57.14535
+MEG,2019,Landings,France,8,0.2249
+MEG,2019,Landings,France,8,112.66392
+MEG,2019,Discards,France,8,38.33659
+MEG,2019,Landings,France,oth,2.6573
+MEG,2019,Landings,France,oth,32.98199
+MEG,2019,Landings,France,oth,10.5324
+MEG,2019,Landings,France,oth,0.09426
+MEG,2019,Landings,France,oth,3.1962
+MEG,2019,Landings,France,oth,2.94057
+MEG,2019,Landings,France,oth,16.75999
+MEG,2019,Landings,France,oth,6.66881
+MEG,2019,Landings,France,oth,18.20196
+MEG,2019,Landings,France,oth,33.65638
+MEG,2019,Landings,France,oth,7.85092
+MEG,2019,Landings,France,oth,201.25567
+MEG,2019,Landings,France,oth,193.99412
+MEG,2019,Landings,France,oth,126.26885
+MEG,2019,Landings,France,oth,141.16576
+MEG,2019,Landings,France,oth,0.49776
+MEG,2019,Landings,France,oth,26.43667
+MEG,2019,Landings,France,oth,6.76844
+MEG,2019,Landings,France,oth,44.87373
+MEG,2019,Landings,France,oth,8.66607
+MEG,2019,Landings,France,oth,22.75226
+MEG,2019,Landings,France,oth,2.75733
+MEG,2019,Landings,France,oth,9.50299
+MEG,2019,Landings,France,oth,12.88963
+MEG,2019,Discards,France,oth,0.66689
+MEG,2019,Landings,France,oth,10.8852
+MEG,2019,Landings,France,oth,35.79273
+MEG,2019,Landings,France,oth,14.34119
+MEG,2019,Landings,France,oth,10.27075
+MEG,2019,Landings,France,oth,47.9479
+MEG,2019,Landings,France,oth,0.94471
+MEG,2019,Landings,Spain,oth,1
+MEG,2019,Landings,Spain,oth,3.38
+MEG,2019,BMS landing,Spain,oth,0.039
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0.07
+MEG,2019,Landings,Spain,oth,1.21
+MEG,2019,Landings,Spain,oth,0.29
+MEG,2019,Landings,Spain,oth,0.28
+MEG,2019,Landings,Spain,oth,0.57
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,1.51
+MEG,2019,Landings,Spain,oth,0.13
+MEG,2019,Landings,Spain,oth,4.1
+MEG,2019,Landings,Spain,oth,0.05
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,France,oth,27.92402
+MEG,2019,Discards,France,oth,0.0906
+MEG,2019,Landings,France,oth,3.80159
+MEG,2019,Landings,France,oth,0.49917
+MEG,2019,Landings,France,oth,0.89989
+MEG,2019,Landings,France,oth,3.73366
+MEG,2019,Discards,France,oth,0.34461
+MEG,2019,Landings,France,oth,16.08976
+MEG,2019,Discards,France,oth,0
+MEG,2019,Landings,France,oth,7.29919
+MEG,2019,Discards,France,oth,1.21322
+MEG,2019,Landings,France,oth,15.17328
+MEG,2019,Discards,France,oth,0
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,France,oth,83.63167
+MEG,2019,Landings,Spain,oth,3.23
+MEG,2019,Discards,Spain,oth,1.11
+MEG,2019,Landings,Spain,oth,3.58
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Landings,Spain,oth,3.58
+MEG,2019,Discards,Spain,oth,0.376
+MEG,2019,Landings,Spain,oth,21.48
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,BMS landing,Spain,oth,0.034
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,13.55
+MEG,2019,Discards,Spain,oth,3.331
+MEG,2019,BMS landing,Spain,oth,0.023
+MEG,2019,Landings,Spain,oth,10.77
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Landings,Spain,oth,11.05
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Landings,Spain,oth,38.66
+MEG,2019,Discards,Spain,oth,4.442
+MEG,2019,Landings,Spain,oth,18.33
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Landings,Spain,oth,26.38
+MEG,2019,Discards,Spain,oth,1.127
+MEG,2019,Landings,Spain,oth,35.19
+MEG,2019,Discards,Spain,oth,8.883
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,58.7
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Landings,Spain,oth,109.29
+MEG,2019,Discards,Spain,oth,5.258
+MEG,2019,BMS landing,Spain,oth,0.03
+MEG,2019,Landings,Spain,oth,34.58
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,442.48
+MEG,2019,Discards,Spain,oth,64.405
+MEG,2019,BMS landing,Spain,oth,0.755
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,441.92
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,BMS landing,Spain,oth,0.81
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,415.64
+MEG,2019,Discards,Spain,oth,21.031
+MEG,2019,BMS landing,Spain,oth,0.28
+MEG,2019,Landings,Spain,oth,232.7
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,BMS landing,Spain,oth,0.279
+MEG,2019,Logbook Registered Discard,Spain,oth,0
+MEG,2019,Landings,Spain,oth,23.07
+MEG,2019,Discards,Spain,oth,0
+MEG,2019,Landings,Spain,oth,13.82
+MEG,2019,Discards,Spain,oth,0.751
+MEG,2019,Landings,France,oth,0.47215
+MEG,2019,Landings,France,oth,1.34117
+MEG,2019,Landings,France,oth,42.33064
+MEG,2019,Landings,France,oth,53.94886
+MEG,2019,Landings,France,oth,0.00742
+MEG,2019,Discards,France,oth,0
+MEG,2019,Landings,France,oth,0.00032
+MEG,2019,Discards,France,oth,0
+MEG,2019,Landings,France,oth,0.00187
+MEG,2019,Discards,France,oth,0
+MEG,2019,Landings,France,oth,0.02383
+MEG,2019,Discards,France,oth,0
+MEG,2019,Landings,France,oth,35.73384
+MEG,2019,Landings,France,oth,175.30117
+MEG,2019,Landings,France,oth,20.70568
+MEG,2019,Landings,France,oth,104.37272
+MEG,2019,Landings,France,oth,0.03435
+MEG,2019,Landings,France,oth,0.28892
+MEG,2019,Landings,France,oth,130.738
+MEG,2019,Landings,France,oth,24.97723
+MEG,2019,Landings,France,oth,21.89872
+MEG,2019,Landings,France,oth,112.81638
+MEG,2019,Landings,France,oth,26.40841
+MEG,2019,Landings,France,oth,0.46368
+MEG,2019,Landings,France,oth,1.14658
+MEG,2019,Landings,France,oth,0.16445
+MEG,2019,Landings,France,oth,1.28397
+MEG,2019,Landings,France,oth,34.28281
+MEG,2019,Landings,France,oth,18.00235
+MEG,2019,Landings,France,oth,1.61018
+MEG,2019,Landings,France,oth,2.67973
+MEG,2019,Landings,France,oth,16.54921
+MEG,2019,Landings,France,oth,14.83022
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0.07
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0.05
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,Spain,oth,0.39
+MEG,2019,Landings,Spain,oth,2.28
+MEG,2019,Landings,Spain,oth,0
+MEG,2019,Landings,France,oth,0.02516
+MEG,2019,Landings,France,oth,0.01096
+MEG,2019,Landings,France,oth,0.10436
+MEG,2019,Landings,Ireland,oth,0.136
+NEP,1987,Landings,France,8,5397
+NEP,1988,Landings,France,8,5875
+NEP,1989,Landings,France,8,4835
+NEP,1990,Landings,France,8,4972
+NEP,1991,Landings,France,8,4754
+NEP,1992,Landings,France,8,5681
+NEP,1993,Landings,France,8,5109
+NEP,1994,Landings,France,8,4092
+NEP,1995,Landings,France,8,4452
+NEP,1996,Landings,France,8,4118
+NEP,1997,Landings,France,8,3610
+NEP,1998,Landings,France,8,3865
+NEP,1999,Landings,France,8,3209
+NEP,2000,Landings,France,8,3069
+NEP,2001,Landings,France,8,3730
+NEP,2002,Landings,France,8,3679
+NEP,2003,Landings,France,8,3886
+NEP,2004,Landings,France,8,3571
+NEP,2005,Landings,France,8,3991
+NEP,2006,Landings,France,8,3447
+NEP,2007,Landings,France,8,3176
+NEP,2008,Landings,France,8,3030
+NEP,2009,Landings,France,8,2987
+NEP,2010,Landings,France,8,3398
+NEP,2011,Landings,France,8,3559
+NEP,2012,Landings,France,8,2520
+NEP,2013,Landings,France,8,2380
+NEP,2014,Landings,France,8,2807
+NEP,2015,Landings,France,8,3569
+NEP,2016,Landings,France,8,4091
+NEP,2017,Landings,France,8,3412
+NEP,2018,Landings,France,8,2125
+NEP,2019,Landings,France,8,2154
+NEP,1987,Discards,France,8,1767
+NEP,1988,Discards,France,8,4123
+NEP,1989,Discards,France,8,2634
+NEP,1990,Discards,France,8,627
+NEP,1991,Discards,France,8,1213
+NEP,1992,Discards,France,8,1354
+NEP,1993,Discards,France,8,1007
+NEP,1994,Discards,France,8,741
+NEP,1995,Discards,France,8,706
+NEP,1996,Discards,France,8,495
+NEP,1997,Discards,France,8,805
+NEP,1998,Discards,France,8,1453
+NEP,1999,Discards,France,8,1148
+NEP,2000,Discards,France,8,1455
+NEP,2001,Discards,France,8,2537
+NEP,2002,Discards,France,8,2620
+NEP,2003,Discards,France,8,1977
+NEP,2004,Discards,France,8,1932
+NEP,2005,Discards,France,8,2698
+NEP,2006,Discards,France,8,4544
+NEP,2007,Discards,France,8,2411
+NEP,2008,Discards,France,8,2123
+NEP,2009,Discards,France,8,1833
+NEP,2010,Discards,France,8,1275
+NEP,2011,Discards,France,8,1263
+NEP,2012,Discards,France,8,1012
+NEP,2013,Discards,France,8,1521
+NEP,2014,Discards,France,8,1326
+NEP,2015,Discards,France,8,1822
+NEP,2016,Discards,France,8,2531
+NEP,2017,Discards,France,8,2387
+NEP,2018,Discards,France,8,1571
+NEP,2019,Discards,France,8,634
+BSS,2000,Landings,France,8,2294.53412
+BSS,2001,Landings,France,8,2238.31947
+BSS,2002,Landings,France,8,2216.38026
+BSS,2003,Landings,France,8,2497.19357
+BSS,2004,Landings,France,8,2284.46337
+BSS,2005,Landings,France,8,2722.20966
+BSS,2006,Landings,France,8,2707.07157
+BSS,2007,Landings,France,8,2676.87469
+BSS,2008,Landings,France,8,2599.75361
+BSS,2009,Landings,France,8,2151.57185
+BSS,2010,Landings,France,8,2089.05808
+BSS,2011,Landings,France,8,2287
+BSS,2012,Landings,France,8,2342
+BSS,2013,Landings,France,8,2532.24
+BSS,2014,Landings,France,8,2895.57081
+BSS,2015,Landings,France,8,2193.242912
+BSS,2016,Landings,France,8,2160
+BSS,2017,Landings,France,8,2223
+BSS,2018,Landings,France,8,2243
+BSS,2019,Landings,France,8,2136
+BSS,2000,Landings,Spain,8,67
+BSS,2001,Landings,Spain,8,68
+BSS,2002,Landings,Spain,8,176
+BSS,2003,Landings,Spain,8,119
+BSS,2004,Landings,Spain,8,96
+BSS,2005,Landings,Spain,8,74
+BSS,2006,Landings,Spain,8,168
+BSS,2007,Landings,Spain,8,74
+BSS,2008,Landings,Spain,8,145
+BSS,2009,Landings,Spain,8,126
+BSS,2010,Landings,Spain,8,140
+BSS,2011,Landings,Spain,8,288
+BSS,2012,Landings,Spain,8,207
+BSS,2013,Landings,Spain,8,153
+BSS,2014,Landings,Spain,8,95
+BSS,2015,Landings,Spain,8,71
+BSS,2016,Landings,Spain,8,92
+BSS,2017,Landings,Spain,8,72
+BSS,2018,Landings,Spain,8,94
+BSS,2019,Landings,Spain,8,91
+ANK,2016,landings,Belgium,27.8,193.474
+ANK,2016,landings,France,27.7,2881.47278
+ANK,2016,landings,France,27.8,2968.04423
+ANK,2016,landings,Ireland,27.7,970.248618
+ANK,2016,landings,Others,27.7,94.269
+ANK,2016,landings,Spain,27.7,1118.32
+ANK,2016,landings,Spain,27.8,918
+ANK,2016,landings,UK (England),27.7,1062.755
+ANK,2016,landings,UK (England),27.8,12.992
+ANK,2017,landings,Belgium,27.8,216.172
+ANK,2017,landings,France,27.7,4254.51674
+ANK,2017,landings,France,27.8,2999.99981
+ANK,2017,landings,Ireland,27.7,793.159
+ANK,2017,landings,Others,27.7,0
+ANK,2017,landings,Spain,27.7,1286.53
+ANK,2017,landings,Spain,27.8,941.13
+ANK,2017,landings,UK (England),27.7,1183.415
+ANK,2017,landings,UK (England),27.8,14.765
+ANK,2018,landings,Belgium,27.8,156.541
+ANK,2018,landings,France,27.7,3442.86039
+ANK,2018,landings,France,27.8,2807.4522
+ANK,2018,landings,Ireland,27.7,1110.254
+ANK,2018,landings,Spain,27.7,890.16
+ANK,2018,landings,Spain,27.8,765.65137
+ANK,2018,landings,UK (England),27.7,898.067
+ANK,2018,landings,UK (England),27.8,4.668
+ANK,2019,landings,Belgium,27.8,64.117
+ANK,2019,landings,France,27.7,3500.37859
+ANK,2019,landings,France,27.8,2156.13088
+ANK,2019,landings,Ireland,27.7,939.819
+ANK,2019,landings,Spain,27.7,1366.37
+ANK,2019,landings,Spain,27.8,644.72099
+ANK,2019,landings,UK (England),27.7,992.936
+ANK,2019,landings,UK (England),27.8,15.075
+ANK,2016,discards,Belgium,27.8,61.7162162
+ANK,2016,discards,France,27.7,444.0762112
+ANK,2016,discards,France,27.8,721.1735648
+ANK,2016,discards,Ireland,27.7,680.1739178
+ANK,2016,discards,Others,27.7,26.61892611
+ANK,2016,discards,Spain,27.7,246.6762808
+ANK,2016,discards,Spain,27.8,206.238362
+ANK,2016,discards,UK (England),27.7,53.80266302
+ANK,2016,discards,UK (England),27.8,0.026455086
+ANK,2017,discards,Belgium,27.8,38.86063591
+ANK,2017,discards,France,27.7,590.1664539
+ANK,2017,discards,France,27.8,531.1237264
+ANK,2017,discards,Ireland,27.7,337.8087723
+ANK,2017,discards,Others,27.7,0
+ANK,2017,discards,Spain,27.7,142.262395
+ANK,2017,discards,Spain,27.8,108.2325544
+ANK,2017,discards,UK (England),27.7,21.6699291
+ANK,2017,discards,UK (England),27.8,0
+ANK,2018,discards,Belgium,27.8,22.15583197
+ANK,2018,discards,France,27.7,245.4059493
+ANK,2018,discards,France,27.8,164.7868894
+ANK,2018,discards,Ireland,27.7,145.3085165
+ANK,2018,discards,Spain,27.7,86.56145855
+ANK,2018,discards,Spain,27.8,22.89794708
+ANK,2018,discards,UK (England),27.7,39.63843
+ANK,2018,discards,UK (England),27.8,0.471494232
+ANK,2019,discards,Belgium,27.8,41.80126463
+ANK,2019,discards,France,27.7,468.4270816
+ANK,2019,discards,France,27.8,239.5243946
+ANK,2019,discards,Ireland,27.7,267.3068389
+ANK,2019,discards,Spain,27.7,23.99838491
+ANK,2019,discards,Spain,27.8,11.87871193
+ANK,2019,discards,UK (England),27.7,31.19472552
+ANK,2019,discards,UK (England),27.8,0
+MAC,2015,Landings,Spain ,8,985
+MAC,2015,Discards,Spain ,8,662
+MAC,2015,Landings,France,8,7378
+MAC,2015,Discards,France,8,338
+MAC,2015,Landings,Netherlands,8,1497
+MAC,2015,Landings,Germany,8,4859
+MAC,2015,Landings,UK England,8,7293
+MAC,2015,Discards,all,oth,9431
+MAC,2015,Landings,all,oth,1176546
+MAC,2016,Landings,Spain ,8,1253
+MAC,2016,Discards,Spain ,8,861
+MAC,2016,Landings,France,8,4237
+MAC,2016,Discards,France,8,315
+MAC,2016,Landings,Germany,8,1269
+MAC,2016,Landings,Netherlands,8,207
+MAC,2016,Landings,UK England,8,1785
+MAC,2016,Discards,all,oth,4795
+MAC,2016,Landings,all,oth,1079345
+MAC,2017,Landings,France,8,3187
+MAC,2017,Discards,France,8,578
+MAC,2017,Landings,Germany,8,1233
+MAC,2017,Landings,Denmark,8,2
+MAC,2017,Landings,Spain,8,786
+MAC,2017,Discards,Spain,8,1046
+MAC,2017,Landings,UK England,8,245
+MAC,2017,Landings,Ireland,8,2
+MAC,2017,Discards,all,oth,1207
+MAC,2017,Landings,all,oth,1147658
+MAC,2018,Landings,France,8,3262
+MAC,2018,Landings,Spain,8,4441
+MAC,2018,Discards,Spain,8,1047
+MAC,2018,Landings,Germany,8,417
+MAC,2018,Landings,Netherlands,8,732
+MAC,2018,Landings,UK England,8,1195
+MAC,2018,Discards,all,oth,1843
+MAC,2018,Landings,all,oth,1013499
+MAC,2019,Landings,France,8,2764
+MAC,2019,Discards,France,8,1494
+MAC,2019,Landings,Spain,8,1178
+MAC,2019,Discards,Spain,8,927
+MAC,2019,Landings,Netherlands,8,324
+MAC,2019,Landings,Denmark,8,5
+MAC,2019,Landings,Germany,8,324
+MAC,2019,Landings,Portugal,8,46
+MAC,2019,Landings,UK England,8,0
+MAC,2019,Discards,all,oth,5386
+MAC,2019,Landings,all,oth,827573
+HOM,2017,Landings,Denmark,8,1
+HOM,2017,Landings,France,8,2303
+HOM,2017,Landings,Germany,8,210
+HOM,2017,Landings,Ireland,8,580
+HOM,2017,Landings,Netherlands,8,313
+HOM,2017,Landings,Spain,8,1358
+HOM,2017,Discards,France,8,927
+HOM,2017,Discards,Spain,8,1839
+HOM,2017,Landings,All,Oth,74269
+HOM,2017,Discards,All,Oth,1163
+HOM,2018,Landings,France,8,2176
+HOM,2018,Landings,Germany,8,554
+HOM,2018,Landings,Ireland,8,219
+HOM,2018,Landings,Netherlands,8,6
+HOM,2018,Landings,Spain,8,401
+HOM,2018,Landings,UK (England),8,2
+HOM,2018,Discards,France,8,385
+HOM,2018,Discards,Spain,8,1399
+HOM,2018,Landings,All,Oth,95715
+HOM,2018,Discards,All,Oth,825
+HOM,2019,Landings,Denmark,8,423
+HOM,2019,Landings,France,8,2914
+HOM,2019,Landings,Germany,8,144
+HOM,2019,Landings,Ireland,8,36
+HOM,2019,Landings,Netherlands,8,3
+HOM,2019,Landings,Spain,8,791
+HOM,2019,Landings,UK (England),8,344
+HOM,2019,Discards,France,8,593
+HOM,2019,Discards,Spain,8,1096
+HOM,2019,Landings,All,Oth,117151
+HOM,2019,Discards,All,Oth,1452
+RJC,2011,Landings,All,All,424
+RJC,2012,Landings,All,All,451
+RJC,2013,Landings,All,All,483
+RJC,2014,Landings,All,All,489
+RJC,2015,Landings,All,All,416
+RJC,2016,Landings,All,All,373
+RJC,2017,Landings,All,All,369
+RJC,2018,Landings,All,All,529
+RJC,2019,Landings,All,All,513
+RJN,2009,Landings,All,All,4408
+RJN,2010,Landings,All,All,4096
+RJN,2011,Landings,All,All,3916
+RJN,2012,Landings,All,All,3388
+RJN,2013,Landings,All,All,3028
+RJN,2014,Landings,All,All,3209
+RJN,2015,Landings,All,All,3360
+RJN,2016,Landings,All,All,2955
+RJN,2017,Landings,All,All,2804
+RJN,2018,Landings,All,All,3037
+RJN,2019,Landings,All,All,3111
+RJU,2011,Landings,All,All,67
+RJU,2012,Landings,All,All,209
+RJU,2013,Landings,All,All,229
+RJU,2014,Landings,All,All,242
+RJU,2015,Landings,All,All,281
+RJU,2016,Landings,All,All,235
+RJU,2017,Landings,All,All,352
+RJU,2018,Landings,All,All,247
+RJU,2019,Landings,All,All,322
+SDV,2005,Landings,All,All,3013
+SDV,2006,Landings,All,All,3043
+SDV,2007,Landings,All,All,3308
+SDV,2008,Landings,All,All,3816
+SDV,2009,Landings,All,All,3628
+SDV,2010,Landings,All,All,3655
+SDV,2011,Landings,All,All,3709
+SDV,2012,Landings,All,All,3345
+SDV,2013,Landings,All,All,3415
+SDV,2014,Landings,All,All,3280
+SDV,2015,Landings,All,All,3349
+SDV,2016,Landings,All,All,3407
+SDV,2017,Landings,All,All,3228
+SDV,2018,Landings,All,All,3651
+SDV,2019,Landings,All,All,3493
+WHG,2000,Landings,All,All,1448
+WHG,2001,Landings,All,All,2281
+WHG,2002,Landings,All,All,2203
+WHG,2003,Landings,All,All,2451
+WHG,2004,Landings,All,All,2221
+WHG,2005,Landings,All,All,2081
+WHG,2006,Landings,All,All,1856
+WHG,2007,Landings,All,All,1920
+WHG,2008,Landings,All,All,965
+WHG,2009,Landings,All,All,1362
+WHG,2010,Landings,All,All,2342
+WHG,2011,Landings,All,All,2141
+WHG,2012,Landings,All,All,1907
+WHG,2013,Landings,All,All,2001
+WHG,2014,Landings,All,All,1651
+WHG,2015,Landings,All,All,2199
+WHG,2016,Landings,All,All,2525
+WHG,2017,Landings,All,All,1925
+WHG,2018,Landings,All,All,1565
+WHG,2019,Landings,All,All,1396
+WHG,2016,Discards,All,All,927
+WHG,2017,Discards,All,All,938
+WHG,2018,Discards,All,All,656
+WHG,2019,Discards,All,All,535
+BSS,2000,Landings,Others,Oth,1258.20588
+BSS,2001,Landings,Others,Oth,1335.78053
+BSS,2002,Landings,Others,Oth,1390.69974
+BSS,2003,Landings,Others,Oth,1418.87643
+BSS,2004,Landings,Others,Oth,1425.74663
+BSS,2005,Landings,Others,Oth,1426.43034
+BSS,2006,Landings,Others,Oth,1429.70843
+BSS,2007,Landings,Others,Oth,1442.70531
+BSS,2008,Landings,Others,Oth,1454.73639
+BSS,2009,Landings,Others,Oth,1450.80815
+BSS,2010,Landings,Others,Oth,1429.94192
+BSS,2011,Landings,Others,Oth,1394.46
+BSS,2012,Landings,Others,Oth,1346.11
+BSS,2013,Landings,Others,Oth,879.67
+BSS,2014,Landings,Others,Oth,824.06519
+BSS,2015,Landings,Others,Oth,781.523088
+BSS,2016,Landings,Others,Oth,777.757
+BSS,2017,Landings,Others,Oth,739.757
+BSS,2018,Landings,Others,Oth,748.111
+BSS,2019,Landings,Others,Oth,697.111
+MON,2012,Discards,Belgium,7,210.4307792
+MON,2013,Discards,Belgium,7,104.4025285
+MON,2014,Discards,Belgium,7,85.92685882
+MON,2015,Discards,Belgium,7,171.0439438
+MON,2016,Discards,Belgium,7,133.024003
+MON,2017,Discards,Belgium,7,204.5951269
+MON,2018,Discards,Belgium,7,155.6145664
+MON,2019,Discards,Belgium,7,296.4671703
+MON,2012,Landings,Belgium,7,1320.547
+MON,2013,Landings,Belgium,7,1100.008
+MON,2014,Landings,Belgium,7,523.954
+MON,2015,Landings,Belgium,7,769.239
+MON,2016,Landings,Belgium,7,981.371
+MON,2017,Landings,Belgium,7,1184.871
+MON,2018,Landings,Belgium,7,766.872
+MON,2019,Landings,Belgium,7,854.028
+MON,2003,Discards,France,7,1113.600518
+MON,2004,Discards,France,7,785.7547365
+MON,2005,Discards,France,7,838.3475349
+MON,2006,Discards,France,7,417.4904229
+MON,2007,Discards,France,7,351.2923525
+MON,2008,Discards,France,7,343.6086946
+MON,2009,Discards,France,7,670.2496145
+MON,2010,Discards,France,7,782.0763718
+MON,2011,Discards,France,7,650.4999219
+MON,2012,Discards,France,7,627.9832483
+MON,2013,Discards,France,7,568.6373419
+MON,2014,Discards,France,7,653.21752
+MON,2015,Discards,France,7,715.5765391
+MON,2016,Discards,France,7,758.1567089
+MON,2017,Discards,France,7,600.3449377
+MON,2018,Discards,France,7,286.5567265
+MON,2019,Discards,France,7,347.3642064
+MON,2002,Landings,France,7,9195.08901
+MON,2003,Landings,France,7,12081.29841
+MON,2004,Landings,France,7,12280.84938
+MON,2005,Landings,France,7,11136.50972
+MON,2006,Landings,France,7,10607.16467
+MON,2007,Landings,France,7,12252.72452
+MON,2008,Landings,France,7,10870.94405
+MON,2009,Landings,France,7,8690.53164
+MON,2010,Landings,France,7,8187.6803
+MON,2011,Landings,France,7,9546.30581
+MON,2012,Landings,France,7,12224.85469
+MON,2013,Landings,France,7,12774.69631
+MON,2014,Landings,France,7,11410.1184
+MON,2015,Landings,France,7,11720.62672
+MON,2016,Landings,France,7,12667.00265
+MON,2017,Landings,France,7,11472.52045
+MON,2018,Landings,France,7,10359.54097
+MON,2019,Landings,France,7,9379.22917
+MON,2003,Discards,Ireland,7,132.3223995
+MON,2004,Discards,Ireland,7,171.6046936
+MON,2005,Discards,Ireland,7,174.5881768
+MON,2006,Discards,Ireland,7,45.52630379
+MON,2007,Discards,Ireland,7,99.5564734
+MON,2008,Discards,Ireland,7,76.57883709
+MON,2009,Discards,Ireland,7,353.5885164
+MON,2010,Discards,Ireland,7,135.2637375
+MON,2011,Discards,Ireland,7,212.8944652
+MON,2012,Discards,Ireland,7,733.3642544
+MON,2013,Discards,Ireland,7,437.1320444
+MON,2014,Discards,Ireland,7,276.4156778
+MON,2015,Discards,Ireland,7,544.5469562
+MON,2016,Discards,Ireland,7,1448.068542
+MON,2017,Discards,Ireland,7,463.3765911
+MON,2018,Discards,Ireland,7,397.8765388
+MON,2019,Discards,Ireland,7,514.5562669
+MON,2002,Landings,Ireland,7,1884.26884
+MON,2003,Landings,Ireland,7,1456.29468
+MON,2004,Landings,Ireland,7,1645.867332
+MON,2005,Landings,Ireland,7,2070.866864
+MON,2006,Landings,Ireland,7,2656.263654
+MON,2007,Landings,Ireland,7,2901.843254
+MON,2008,Landings,Ireland,7,2418.63132
+MON,2009,Landings,Ireland,7,2048.49385
+MON,2010,Landings,Ireland,7,2523.26934
+MON,2011,Landings,Ireland,7,2304.037014
+MON,2012,Landings,Ireland,7,2648.167923
+MON,2013,Landings,Ireland,7,2557.427116
+MON,2014,Landings,Ireland,7,2707.22148
+MON,2015,Landings,Ireland,7,2581.514304
+MON,2016,Landings,Ireland,7,2761.475064
+MON,2017,Landings,Ireland,7,2542.674
+MON,2018,Landings,Ireland,7,2147.934
+MON,2019,Landings,Ireland,7,2822.104
+MON,1986,Landings,Land7a,7,1315
+MON,1987,Landings,Land7a,7,1182
+MON,1988,Landings,Land7a,7,1219
+MON,1989,Landings,Land7a,7,2885
+MON,1990,Landings,Land7a,7,1229
+MON,1991,Landings,Land7a,7,603
+MON,1992,Landings,Land7a,7,851
+MON,1993,Landings,Land7a,7,1437
+MON,1994,Landings,Land7a,7,1081
+MON,1995,Landings,Land7a,7,1303
+MON,1996,Landings,Land7a,7,1171
+MON,1997,Landings,Land7a,7,1323
+MON,1998,Landings,Land7a,7,902
+MON,1999,Landings,Land7a,7,542
+MON,2000,Landings,Land7a,7,510
+MON,2001,Landings,Land7a,7,613
+MON,2002,Landings,Land7a,7,672
+MON,2003,Landings,Land7a,7,639
+MON,2004,Landings,Land7a,7,604
+MON,2005,Landings,Land7a,7,489
+MON,2006,Landings,Land7a,7,418.1
+MON,2007,Landings,Land7a,7,428.4
+MON,2008,Landings,Land7a,7,290.01
+MON,2009,Landings,Land7a,7,217.6
+MON,2010,Landings,Land7a,7,176.9
+MON,2011,Landings,Land7a,7,234.76
+MON,2012,Landings,Land7a,7,294.83
+MON,2013,Landings,Land7a,7,269.27
+MON,2014,Landings,Land7a,7,252.77
+MON,2015,Landings,Land7a,7,234.43
+MON,2016,Landings,Land7a,7,327.92
+MON,2017,Landings,Land7a,7,310.5202
+MON,2018,Landings,Land7a,7,0
+MON,2019,Landings,Land7a,7,0
+MON,2016,Discards,Netherlands,7,0.214210319
+MON,2017,Discards,Netherlands,7,0.16946798
+MON,2018,Discards,Netherlands,7,0.196621507
+MON,2019,Discards,Netherlands,7,0.365286152
+MON,2016,Landings,Netherlands,7,1.277
+MON,2017,Landings,Netherlands,7,1.887
+MON,2018,Landings,Netherlands,7,2.66
+MON,2019,Landings,Netherlands,7,4.04
+MON,2003,Discards,Others,7,85.47148312
+MON,2004,Discards,Others,7,121.3918771
+MON,2005,Discards,Others,7,84.74497331
+MON,2006,Discards,Others,7,24.69306385
+MON,2007,Discards,Others,7,26.52888159
+MON,2008,Discards,Others,7,32.27745026
+MON,2009,Discards,Others,7,71.33496885
+MON,2010,Discards,Others,7,108.2176688
+MON,2011,Discards,Others,7,72.14931913
+MON,2012,Discards,Others,7,21.12799423
+MON,2013,Discards,Others,7,17.31381355
+MON,2014,Discards,Others,7,20.83461698
+MON,2015,Discards,Others,7,29.36469689
+MON,2016,Discards,Others,7,44.88536527
+MON,2017,Discards,Others,7,0
+MON,2002,Landings,Others,7,725.249
+MON,2003,Landings,Others,7,929.541
+MON,2004,Landings,Others,7,1138.761
+MON,2005,Landings,Others,7,979.61
+MON,2006,Landings,Others,7,957.018
+MON,2007,Landings,Others,7,1167.634
+MON,2008,Landings,Others,7,772.167
+MON,2009,Landings,Others,7,639.451
+MON,2010,Landings,Others,7,816.352
+MON,2011,Landings,Others,7,939.488
+MON,2012,Landings,Others,7,219.733
+MON,2013,Landings,Others,7,255.708
+MON,2014,Landings,Others,7,277.847
+MON,2015,Landings,Others,7,281.109
+MON,2016,Landings,Others,7,267.581
+MON,2017,Landings,Others,7,0
+MON,2003,Discards,Spain,7,271.6339323
+MON,2004,Discards,Spain,7,599.2176357
+MON,2005,Discards,Spain,7,283.4225387
+MON,2006,Discards,Spain,7,92.02163536
+MON,2007,Discards,Spain,7,16.82438908
+MON,2008,Discards,Spain,7,200.9773909
+MON,2009,Discards,Spain,7,268.9727227
+MON,2010,Discards,Spain,7,813.5356434
+MON,2011,Discards,Spain,7,149.817
+MON,2012,Discards,Spain,7,120.891
+MON,2013,Discards,Spain,7,93.98107401
+MON,2014,Discards,Spain,7,36.99789918
+MON,2015,Discards,Spain,7,2.190072754
+MON,2016,Discards,Spain,7,356.7387627
+MON,2017,Discards,Spain,7,5.299233288
+MON,2018,Discards,Spain,7,13.05022024
+MON,2019,Discards,Spain,7,2.235423286
+MON,2002,Landings,Spain,7,3084.49637
+MON,2003,Landings,Spain,7,4662.35097
+MON,2004,Landings,Spain,7,4507.28207
+MON,2005,Landings,Spain,7,4663.15302
+MON,2006,Landings,Spain,7,4589.48666
+MON,2007,Landings,Spain,7,5065.31674
+MON,2008,Landings,Spain,7,4107.17207
+MON,2009,Landings,Spain,7,2753.5246
+MON,2010,Landings,Spain,7,2353.188
+MON,2011,Landings,Spain,7,2232.39
+MON,2012,Landings,Spain,7,2565
+MON,2013,Landings,Spain,7,4464.90386
+MON,2014,Landings,Spain,7,2228.46
+MON,2015,Landings,Spain,7,2107.06
+MON,2016,Landings,Spain,7,2104.92
+MON,2017,Landings,Spain,7,1744.2
+MON,2018,Landings,Spain,7,1894.17
+MON,2019,Landings,Spain,7,1473.25
+MON,2018,Logbook Registered Discard,Spain,7,0
+MON,2019,Logbook Registered Discard,Spain,7,0
+MON,2003,Discards,UK (England),7,473.5533368
+MON,2004,Discards,UK (England),7,289.6424759
+MON,2005,Discards,UK (England),7,397.6519046
+MON,2006,Discards,UK (England),7,93.96055181
+MON,2007,Discards,UK (England),7,125.4736839
+MON,2008,Discards,UK (England),7,89.30708299
+MON,2009,Discards,UK (England),7,144.668503
+MON,2010,Discards,UK (England),7,198.8105609
+MON,2011,Discards,UK (England),7,357.7793849
+MON,2012,Discards,UK (England),7,119.6685147
+MON,2013,Discards,UK (England),7,183.9012448
+MON,2014,Discards,UK (England),7,298.8728826
+MON,2015,Discards,UK (England),7,228.5998062
+MON,2016,Discards,UK (England),7,169.8862009
+MON,2017,Discards,UK (England),7,531.0961374
+MON,2018,Discards,UK (England),7,292.8530861
+MON,2019,Discards,UK (England),7,172.2233289
+MON,2002,Landings,UK (England),7,2984.858
+MON,2003,Landings,UK (England),7,2850.294
+MON,2004,Landings,UK (England),7,2905.974
+MON,2005,Landings,UK (England),7,3032.284
+MON,2006,Landings,UK (England),7,3137.468
+MON,2007,Landings,UK (England),7,4036.226
+MON,2008,Landings,UK (England),7,2928.204
+MON,2009,Landings,UK (England),7,3013.063
+MON,2010,Landings,UK (England),7,3674.942
+MON,2011,Landings,UK (England),7,4286.773
+MON,2012,Landings,UK (England),7,4028.481
+MON,2013,Landings,UK (England),7,4628.842
+MON,2014,Landings,UK (England),7,5058.579
+MON,2015,Landings,UK (England),7,4745.256
+MON,2016,Landings,UK (England),7,4952.9
+MON,2017,Landings,UK (England),7,4031.813
+MON,2018,Landings,UK (England),7,3464.73
+MON,2019,Landings,UK (England),7,3803.944
+MON,2010,Discards,UK(Scotland),7,0
+MON,2011,Discards,UK(Scotland),7,0
+MON,2012,Discards,UK(Scotland),7,0
+MON,2013,Discards,UK(Scotland),7,0
+MON,2014,Discards,UK(Scotland),7,70.5165122
+MON,2015,Discards,UK(Scotland),7,104.8941979
+MON,2016,Discards,UK(Scotland),7,145.4133826
+MON,2017,Discards,UK(Scotland),7,106.9357277
+MON,2018,Discards,UK(Scotland),7,45.93863068
+MON,2019,Discards,UK(Scotland),7,60.45877806
+MON,2010,Landings,UK(Scotland),7,0
+MON,2011,Landings,UK(Scotland),7,0
+MON,2012,Landings,UK(Scotland),7,0
+MON,2013,Landings,UK(Scotland),7,0
+MON,2014,Landings,UK(Scotland),7,1070.093
+MON,2015,Landings,UK(Scotland),7,898.577
+MON,2016,Landings,UK(Scotland),7,1099.477
+MON,2017,Landings,UK(Scotland),7,1190.602
+MON,2018,Landings,UK(Scotland),7,690.994
+MON,2019,Landings,UK(Scotland),7,748.602
+MON,2012,Discards,Belgium,8,6.832
+MON,2012,Landings,Belgium,8,44.982
+MON,2002,Landings,Denmark,8,0
+MON,2003,Discards,France,8,403.8033839
+MON,2004,Discards,France,8,347.7191112
+MON,2005,Discards,France,8,296.5963454
+MON,2006,Discards,France,8,208.233934
+MON,2007,Discards,France,8,192.1413936
+MON,2008,Discards,France,8,223.9800438
+MON,2009,Discards,France,8,529.9705749
+MON,2010,Discards,France,8,505.190224
+MON,2011,Discards,France,8,350.0554125
+MON,2012,Discards,France,8,455.4858901
+MON,2013,Discards,France,8,261.7510667
+MON,2014,Discards,France,8,402.5364898
+MON,2015,Discards,France,8,519.6917905
+MON,2016,Discards,France,8,478.9391513
+MON,2017,Discards,France,8,260.4632774
+MON,2018,Discards,France,8,56.12398994
+MON,2019,Discards,France,8,46.55633974
+MON,2002,Landings,France,8,3022.78555
+MON,2003,Landings,France,8,4806.20023
+MON,2004,Landings,France,8,5227.30891
+MON,2005,Landings,France,8,4927.04905
+MON,2006,Landings,France,8,4818.79935
+MON,2007,Landings,France,8,4934.98901
+MON,2008,Landings,France,8,5131.58803
+MON,2009,Landings,France,8,4065.02545
+MON,2010,Landings,France,8,4042.85233
+MON,2011,Landings,France,8,4568.92168
+MON,2012,Landings,France,8,4220.84022
+MON,2013,Landings,France,8,4104.65916
+MON,2014,Landings,France,8,4279.28636
+MON,2015,Landings,France,8,4152.8525
+MON,2016,Landings,France,8,3561.49004
+MON,2017,Landings,France,8,2886.06463
+MON,2018,Landings,France,8,2843.95755
+MON,2019,Landings,France,8,1987.34801
+MON,2003,Discards,Ireland,8,0.022068049
+MON,2004,Discards,Ireland,8,0.035238306
+MON,2003,Landings,Ireland,8,0.25392
+MON,2004,Landings,Ireland,8,0.210714
+MON,2019,Discards,Netherlands,8,0.004520868
+MON,2019,Landings,Netherlands,8,0.05
+MON,2019,BMS landing,Spain,8,0.065
+MON,2003,Discards,Spain,8,30.40526733
+MON,2004,Discards,Spain,8,95.19045423
+MON,2005,Discards,Spain,8,34.98658186
+MON,2006,Discards,Spain,8,8.481561517
+MON,2007,Discards,Spain,8,1.554832419
+MON,2008,Discards,Spain,8,25.71313807
+MON,2009,Discards,Spain,8,36.67709171
+MON,2010,Discards,Spain,8,125.1205919
+MON,2011,Discards,Spain,8,31.4230813
+MON,2012,Discards,Spain,8,28.62637042
+MON,2013,Discards,Spain,8,8.362538737
+MON,2014,Discards,Spain,8,10.89514784
+MON,2015,Discards,Spain,8,6.74735317
+MON,2016,Discards,Spain,8,47.77230582
+MON,2017,Discards,Spain,8,2.554174499
+MON,2018,Discards,Spain,8,1.516353228
+MON,2019,Discards,Spain,8,3.449591041
+MON,2002,Landings,Spain,8,514.26
+MON,2003,Landings,Spain,8,508.17788
+MON,2004,Landings,Spain,8,717.74785
+MON,2005,Landings,Spain,8,570.88674
+MON,2006,Landings,Spain,8,420.30793
+MON,2007,Landings,Spain,8,400.53734
+MON,2008,Landings,Spain,8,526.84724
+MON,2009,Landings,Spain,8,374.16319
+MON,2010,Landings,Spain,8,366.57993
+MON,2011,Landings,Spain,8,452.11
+MON,2012,Landings,Spain,8,471.57
+MON,2013,Landings,Spain,8,318.123
+MON,2014,Landings,Spain,8,492.38
+MON,2015,Landings,Spain,8,303.18
+MON,2016,Landings,Spain,8,288.2
+MON,2017,Landings,Spain,8,202.71
+MON,2018,Landings,Spain,8,158.86856
+MON,2019,Landings,Spain,8,129.50739
+MON,2019,Logbook Registered Discard,Spain,8,0
+MON,2003,Discards,UK (England),8,0.004781411
+MON,2006,Discards,UK (England),8,1.845332672
+MON,2007,Discards,UK (England),8,2.946961565
+MON,2008,Discards,UK (England),8,0.624802014
+MON,2009,Discards,UK (England),8,2.394733898
+MON,2010,Discards,UK (England),8,3.395518407
+MON,2011,Discards,UK (England),8,7.008712047
+MON,2012,Discards,UK (England),8,6.02759602
+MON,2013,Discards,UK (England),8,9.00007826
+MON,2014,Discards,UK (England),8,0
+MON,2015,Discards,UK (England),8,1.541669781
+MON,2016,Discards,UK (England),8,2.008582528
+MON,2017,Discards,UK (England),8,0
+MON,2018,Discards,UK (England),8,0
+MON,2019,Discards,UK (England),8,0
+MON,2002,Landings,UK (England),8,0.003
+MON,2003,Landings,UK (England),8,0.052
+MON,2006,Landings,UK (England),8,47.885
+MON,2007,Landings,UK (England),8,25.376
+MON,2008,Landings,UK (England),8,7.363
+MON,2009,Landings,UK (England),8,33.236
+MON,2010,Landings,UK (England),8,73.082
+MON,2011,Landings,UK (England),8,92.514
+MON,2012,Landings,UK (England),8,149.295
+MON,2013,Landings,UK (England),8,137.21
+MON,2014,Landings,UK (England),8,121.453
+MON,2015,Landings,UK (England),8,64.935
+MON,2016,Landings,UK (England),8,68.968
+MON,2017,Landings,UK (England),8,65.715
+MON,2018,Landings,UK (England),8,14.026
+MON,2019,Landings,UK (England),8,63.461
+MON,2010,Discards,UK(Scotland),8,0
+MON,2011,Discards,UK(Scotland),8,0
+MON,2012,Discards,UK(Scotland),8,0
+MON,2013,Discards,UK(Scotland),8,0
+MON,2014,Discards,UK(Scotland),8,2.410410875
+MON,2015,Discards,UK(Scotland),8,0
+MON,2016,Discards,UK(Scotland),8,0
+MON,2018,Discards,UK(Scotland),8,0.078352931
+MON,2019,Discards,UK(Scotland),8,0.058771287
+MON,2010,Landings,UK(Scotland),8,0
+MON,2011,Landings,UK(Scotland),8,0
+MON,2012,Landings,UK(Scotland),8,0
+MON,2013,Landings,UK(Scotland),8,0
+MON,2014,Landings,UK(Scotland),8,52.314
+MON,2015,Landings,UK(Scotland),8,0
+MON,2016,Landings,UK(Scotland),8,0
+MON,2018,Landings,UK(Scotland),8,1.06
+MON,2019,Landings,UK(Scotland),8,0.65

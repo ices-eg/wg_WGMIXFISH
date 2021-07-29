@@ -15,7 +15,7 @@ data_yrs <- c(range(biols)[["minyear"]],
               range(biols)[["maxyear"]])
 
 first_yr_sim <- 2020 
-last_yr_sim  <- 2022
+last_yr_sim  <- 2021
 proj_yrs     <- first_yr_sim:last_yr_sim
 
 ResetRestriciton <- TRUE
@@ -35,6 +35,7 @@ stocks<-FLStocks(lapply(list.files(path = stk_path, pattern = ".RData"),function
   name(res)<-gsub('.RData',"",x)
   res}))
 
+stocks_list <- str_sub(stocks_list, 1, str_length(stocks_list)-6)
 ##~Some fixes ####
 stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2019)]    <- stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2018)]
 stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2017:2019)] <- stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2012)] ## last year of discard rate at age 7
@@ -59,17 +60,17 @@ fleets <- FLFleetsExt()
 biols <- FLBiols()
 
 for(i in 1:length(stocks_list)){
-print(i)
+print(stocks_list[i])
 fleets_sub   <- FLFleetsExt(as(stocks[[i]], "FLFleetExt")); names(fleets)
 biols_sub    <- FLBiols(as(stocks[[i]], "FLBiol"))
-fleets <- rbind(fleets, fleets_sub)
+fleets <- rbind(fleets, fleets_sub) # this is empty - shoudl I name and fill wih zeros
 biols <- rbind(biols, biols_sub)
 rm(fleets_sub,biols_sub)
 }
+#fleet do one by one - and name as stock
 
 # Control object ####
 # fleets.ctrl  -- see bim script 04
-
 LO <- FALSE 
 
 fls   <- names(fleets)
@@ -85,23 +86,47 @@ flts.stksnames   <- NULL; for(f in 1:length(fleets))  flts.stksnames <- c(flts.s
 # 
 # stks <- c(dyn.stk, cnt.stk)
 
+###########################
+### CATCH MODELS
+############################
 
+## This is automatic
+c.mod<-stack(lapply(fleets,catchNames)) #we need to name fleets, should I just put it all as a MIS_MIS? 
+c.mod$catch.mod<-sapply(c.mod$values,function(x) {
+  if(x %in% cat1) return("CobbDouglasAge") else  ## CobbDouglasAge
+    return("CobbDouglasBio")
+})
+catch.models     <- c.mod$catch.mod ; names(catch.models)<-paste(c.mod$ind,c.mod$values,sep=".")
+#############################
+
+############################
+### CAPTIAL MODELS
+#############################
+## Is fixed 
+capital.models   <- rep("fixedCapital",n.fls)           ; names(capital.models)<-fls
+#############################
+
+#############################
+### PRICE MODELS
+## fixed
+##############################
+price.models     <- rep("fixedPrice",n.stks)            ; names(price.models)<-paste(c.mod$ind,c.mod$values,sep=".")
 flq   <- FLQuant(dimnames = list(quant = 'all', year = data_yrs[1]:last_yr_sim, season = 1), iter = 1)
 
 fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stksnames=flts.stksnames,
                                        effort.models= effort.models,catch.models=catch.models,
-                                       capital.models=capital.models, price.models=price.models,flq=flq)
+                                       capital.models=NULL, price.models=NULL,flq=flq)
 
-#NB stock specific effort. 
-#Just do default a loop through after 
+#NB stock specific effort - but we have no effort yet? I only have stock objects
+# NoteJust do default a loop through after 
 
 for(i in names(fleets)) {
   fleets.ctrl[[i]]$effort.restr <- restrictionTable[restrictionTable$fleet == i, "eff.restriction"]
 }
-
-
+# I assume our effort restrictions are based on the F's st out in the single species WG
 
 # advice       -- see bim script 05
+
 # advice.ctrl  -- see bim script 05, create.advice.ctrl()
 # biols.ctrl   -- see bim script 03, create.biols.ctrl() 
 # obs.ctrl     -- see bim script 03, create.obs.ctrl()

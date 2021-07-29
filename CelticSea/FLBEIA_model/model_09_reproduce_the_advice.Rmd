@@ -1,0 +1,92 @@
+---
+title: "model_09_reproduce_the_advice"
+author: "Claire Moore"
+date: "7/29/2021"
+output: html_document
+---
+
+
+```{r}
+#Setup
+library(FLCore)
+library(FLBEIA)
+library(tidyverse)
+library(ggplot2)
+```
+
+__Overview__
+This WD is to record a simple FLBEIA set-up for mixed fisheries forecasts in the Celtic Sea. It outlines the
+following steps:
+1. Set-up the control parameters for the simulations
+2. Conditioning of the FLBiols objects
+3. Conditioning of the FLFleetExts object
+4. Set-up the Stock-Recruit objects
+
+#__Read in the data __
+And convert to format that we need
+```{r}
+stk_path  <- file.path("results/clean_data/clean_stock_objects/")
+stocks_list <- list.files(path = stk_path, pattern = ".RData")
+stocks<-FLStocks(lapply(list.files(path = stk_path, pattern = ".RData"),function(x){
+  load(file.path(stk_path,x))
+  res<-get("stock")
+  name(res)<-gsub('.RData',"",x)
+  res}))
+
+stocks_list <- str_sub(stocks_list, 1, str_length(stocks_list)-6)
+
+##~Some fixes ####
+stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2019)]    <- stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2018)]
+stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2017:2019)] <- stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2012)] ## last year of discard rate at age 7
+
+for(st in stocks@names) {
+  if(all(is.na(stocks[[st]]@discards.wt))) {
+    stocks[[st]]@discards.wt <- stocks[[st]]@stock.wt
+  }
+}
+
+## For individual ages/years
+for(st in stocks@names) {
+  if(any(is.na(stocks[[st]]@discards.wt))) {
+    stocks[[st]]@discards.wt[is.na(stocks[[st]]@discards.wt)] <- stocks[[st]]@stock.wt[is.na(stocks[[st]]@discards.wt)]
+  }
+}
+
+# Convert to FLBiols and FLFleet ####
+source("funcs/reproduce_the_advice.R")
+
+fleets <- FLFleetsExt()
+biols <- FLBiols()
+
+for(i in 1:length(stocks_list)){
+print(stocks_list[i])
+fleets_sub   <- FLFleetsExt(as(stocks[[i]], "FLFleetExt")); names(fleets)
+biols_sub    <- FLBiols(as(stocks[[i]], "FLBiol"))
+fleets <- rbind(fleets, fleets_sub) # this is empty - shoudl I name and fill wih zeros
+biols <- rbind(biols, biols_sub)
+rm(fleets_sub,biols_sub)
+}
+
+```
+
+#__Main control object__
+Here we set out the bounds of our forecasts.
+```{r}
+data_yrs <- c(range(biols)[["minyear"]],
+              range(biols)[["maxyear"]])
+first_yr_sim <- 2020 
+last_yr_sim  <- 2021
+proj_yrs     <- first_yr_sim:last_yr_sim
+
+ResetRestriciton <- TRUE
+ResetLO <- TRUE
+Cond_Fleet <- TRUE
+
+fl.proj.avg.yrs <- 2017:2019 ## weights including landings.wt, discards.wt
+sel.yrs         <- 2017:2019 ## the selection pattern including effort, effshare, catch.q, landings.sel, discards.sel
+```
+
+
+#__Main control object__
+
+
