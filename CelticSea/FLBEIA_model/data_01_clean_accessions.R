@@ -105,8 +105,19 @@ names(accessions_landings) <-  c("Country", "Year", "Quarter", "Metier", "Vessel
 
 # 04 _ Subset for Celtic Seas Areas ####
 accessions_landings$Area <- as.character(accessions_landings$Area)
-accessions_landings_new<- accessions_landings[substr(accessions_landings$Area, 1,4) %in% c("27.7"   , "27.7.b" , "27.7.c" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j" , "27.7.k" ),]
+accessions_landings_new<- accessions_landings[substr(accessions_landings$Area, 1,4) %in% c("27.7","27.7.a","27.7.b","27.7.c","27.7.c.2","27.7.d","27.7.e","27.7.f","27.7.g","27.7.h","27.7.j","27.7.j.1","27.7.j.2","27.7.k","27.7.k.1","27.7.k.2" ),]
 unique(accessions_landings_new$Area)
+
+# apply area corrections 1 --------------------------------------------------
+dim(accessions_landings_new)[1]
+accessions_landings_new_a <- left_join(accessions_landings_new,select(area_spp_fix,Area,ICES_mix_correct))
+dim(accessions_landings_new_a)[1]
+table(is.na(accessions_landings_new_a$ICES_mix_correct))
+#### should be all false
+accessions_landings_new_a$Area <-accessions_landings_new_a$ICES_mix_correct 
+accessions_landings_new_a <- accessions_landings_new_a %>% select(-ICES_mix_correct)
+
+accessions_landings_new <- accessions_landings_new_a
 
 # ~back to accessions_landings -----------------------------------------
 
@@ -234,7 +245,7 @@ accessions_landings <- accessions_landings5 %>% group_by(Country, Year, Quarter,
 sum(accessions_landings5$Landings)/1000
 sum(accessions_landings$Landings)/1000
 
-q <- ggplot(accessions_landings[accessions_landings$Year %in% c(2019) & accessions_landings$Species %in% c("COD", "HAD", "WHG")& accessions_landings$Area %in% c("27.7.b" ,"27.7.c" ,  "27.7.d", "27.7.e","27.7.f" ,  "27.7.g" ,  "27.7.h" ,"27.7.j" ,  "27.7.k"),], aes(Country, Landings)) + geom_bar(stat="identity") + facet_wrap(~Species)
+q <- ggplot(accessions_landings[accessions_landings$Year %in% c(2019) & accessions_landings$Species %in% c("COD", "HAD", "WHG")& accessions_landings$Area %in% c("27.7","27.7.a","27.7.b","27.7.c","27.7.c.2","27.7.d","27.7.e","27.7.f","27.7.g","27.7.h","27.7.j","27.7.j.1","27.7.j.2","27.7.k","27.7.k.1","27.7.k.2" ),], aes(Country, Landings)) + geom_bar(stat="identity") + facet_wrap(~Species)
 q
 
 
@@ -396,7 +407,19 @@ write.taf(Bad_accessions_effort_areas,file = file.path(Data_path_out,"Intermedia
 
 # #~filter areas ----------------------------------------------------------
 accessions_effort <- accessions_effort %>% filter(!Area %in%c("-1","NULL"))
-accessions_effort <- accessions_effort[substr(accessions_effort$Area, 1,4) %in% c("27.7"   , "27.7.b" , "27.7.c" , "27.7.d",  "27.7.e",  "27.7.f" , "27.7.g" , "27.7.h",  "27.7.j" , "27.7.k" ),]
+accessions_effort <- accessions_effort[substr(accessions_effort$Area, 1,4) %in% c("27.7","27.7.a","27.7.b","27.7.c","27.7.c.2","27.7.d","27.7.e","27.7.f","27.7.g","27.7.h","27.7.j","27.7.j.1","27.7.j.2","27.7.k","27.7.k.1","27.7.k.2" ),]
+
+# apply area corrections 1 --------------------------------------------------
+dim(accessions_effort)[1]
+accessions_effort_a <- left_join(accessions_effort,select(area_spp_fix,Area,ICES_mix_correct))
+dim(accessions_effort_a)[1]
+table(is.na(accessions_effort_a$ICES_mix_correct))
+#### should be all false
+accessions_effort_a$Area <-accessions_effort_a$ICES_mix_correct 
+accessions_effort_a <- accessions_effort_a %>% select(-ICES_mix_correct)
+
+accessions_effort <- accessions_effort_a
+
 
 ## remove extra cols
 accessions_effort <- accessions_effort %>% select(-Standard,-ICES_mix_correct, -ICES_FU,-species_mix_FU)
@@ -517,6 +540,14 @@ accessions_effort<- accessions_effort %>% group_by(Country, Year, Quarter, Metie
                                                                               "No_vessels" = sum(No_vessels, na.rm=TRUE) )
 
 accessions_effort$Metier <- substr(accessions_effort$Metier,1,7)
+
+
+# add stock ---------------------------------------------------------------
+
+dim(accessions_effort)
+accessions_effort <- left_join(accessions_effort,Stock_lookup)
+dim(accessions_effort)[1]-dim(accessions_effort)[1]
+
 accessions_effort_fin <- as.data.frame(accessions_effort)
 
 # 06 _ Write out clean data ####
