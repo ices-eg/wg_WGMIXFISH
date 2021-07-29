@@ -237,13 +237,15 @@ CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(A
 #now do some graphs, this is just counts of problems
 Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB,ADVICE_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB,ADVICE_PROB),names_to ="Prob")
 
-ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()
-
+ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()+
+  ggsave(file.path(Data_path,"\\intermediate_products\\03_crosschecking_counts.png"))
 ### this is the actuall value we are out by
 Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC,diff_Advice) %>% pivot_longer(cols =c(diff_AC,diff_IC,diff_Advice),names_to ="Diff")
 
-ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+   scale_y_continuous(breaks = seq(-7000,1100,500),limits =c(-7000,1100))
+ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+   scale_y_continuous(breaks = seq(-5000,5000,500),limits =c(-5000,5000))+
+  ggsave(file.path(Data_path,"\\intermediate_products\\03_crosschecking_landings.png"))
 
+write.csv(CHECK_IC_AC_OBJ_SUM,file = file.path(Data_path,"\\intermediate_products\\03_crosschecking.csv"))
 
 # Notes -------------------------------------------------------------------
 
@@ -450,7 +452,7 @@ sum(Catch3$Landings)-(sum(Catch7$Landings)+sum(Catch7_DR_NA$Landings))
  
 # ~Set Catch7 back to Catch3 and remove 4-7 --------------------------------
 Catch3 <- Catch8
-rm(Catch4,Catch4_DR,Catch4_DR_NA,Catch5,Catch5_DR,Catch5_DR_NA,Catch6,Catch6_DR,Catch6_DR_NA,Catch6_DR,Catch7_DR_NA)
+rm(Catch4,Catch4_DR,Catch4_DR_NA,Catch5,Catch5_DR,Catch5_DR_NA,Catch6,Catch6_DR,Catch6_DR_NA,Catch7,Catch7_DR_NA)
 # Catch_Check <- Catch3 %>% select(Discard_ID,Landings) %>% group_by(Discard_ID) %>% summarise(Landings=sum(Landings)) %>% ungroup()
 # IC_Check <- InterCatch %>% select(Discard_ID,Country,Year,Landings,DR) %>% group_by(Discard_ID,Country,Year) %>% summarise(IC_Landings=sum(Landings),DR = max(DR,na.rm = T)) %>% ungroup()
 # 
@@ -496,7 +498,7 @@ write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per
 #hashed out old code
 ## Question is this not simply landigns*discard rate?
 # Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
-Catch3<-mutate(Catch3,Discards=(Landings*DR)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
+Catch3<-mutate(Catch3,Discards=(Landings*DR)) %>%  select(Country,Year,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
 
 # 9.0 Assigning a fleet ------------------------------------------------------
 
@@ -523,13 +525,13 @@ effort2$Fleet<-paste(effort2$Country,effort2$GeneralGrouping,effort2$Vessel_leng
 effort2$Metier <- paste(effort2$Metier, effort2$Area, sep= "_") 
 
 # Now aggregate to make sure
-Catch4<- Catch3 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter,Species,Stock) %>%  
+Catch4<- Catch3 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Species,Stock) %>%  
   summarise("Landings"=sum(Landings,na.rm=T),
             "Discards"=sum(Discards,na.rm=T),
             "Value" = sum(Value, na.rm=T)) %>% ungroup()
 
 # Now aggregate to make sure
-effort3 <- effort2 %>% group_by(Fleet,Metier, Vessel_length, Year,Area,Quarter) %>%dplyr::summarise("kw_days"=sum(kw_days,na.rm=T),"Days_at_sea"=sum(Days_at_sea,na.rm=T)) %>% ungroup()
+effort3 <- effort2 %>% group_by(Fleet,Metier, Vessel_length, Year,Area) %>%dplyr::summarise("kw_days"=sum(kw_days,na.rm=T),"Days_at_sea"=sum(Days_at_sea,na.rm=T)) %>% ungroup()
 
 # 10.0 FIN df created and setting of fleet and metier aggregations  -------------------------------------
 Effort_FIN <- effort3
