@@ -23,8 +23,8 @@ Data_path <- "bootstrap"
 Data_path_out <- "results/"
 
 # 02 _ Read in data ####
-load(file.path(Data_path,"/initial/wgmixfish_accessions/catch_2020.Rdata"))
-load(file.path(Data_path,"initial/wgmixfish_accessions/catchHAD.Rdata"))
+load(file.path(Data_path,"/Data/wgmixfish_accessions/catch_2020.Rdata"))
+load(file.path(Data_path,"Data/wgmixfish_accessions/catchHAD.Rdata"))
 
 # 03_lookup tables -----------------------------------------------------------
 area_spp_fix <- read.csv(file.path(Data_path,"data/supporting_files/Area_lookup.csv"))
@@ -349,7 +349,7 @@ Data_path <- "bootstrap"
 Data_path_out <- "results/"
 
 # 02 _ Read in data ####
-load(file.path(Data_path,"initial/wgmixfish_accessions/effort_2020.Rdata"))
+load(file.path(Data_path,"Data/wgmixfish_accessions/effort_2020.Rdata"))
 area_spp_fix <- read.csv(file.path(Data_path,"data/supporting_files/Area_lookup.csv"))
 lvl4_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Metier_lvl4_lookup.xlsx"))
 Vessel_Lookup <- read_xlsx(file.path(Data_path,"data/supporting_files/Vessel_length_lookup.xlsx"))
@@ -361,7 +361,7 @@ rm(effort)
 
 
 # 03_spanish data that needs to be substituted (ask someone why) -------------
-load(file.path(Data_path,"initial/wgmixfish_accessions/effort_2019.RData"))
+load(file.path(Data_path,"Data/wgmixfish_accessions/effort_2019.RData"))
 
 #remove offender from current data
 accessions_effort_replece <- accessions_effort %>% filter(Country %in% c("ES-AZTI", "ES","ESP" )& Year %in% c(2018)) 
