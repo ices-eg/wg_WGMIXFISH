@@ -1,0 +1,584 @@
+Country,Season,Season type,Year,Stock,Area,Fleets,Effort,UnitEffort,Catch. kg,Catch Cat.,Report cat.,Discards Imported Or Raised
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,-9,NA,2,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,-9,NA,2,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,-9,NA,178,Landings,"A-All - reported, nonre",Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.d,MIS_MIS_0_0_0_HC,3770930,kWd,1370.49,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.d,MIS_MIS_0_0_0_HC,4521794,kWd,1289.45,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.d,MIS_MIS_0_0_0_HC,5672159,kWd,494.58,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_>=70_0_0,-9,NA,133870,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_>=70_0_0,-9,NA,188870,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_>=70_0_0,-9,NA,151380,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_>=70_0_0,-9,NA,181720,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,GNS_DEF_>=100_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,GNS_DEF_>=100_0_0,2024,kWd,0,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.d,MIS_MIS_0_0_0_HC,4364101,kWd,768.86,Landings,R-Reported,Imported
+Belgium,1,Quarter,2017,meg.27.7b-k8abd,27.7.d,MIS_MIS_0_0_0_HC,59058,kWd,1,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,PTB_DEF_>=70_0_0,95169,kWd,50,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,GNS_DEF_>=100_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,PTB_DEF_>=70_0_0,68283,kWd,10,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,GNS_DEF_>=100_0_0,14572,kWd,60,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,PTB_DEF_>=70_0_0,80661,kWd,200,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,PTB_DEF_>=70_0_0,92973,kWd,90,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.d,OTB_DEF_70-99_0_0,2282110,kWd,72.58,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,2973434,kWd,289.68,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT-CRU,916,kWd,0,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,SSC_DEF_All_0_0_All,12573,kWd,157.36,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_>=70_0_0,18484,kWd,291.17,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_100-119_0_0_all,25364,kWd,2310.52,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_100-119_0_0,374647,kWd,7851.83,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0,1380250,kWd,2681.89,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,62532,kWd,847.75,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT-CRU,3397,kWd,614.28,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT_DEF_100-119_0_0_all,318112,kWd,53629.65,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,752039,kWd,108204.86,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_100-119_0_0,173288,kWd,5620.23,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT_DEF_100-119_0_0_all,403513,kWd,73649.39,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,615381,kWd,90259.72,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,752039,kWd,317.41,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,294520,kWd,27881.67,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0,3379,kWd,46.95,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0,5500,kWd,258.24,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTT_DEF_100-119_0_0_all,5397,kWd,159.85,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0,63065,kWd,19494.48,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.c,MIS_MIS_0_0_0_HC,367992,kWd,304.73,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTT_DEF_100-119_0_0_all,1400,kWd,29.65,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_100-119_0_0,155176,kWd,28134.42,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0,116504,kWd,95471.03,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,MIS_MIS_0_0_0_HC,84840,kWd,728.69,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_All_0_0_All,25872,kWd,1193.5,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0,425458,kWd,26216.58,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,MIS_MIS_0_0_0_HC,607618,kWd,725.11,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,SSC_DEF_All_0_0_All,15804,kWd,164.42,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0,584649,kWd,71650.66,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0,714054,kWd,52902.74,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_100-119_0_0_all,8043,kWd,11.96,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,MIS_MIS_0_0_0_HC,747702,kWd,2316.13,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,383331,kWd,176171.48,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,382594,kWd,120261.69,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,325540,kWd,226738.02,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTT_DEF_100-119_0_0_all,4900,kWd,195.77,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTT_DEF_100-119_0_0_all,3682,kWd,287.92,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT_DEF_100-119_0_0_all,403513,kWd,11807.47,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,615381,kWd,12469.66,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,294520,kWd,22564.97,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.d,OTB_DEF_70-99_0_0,1640829,kWd,298.15,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0,1422069,kWd,4116.64,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_DEF_70-99_0_0,822491,kWd,13017.54,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,502498,kWd,24.53,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_100-119_0_0,318438,kWd,294.78,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,1759435,kWd,80871.76,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,GTR_DEF_100-119_0_0_all,570401,kWd,103.14,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0,1709896,kWd,28450.89,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,1759435,kWd,100250.25,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,266594,kWd,47528.35,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT_DEF_>=70_0_0,932692,kWd,108093.96,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_100-119_0_0,259543,kWd,8985.13,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,841527,kWd,85545.42,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,2424005,kWd,77490.05,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT_DEF_>=70_0_0,883570,kWd,233196.52,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,779641,kWd,245.69,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.d,OTB_DEF_100-119_0_0,7867,kWd,2.53,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.d,OTB_DEF_70-99_0_0,1671566,kWd,209.57,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.d,OTB_DEF_70-99_0_0,1473896,kWd,0.81,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,3171611,kWd,289.68,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,3414941,kWd,478.79,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT-CRU,972,kWd,1.94,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_>=70_0_0,1180,kWd,58.16,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_100-119_0_0_all,12246,kWd,1716.36,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0,2190700,kWd,12727.78,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_100-119_0_0_all,39868,kWd,1.97,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,48913,kWd,1263.65,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT-CRU,1125,kWd,178.35,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT_DEF_100-119_0_0_all,24651,kWd,2572.07,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_All_0_0_All,56376,kWd,3101.69,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT_DEF_100-119_0_0_all,367616,kWd,69020.05,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_100-119_0_0,419783,kWd,13933.66,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,841527,kWd,195317.56,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,263789,kWd,40297.94,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,209758,kWd,7525.41,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,85046,kWd,8073.9,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,2424005,kWd,90114.12,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,557589,kWd,45.72,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,GTR_DEF_100-119_0_0_all,628860,kWd,364.11,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT_DEF_>=70_0_0,883570,kWd,126560.05,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_100-119_0_0,318438,kWd,2862.42,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_100-119_0_0,259543,kWd,6015.81,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_100-119_0_0,42662,kWd,6317.7,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0,8652,kWd,2392.32,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,MIS_MIS_0_0_0_HC,3872882,kWd,18212.45,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_All_0_0_All,56376,kWd,386.79,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT_DEF_100-119_0_0_all,367616,kWd,5705.34,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,266594,kWd,513.74,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,263789,kWd,5585.84,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,85046,kWd,4768.36,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,209758,kWd,8933.8,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_DEF_70-99_0_0,822491,kWd,2439.82,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,GTR_DEF_100-119_0_0_all,628860,kWd,32.08,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,SSC_DEF_All_0_0_All,369816,kWd,169.74,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,779641,kWd,1411.07,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,502498,kWd,10.72,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,1401639,kWd,186.29,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT-CRU,37359,kWd,43.44,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT_DEF_>=70_0_0,49874,kWd,1979.3,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,GTR_DEF_100-119_0_0_all,570401,kWd,258.29,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.d,MIS_MIS_0_0_0_HC,114244,kWd,326.58,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.d,SSC_DEF_All_0_0_All,2088,kWd,137.91,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTB_DEF_70-99_0_0,3787,kWd,311.72,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.d,GTR_DEF_100-119_0_0_all,18530,kWd,26.67,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT-CRU,4093,kWd,29.43,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_>=70_0_0,24748,kWd,69.98,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_100-119_0_0_all,28132,kWd,4255.38,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT-CRU,1132,kWd,174,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT_DEF_100-119_0_0_all,10518,kWd,1736.67,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.b,MIS_MIS_0_0_0_HC,9314,kWd,22.44,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_100-119_0_0,119627,kWd,27193.28,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_100-119_0_0,135346,kWd,28307.72,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0,65375,kWd,25301.25,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTT_DEF_100-119_0_0_all,16800,kWd,570.05,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTT_DEF_100-119_0_0_all,2191,kWd,49.94,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_100-119_0_0,148546,kWd,40865.92,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0,64157,kWd,34808.22,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,MIS_MIS_0_0_0_HC,180536,kWd,318.16,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0,9963,kWd,158.52,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,MIS_MIS_0_0_0_HC,441608,kWd,774.61,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,MIS_MIS_0_0_0_HC,619779,kWd,13840.66,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT-CRU,21102,kWd,9246.86,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT-CRU,64595,kWd,26459.51,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT-CRU,12269,kWd,3154.42,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_>=70_0_0,961,kWd,9.01,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_>=70_0_0,2270,kWd,257.47,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT_DEF_>=70_0_0,1728897,kWd,281899.85,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_70-99_0_0,604569,kWd,12722.76,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,GTR_DEF_100-119_0_0_all,595000,kWd,155.74,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0,278570,kWd,49120.13,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,1162142,kWd,29911.66,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,135373,kWd,9786.07,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,34261,kWd,233.96,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_>=70_0_0,23642,kWd,354.62,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,605416,kWd,22039.8,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,385201,kWd,5683.13,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,355776,kWd,10217.04,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,3895372,kWd,433.98,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,SSC_DEF_All_0_0_All,13342,kWd,415.13,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_>=70_0_0,1466,kWd,0.04,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT_DEF_100-119_0_0_all,13823,kWd,5949.25,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_100-119_0_0,100035,kWd,3326.04,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0,2466,kWd,12.64,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTT_DEF_100-119_0_0_all,5636,kWd,17.71,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_100-119_0_0,131732,kWd,25087.23,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0,45107,kWd,15749.37,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.c,MIS_MIS_0_0_0_HC,173603,kWd,49.1,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTT_DEF_100-119_0_0_all,20510,kWd,2011.13,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_100-119_0_0,119678,kWd,28707.77,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0,41389,kWd,19921.42,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0,79396,kWd,36688.73,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_100-119_0_0_all,27565,kWd,1.18,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,38910,kWd,53.83,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT-CRU,816,kWd,42.86,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT_DEF_100-119_0_0_all,2245,kWd,73.12,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_All_0_0_All,2580,kWd,36.11,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT_DEF_100-119_0_0_all,297693,kWd,79567.95,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,135373,kWd,41218.84,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0,319345,kWd,39442,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0,82953,kWd,6811.1,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0,10928,kWd,393.7,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT-CRU,9889,kWd,5862.81,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,SSC_DEF_All_0_0_All,242284,kWd,1012.73,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT-CRU,756,kWd,217.84,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,537821,kWd,223306.43,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,217842,kWd,131023.5,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_100-119_0_0,39937,kWd,8918.17,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,MIS_MIS_0_0_0_HC,4339211,kWd,10998.77,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_70-99_0_0,1090005,kWd,97104.38,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_70-99_0_0,1386970,kWd,31953.56,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,738021,kWd,2190.45,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,1993113,kWd,1590.63,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,1363952,kWd,490.83,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT-CRU,10172,kWd,0.91,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,SSC_DEF_All_0_0_All,9841,kWd,1.29,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT_DEF_>=70_0_0,116837,kWd,5483.7,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT_DEF_>=70_0_0,125540,kWd,3099.25,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_DEF_70-99_0_0,595495,kWd,5095.5,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,GTR_DEF_100-119_0_0_all,611907,kWd,52.13,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.d,MIS_MIS_0_0_0_HC,105939,kWd,114.72,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.d,SSC_DEF_All_0_0_All,7041,kWd,60.7,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTT_DEF_>=70_0_0,33984,kWd,6139.25,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTB_DEF_70-99_0_0,28040,kWd,7870.41,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,82783,kWd,3219.85,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,1162142,kWd,12204.34,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,973460,kWd,17760.56,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_DEF_70-99_0_0,401561,kWd,22991.58,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTT_DEF_100-119_0_0_all,17269,kWd,2312.44,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_100-119_0_0,141677,kWd,3993.96,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_100-119_0_0,247146,kWd,10441.42,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_100-119_0_0,164058,kWd,31568.48,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0,25141,kWd,8426.94,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_100-119_0_0,168603,kWd,45702.27,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,MIS_MIS_0_0_0_HC,64800,kWd,450.37,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,82783,kWd,28440.42,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,61504,kWd,12444.69,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,MIS_MIS_0_0_0_HC,523525,kWd,1242.51,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,SSC_DEF_All_0_0_All,15876,kWd,235.09,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_>=70_0_0,7522,kWd,1006.82,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,325928,kWd,182145.73,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.k,MIS_MIS_0_0_0_HC,557903,kWd,46.93,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTT_DEF_100-119_0_0_all,4200,kWd,318.75,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_100-119_0_0,86298,kWd,6169.17,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0,16038,kWd,3041.28,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,MIS_MIS_0_0_0_HC,3840591,kWd,22296.65,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_100-119_0_0_all,4634,kWd,2.13,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,MIS_MIS_0_0_0_HC,1435373,kWd,7074.6,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT-CRU,994,kWd,211.73,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,SSC_DEF_All_0_0_All,588,kWd,3.93,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT-CRU,973460,kWd,40742.87,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,SSC_DEF_All_0_0_All,188053,kWd,507.65,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_70-99_0_0,896658,kWd,12156.19,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT-CRU,67549,kWd,39.98,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT_DEF_>=70_0_0,79136,kWd,2314.71,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_DEF_70-99_0_0,401561,kWd,11936.4,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTT_DEF_>=70_0_0,69110,kWd,18127.17,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTT_DEF_>=70_0_0,34812,kWd,1366.71,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,891265,kWd,51675.12,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT_DEF_>=70_0_0,1061036,kWd,30266.36,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_DEF_70-99_0_0,604569,kWd,22394.66,Discards,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,GTR_DEF_100-119_0_0_all,738021,kWd,187.41,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTT-CRU,34261,kWd,6342.57,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0,343221,kWd,35719.32,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_>=70_0_0,23642,kWd,2361.2,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,891265,kWd,250442.6,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT_DEF_100-119_0_0_all,605416,kWd,87076.33,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_100-119_0_0,385201,kWd,38751.84,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0,737797,kWd,92436.12,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT_DEF_100-119_0_0_all,355776,kWd,17414.91,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTT-CRU,64595,kWd,7432.88,Discards,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT-CRU,67549,kWd,1500.12,Discards,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTT_DEF_>=70_0_0,1061036,kWd,217535.31,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_70-99_0_0_all,-9,kWd,148,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,kWd,1025,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_CRU_70-99_0_0_all,-9,kWd,296,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_DEF_>=120_0_0_all,-9,kWd,15808,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,MIS_MIS_0_0_0_HC,-9,NA,1914,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,GNS_DEF_120-219_0_0_all,-9,NA,3250,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0_all,-9,NA,275009,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0_all,-9,NA,73380,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_100-119_0_0_all,-9,NA,90774,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,569082,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,-9,NA,32598,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_100-119_0_0_all,-9,NA,89798,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0_all,-9,NA,188248,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0_all,-9,NA,503484,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_100-119_0_0_all,-9,NA,103749,Landings,R-Reported,Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_70-99_0_0_all,-9,NA,48037,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,GNS_DEF_all_0_0_all,-9,NA,16,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_all_0_0_all,-9,NA,119,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.j,GNS_DEF_all_0_0_all,-9,NA,330,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.j,GTR_DEF_all_0_0_all,-9,NA,2,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0_all,-9,NA,25912,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0_all,-9,NA,3831,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_>=120_0_0_all,-9,NA,32916,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0_all,-9,NA,13249,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_>=120_0_0_all,-9,NA,17035,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.e,GNS_DEF_all_0_0_all,-9,NA,138,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,GNS_DEF_all_0_0_all,-9,NA,123,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_all_0_0_all,-9,NA,2,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_>=120_0_0_all,-9,NA,8851,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_CRU_>=120_0_0_all,-9,NA,3113,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_70-99_0_0_all,-9,NA,30675,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_>=120_0_0_all,-9,NA,5243,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,GNS_DEF_all_0_0_all,-9,NA,104,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,GTR_DEF_all_0_0_all,-9,NA,30,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0_all,-9,NA,2242,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,NA,26115,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_>=120_0_0_all,-9,NA,13384,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0_all,-9,NA,15531,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,48718,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_all_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,GNS_DEF_all_0_0_all,-9,NA,522,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,GNS_DEF_all_0_0_all,-9,NA,710,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,GTR_DEF_all_0_0_all,-9,NA,39,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0_all,-9,NA,1625,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_>=120_0_0_all,-9,NA,4296,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,113178,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.d,GNS_DEF_all_0_0_all,-9,NA,1,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_70-99_0_0_all,-9,NA,1313,Discards,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,10099,Discards,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,GNS_DEF_all_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0_all,-9,NA,4150,Discards,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_70-99_0_0_all,-9,NA,29557,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_>=120_0_0_all,-9,NA,18233,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0_all,-9,NA,12955,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,NA,125,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_70-99_0_0_all,-9,NA,5285,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_CRU_>=120_0_0_all,-9,NA,1511,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0_all,-9,NA,13079,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0_all,-9,NA,7107,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_>=120_0_0_all,-9,NA,49902,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0_all,-9,NA,78419,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,11898,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,NA,10644,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,GTR_DEF_all_0_0_all,-9,NA,21,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_>=120_0_0_all,-9,NA,1105,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,25019,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,NA,77922,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,GNS_DEF_all_0_0_all,-9,NA,172,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_all_0_0_all,-9,NA,15,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_all_0_0_all,-9,NA,4,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0_all,-9,NA,1077,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0_all,-9,NA,2442,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_>=120_0_0_all,-9,NA,267451,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_>=120_0_0_all,-9,NA,161365,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.j,GNS_DEF_all_0_0_all,-9,NA,282,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_70-99_0_0_all,-9,NA,19956,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_>=120_0_0_all,-9,NA,3087,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,GNS_DEF_all_0_0_all,-9,NA,662,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0_all,-9,NA,49488,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_>=120_0_0_all,-9,NA,4461,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0_all,-9,NA,1297,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_70-99_0_0_all,-9,NA,8610,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_70-99_0_0_all,-9,NA,23601,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,GNS_DEF_all_0_0_all,-9,NA,149,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_all_0_0_all,-9,NA,2,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0_all,-9,NA,34119,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,NA,8,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_>=120_0_0_all,-9,NA,1714,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_70-99_0_0_all,-9,NA,26106,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_>=120_0_0_all,-9,NA,234,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,GNS_DEF_all_0_0_all,-9,NA,366,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,GTR_DEF_all_0_0_all,-9,NA,34,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0_all,-9,NA,1,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0_all,-9,NA,93,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,NA,25125,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,NA,33435,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0_all,-9,NA,8033,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_>=120_0_0_all,-9,NA,34474,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0_all,-9,NA,42419,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,19122,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,NA,22301,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,GNS_DEF_all_0_0_all,-9,NA,320,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,GTR_DEF_all_0_0_all,-9,NA,49,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,NA,60583,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,NA,45804,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,GNS_DEF_all_0_0_all,-9,NA,97,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0_all,-9,NA,4323,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_CRU_>=120_0_0_all,-9,NA,15159,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_>=120_0_0_all,-9,NA,146457,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0_all,-9,NA,24192,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_>=120_0_0_all,-9,NA,1559,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,82204,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,TBB_DEF_70-99_0_0_all,-9,NA,5807,Discards,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,-9,NA,187634,Discards,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_>=120_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_70-99_0_0_all,-9,NA,6554,Discards,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_all_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,3827,Discards,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,23636,Discards,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,MIS_MIS_0_0_0_HC,-9,NA,245,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_>=120_0_0_all,-9,NA,32598,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.e,GNS_DEF_all_0_0_all,-9,NA,319,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_all_0_0_all,-9,NA,5,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,GTR_DEF_all_0_0_all,-9,NA,0,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0_all,-9,NA,865,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0_all,-9,NA,1445,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,NA,62,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_>=120_0_0_all,-9,NA,2941,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.f,GNS_DEF_all_0_0_all,-9,NA,157,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,GNS_DEF_all_0_0_all,-9,NA,139,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_70-99_0_0_all,-9,NA,1113,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,NA,21894,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0_all,-9,NA,7567,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_>=120_0_0_all,-9,NA,25124,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_DEF_70-99_0_0_all,-9,NA,25655,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,55900,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,NA,30876,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,NA,15546,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,TBB_DEF_>=120_0_0_all,-9,NA,398,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,90787,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,NA,34773,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,GNS_DEF_all_0_0_all,-9,NA,29,Landings,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,GTR_DEF_all_0_0_all,-9,NA,26,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_>=120_0_0_all,-9,NA,220379,Landings,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.j,GTR_DEF_all_0_0_all,-9,NA,25,Landings,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_>=120_0_0_all,-9,NA,76,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0_all,-9,NA,5784,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_>=120_0_0_all,-9,NA,790,Discards,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_DEF_70-99_0_0_all,-9,NA,3686,Discards,"A-All - reported, nonre",Imported
+UK (England),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,GNS_DEF_all_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,3030,Discards,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,GNS_DEF_all_0_0_all,-9,NA,0,Discards,"A-All - reported, nonre",Imported
+UK (England),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,TBB_DEF_70-99_0_0_all,-9,NA,14583,Discards,"A-All - reported, nonre",Imported
+UK(Northern Ireland),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,27420,kWd,86,Landings,R-Reported,Imported
+UK(Northern Ireland),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0_all,5180,kWd,132,Landings,R-Reported,Imported
+UK(Northern Ireland),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0_all,23568,kWd,1378,Landings,R-Reported,Imported
+UK(Northern Ireland),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_100-119_0_0_all,10272,kWd,765,Landings,R-Reported,Imported
+UK(Northern Ireland),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0_all,11822,kWd,146,Landings,R-Reported,Imported
+UK(Northern Ireland),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0_all,6345,kWd,132,Landings,R-Reported,Imported
+UK(Northern Ireland),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,SSC_DEF_100-119_0_0_all,6420,kWd,150,Landings,R-Reported,Imported
+UK(Northern Ireland),2,Quarter,2017,meg.27.7b-k8abd,27.7.j,SSC_DEF_100-119_0_0_all,4708,kWd,91,Landings,R-Reported,Imported
+UK(Northern Ireland),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,141801,kWd,779,Landings,R-Reported,Imported
+UK(Northern Ireland),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0_all,1680,kWd,28,Landings,R-Reported,Imported
+UK(Northern Ireland),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,45428,kWd,42,Landings,R-Reported,Imported
+UK(Northern Ireland),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,23674,kWd,560,Landings,R-Reported,Imported
+UK(Northern Ireland),1,Quarter,2017,meg.27.7b-k8abd,27.7.j,SSC_DEF_100-119_0_0_all,3852,kWd,108,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_MCF_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_MCF_>=70_0_0,2119,kWd,240,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,-9,kWd,0,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MCF_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,GNS_DEF_60-79_0_0,13067,kWd,0,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,-9,kWd,3820,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MCF_>=70_0_0,22637,kWd,620,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,GNS_DEF_60-79_0_0,4050,kWd,0,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MPD_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_MCF_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,-9,kWd,0,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MCF_>=70_0_0,3039,kWd,150,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,GNS_DEF_60-79_0_0,5093,kWd,30,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MPD_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_MCF_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,-9,kWd,0,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MCF_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,GNS_DEF_60-79_0_0,9956,kWd,0,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MPD_>=70_0_0,21470,kWd,8900,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_MPD_>=70_0_0,0,kWd,0,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.c,MIS_MIS_0_0_0_HC,344817,kWd,106.37,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_CRU_All_0_0_All,1776,kWd,336.2,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_CRU_All_0_0_All,19592,kWd,1668.05,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_All_0_0_All,4392,kWd,1465.1,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_CRU_All_0_0_All,5305,kWd,1126.16,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,1477021,kWd,38.14,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,SSC_DEF_All_0_0_All,154036,kWd,85.22,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_DEF_70-99_0_0,905671,kWd,19774.59,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.d,MIS_MIS_0_0_0_HC,502839,kWd,21.89,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTT_DEF_>=70_0_0,27637,kWd,939.65,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTB_DEF_70-99_0_0,8274,kWd,292.73,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,MIS_MIS_0_0_0_HC,863426,kWd,3756.48,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTT-CRU,4488,kWd,30.58,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_CRU_All_0_0_All,2329,kWd,66.52,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,301507,kWd,97859.12,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,271047,kWd,170446.71,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.k,MIS_MIS_0_0_0_HC,28976,kWd,8.04,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTT_DEF_100-119_0_0_all,21028,kWd,1085.3,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_100-119_0_0,29053,kWd,8233.51,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0,6614,kWd,679.36,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_DEF_70-99_0_0,22809,kWd,9024.16,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,MIS_MIS_0_0_0_HC,4123178,kWd,6108.88,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_CRU_All_0_0_All,21368,kWd,80.15,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_CRU_All_0_0_All,121626,kWd,2271.18,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_CRU_All_0_0_All,10052,kWd,192.53,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,SSC_DEF_All_0_0_All,216672,kWd,76.76,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.b,MIS_MIS_0_0_0_HC,254610,kWd,81.35,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_All_0_0_All,1606,kWd,82.85,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_CRU_All_0_0_All,3552,kWd,417.14,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_CRU_All_0_0_All,1695,kWd,12.53,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_All_0_0_All,22833,kWd,4827.63,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_CRU_All_0_0_All,3122,kWd,585.48,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,OTB_CRU_All_0_0_All,47510,kWd,804.39,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTT-CRU,1137,kWd,0.16,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.d,OTB_DEF_70-99_0_0,3902,kWd,294.98,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_CRU_All_0_0_All,26712,kWd,2459.93,Discards,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTT-CRU,1584,kWd,0,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.e,OTB_CRU_All_0_0_All,339,kWd,11.17,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_CRU_All_0_0_All,2485,kWd,554.92,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.k,MIS_MIS_0_0_0_HC,52382,kWd,122.09,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.8.b,OTB_CRU_All_0_0_All,22031,kWd,0.33,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_All_0_0_All,7758,kWd,1408.06,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_All_0_0_All,678,kWd,65.41,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_CRU_All_0_0_All,4500,kWd,1478.62,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,MIS_MIS_0_0_0_HC,813313,kWd,1597.29,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_CRU_All_0_0_All,610,kWd,21.78,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.k,MIS_MIS_0_0_0_HC,309078,kWd,32.17,Landings,R-Reported,Imported
+France,3,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTT-CRU,994,kWd,26.45,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.7.k,OTB_CRU_All_0_0_All,9956,kWd,376.08,Landings,R-Reported,Imported
+France,4,Quarter,2017,meg.27.7b-k8abd,27.8.d,MIS_MIS_0_0_0_HC,337813,kWd,142.07,Landings,R-Reported,Imported
+Belgium,3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,42913,kWd,1376,Landings,R-Reported,Imported
+Belgium,3,Quarter,2017,meg.27.7b-k8abd,27.8.a,MIS_MIS_0_0_0_HC,3035,kWd,9,Landings,R-Reported,Imported
+Belgium,2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,34584,kWd,286,Landings,R-Reported,Imported
+Belgium,1,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_CRU_70-99_0_0_all,905,kWd,419,Landings,R-Reported,Imported
+Belgium,1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,21702,kWd,5942,Landings,R-Reported,Imported
+Belgium,3,Quarter,2017,meg.27.7b-k8abd,27.8.b,MIS_MIS_0_0_0_HC,4165,kWd,13,Landings,R-Reported,Imported
+Belgium,2017,Year,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,5263629,kWd,40427,Discards,R-Reported,Imported
+Belgium,2017,Year,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,5263629,kWd,349401,Landings,R-Reported,Imported
+Belgium,4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,20201,kWd,2438,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_100-119_0_0_all,-9,NA,108268.96,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0_all,-9,NA,23682.63,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_70-99_0_0_all,-9,NA,59137.8,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_100-119_0_0_all,-9,NA,19310.12,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_100-119_0_0_all,-9,NA,11419.86,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_70-99_0_0_all,-9,NA,79917.01,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.g,OTB_CRU_70-99_0_0_all,-9,NA,7009.86,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_70-99_0_0_all,-9,NA,9231.6,Discards,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,-9,NA,740,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,720620,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,210423,Discards,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,280831,Discards,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,-9,NA,1470,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,627070,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,104100,Discards,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,-9,NA,1920,Landings,R-Reported,Imported
+Spain,2,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0,-9,NA,3730,Landings,R-Reported,Imported
+Spain,1,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,713760,Landings,R-Reported,Imported
+Spain,4,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,438630,Landings,R-Reported,Imported
+Spain,3,Quarter,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_70-99_0_0,-9,NA,111052,Discards,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_DEF_>=120_0_0_all,-9,kWd,1444,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_DEF_>=120_0_0_all,-9,kWd,8231,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_CRU_70-99_0_0_all,-9,kWd,216,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_DEF_>=120_0_0_all,-9,kWd,7483,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,kWd,650,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,kWd,299,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,kWd,730,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_CRU_70-99_0_0_all,-9,kWd,1434,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_DEF_>=120_0_0_all,-9,kWd,9066,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_CRU_70-99_0_0_all,-9,kWd,4028,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_DEF_>=120_0_0_all,-9,kWd,31476,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_CRU_70-99_0_0_all,-9,kWd,226,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,MIS_MIS_0_0_0_HC,-9,kWd,1078,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.b,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_>=120_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.c.2,OTB_CRU_70-99_0_0_all,-9,kWd,6173,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_CRU_70-99_0_0_all,-9,kWd,0,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_CRU_70-99_0_0_all,-9,kWd,179,Landings,R-Reported,Imported
+UK(Scotland),3,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_DEF_>=120_0_0_all,-9,kWd,5126,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_CRU_70-99_0_0_all,-9,kWd,847,Landings,R-Reported,Imported
+UK(Scotland),1,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_DEF_>=120_0_0_all,-9,kWd,65712,Landings,R-Reported,Imported
+UK(Scotland),4,Quarter,2017,meg.27.7b-k8abd,27.7.j.2,OTB_DEF_>=120_0_0_all,-9,kWd,13532,Landings,R-Reported,Imported
+UK(Scotland),2,Quarter,2017,meg.27.7b-k8abd,27.7.k.2,OTB_DEF_>=120_0_0_all,-9,kWd,303,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,SSC_DEF_100-119_0_0_all,-9,NA,2995,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_CRU_70-99_0_0_all,-9,NA,13767,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,MIS_MIS_0_0_0_HC,-9,NA,375,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,SSC_DEF_100-119_0_0_all,-9,NA,39752,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_100-119_0_0_all,-9,NA,900,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,MIS_MIS_0_0_0_HC,-9,NA,1890,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,GNS_DEF_120-219_0_0_all,-9,NA,3168,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0_all,-9,NA,448382,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_70-99_0_0_all,-9,NA,10457,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,TBB_DEF_70-99_0_0_all,-9,NA,50,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_CRU_100-119_0_0_all,-9,NA,5319,Landings,R-Reported,Imported
+UK (England),2,Quarter,2017,meg.27.7b-k8abd,27.7.h,OTB_DEF_70-99_0_0_all,-9,NA,354,Landings,"A-All - reported, nonre",Imported
+UK (England),4,Quarter,2017,meg.27.7b-k8abd,27.7.g,TBB_DEF_>=120_0_0_all,-9,NA,1107,Landings,"A-All - reported, nonre",Imported
+UK(Northern Ireland),4,Quarter,2017,meg.27.7b-k8abd,27.7.f,OTB_DEF_100-119_0_0_all,4624,kWd,61,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.b,MIS_MIS_0_0_0_HC,122735,kWd,27.58,Landings,R-Reported,Imported
+France,1,Quarter,2017,meg.27.7b-k8abd,27.7.c,MIS_MIS_0_0_0_HC,171818,kWd,226.97,Landings,R-Reported,Imported
+France,2,Quarter,2017,meg.27.7b-k8abd,27.7.c,OTB_CRU_All_0_0_All,3552,kWd,747.11,Landings,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_70-99_0_0_all,-9,NA,1315.55,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.b,OTB_CRU_100-119_0_0_all,-9,NA,113.23,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,TBB_DEF_70-99_0_0_all,-9,NA,7.02,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_CRU_70-99_0_0_all,-9,NA,1731.96,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_CRU_100-119_0_0_all,-9,NA,669.16,Discards,R-Reported,Imported
+Ireland,2017,Year,2017,meg.27.7b-k8abd,27.7.j,OTB_DEF_100-119_0_0_all,-9,NA,56408.9,Discards,R-Reported,Imported

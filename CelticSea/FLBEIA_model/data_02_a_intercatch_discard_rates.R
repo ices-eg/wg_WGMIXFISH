@@ -5,9 +5,9 @@
 ## After:  Discards rates 
 
 # Data sources vary per stock: 
-#       - InterCatch CATON with distribution: meg.27.7b-k8abd, sol.27.7fg, hke.27.3a46-8abd
-#       - InterCatch CATON without distribution: mon.27.78abd 
-#       - Raised outside InterCatch: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, 
+#       - InterCatch CATON with distribution: sol.27.7fg
+#       - WGBIE rasied outside InterCatch not fully documented: mon.27.78abd, meg.27.7b-k8abd, hke.27.3a46-8abd
+#       - WGCSE raised outside InterCatch with common systematic script from WKCeltic: cod.27.7e-k, had.27.7b-k, whg.27.7b-ce-k, 
 #       - Supplied by NEP expert: nep.fu.16, nep.fu.17, nep.fu.19, nep.fu.2021, nep.fu.22, nep.out.7
 # Notes: User must make sure that: factors are turned to characters and dim of data frame does not change shape during cleaning process
 
@@ -54,12 +54,13 @@ taf.unzip("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks with
 #NB gitignore this file as it is too big
 intercatch_caton_no_dist <-  read.csv(file = file.path("bootstrap/data/ices_intercatch/2020 06 22 WGMIXFISH CATON stocks withOUT distributions all WG 2002 2019.csv"),fileEncoding = "UTF-8-BOM")
 names(intercatch_caton_no_dist) <- names(intercatch_caton)
+
 intercatch_caton <- rbind(intercatch_caton_no_dist, intercatch_caton)
 #subset by stocks
 intercatch_caton <- intercatch_caton %>% filter(Stock %in% c( "hke.27.3a46-8abd","meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg"))
 intercatch_caton_saftey_check <- intercatch_caton #save for sanity checking later
 
-# ~ Area fix ####
+# ~ Area fix 
 area_spp_fix <- read.csv("bootstrap/data/supporting_files/Area_lookup.csv")
 names(area_spp_fix) <- c("Area" ,"Standard","ICES_mix_correct", "ICES_FU","species_mix_FU" )
 intercatch_caton <- left_join(intercatch_caton,area_spp_fix, by = "Area" )
@@ -74,10 +75,10 @@ dim(intercatch_caton)[1]-dim(intercatch_caton_saftey_check)[1] #safety check - d
 intercatch_caton$Country <- intercatch_caton$CorrectCountry
 intercatch_caton <- intercatch_caton[-c(13)]
 
-# ~ Species fix #### 
+# ~ Species fix 
 intercatch_caton$Species <- toupper(substr(intercatch_caton$Stock,1,3))
 
-# ~ Metier level 4 fix ####
+# ~ Metier level 4 fix 
 intercatch_caton$lvl4 <- substr(intercatch_caton$fleet,1,7)
 lvl4_Lookup <- read_xlsx("bootstrap/data/supporting_files/Metier_lvl4_lookup.xlsx")
 intercatch_caton <- left_join(intercatch_caton,lvl4_Lookup)
@@ -86,29 +87,29 @@ intercatch_caton$lvl4_new <- ifelse(is.na(intercatch_caton$Correct_lvl4),interca
 intercatch_caton$lvl4 <- intercatch_caton$lvl4_new 
 intercatch_caton <- intercatch_caton[-c(15,16,17)]
 
-# ~ Remove unwanted data ####  
+# ~ Remove unwanted data 
 intercatch_caton <-intercatch_caton [!intercatch_caton$CatchCat %in% c("BMS landing", "Logbook Registered Discard"),]
 intercatch_caton<- intercatch_caton%>% select("DataYear" ,"Stock" ,"Country" ,"fleet" ,"CatchCat","Weight_Total_in_kg","lvl4", "Area","Species")
 names(intercatch_caton) <-  c("Year", "Stock","Country" ,"Fleet" , "CatchCat", "CATON_in_kg", "lvl4", "Area" , "Species")
 
-# ~ Convert to tonnes ####
+# ~ Convert to tonnes 
 intercatch_caton$CATON <- intercatch_caton$CATON_in_kg/1000
 
-# ~ Split out stocks, compare with advice sheet and edit ####
-intercatch_caton_summed <- intercatch_caton %>% filter(Year %in% YEARS) %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(IC_Landings = round(sum(CATON_in_kg, na.rm=T)/1000,2)) %>% data.frame()
-#
-intercatch_caton_summed$CatchCat <- tolower(intercatch_caton_summed$CatchCat)
-#
-advice_sheet_values_summed <-advice_sheet_values %>% filter(year %in% YEARS)  %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(Advice_catch = sum(total, na.rm=T))
-names(advice_sheet_values_summed) <- c("Year","Stock", "CatchCat", "Advice_catch")
-
-IC_AC <- full_join(advice_sheet_values_summed,intercatch_caton_summed)
-dim(advice_sheet_values_summed)[1]-dim(IC_AC)[1]
-##### if the dims do not match then there is unmatched data and you need to check
-####  Look at the differnaces 
-IC_AC <- IC_AC %>% mutate(Differance = Advice_catch-IC_Landings )
-####
-ggplot(filter(IC_AC,is.na(Differance)==F), aes(Year, Differance, group==CatchCat,fill = CatchCat)) + geom_bar(stat="identity", position="dodge") +facet_wrap(~Stock)+ scale_y_continuous(labels = scales::comma) +theme_classic()
+#### For data checking####
+# intercatch_caton_summed <- intercatch_caton %>% filter(Year %in% YEARS) %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(IC_Landings = round(sum(CATON_in_kg, na.rm=T)/1000,2)) %>% data.frame()
+# #
+# intercatch_caton_summed$CatchCat <- tolower(intercatch_caton_summed$CatchCat)
+# #
+# advice_sheet_values_summed <-advice_sheet_values %>% filter(year %in% YEARS)  %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(Advice_catch = sum(total, na.rm=T))
+# names(advice_sheet_values_summed) <- c("Year","Stock", "CatchCat", "Advice_catch")
+# #
+# IC_AC <- full_join(advice_sheet_values_summed,intercatch_caton_summed)
+# dim(advice_sheet_values_summed)[1]-dim(IC_AC)[1]
+# ##### if the dims do not match then there is unmatched data and you need to check
+# ####  Look at the differences 
+# IC_AC <- IC_AC %>% mutate(Differance = Advice_catch-IC_Landings )
+# ####
+# ggplot(filter(IC_AC,is.na(Differance)==F), aes(Year, Differance, group==CatchCat,fill = CatchCat)) + geom_bar(stat="identity", position="dodge") +facet_wrap(~Stock)+ scale_y_continuous(labels = scales::comma) +theme_classic()
 
 # ~~ sol.27.7fg ####
 advice_sheet_values[advice_sheet_values$stock %in% c("sol.27.7fg") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
@@ -123,83 +124,102 @@ intercatch_caton[intercatch_caton$Stock %in% c("meg.27.7b-k8abd") & intercatch_c
 intercatch_caton_meg <- intercatch_caton[intercatch_caton$Stock == "meg.27.7b-k8abd" & intercatch_caton$Year %in% YEARS,]
 intercatch_caton_meg <- intercatch_caton_meg[-c(11,12)]
 
-# ~~ hke.27.3a46-8abd ####
-advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
-intercatch_caton[intercatch_caton$Stock %in% c("hke.27.3a46-8abd") & intercatch_caton$Year %in% YEARS,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
-# Notes - hke.27.3a46-8abd poor match for landings in last 2 years, and as you can see form plot below there is no problem with units
-# Difference is minor but still needs to be raised to the total level of the fleet
-ggplot(intercatch_caton[intercatch_caton$Stock %in% c("hke.27.3a46-8abd") & intercatch_caton$Year %in% YEARS,], aes(Year, CATON_in_kg/1000, colour = CatchCat)) + geom_bar(stat="identity") +facet_wrap(~Country)+ scale_y_continuous(labels = scales::comma) +theme_classic()
-intercatch_caton_hke <- intercatch_caton[intercatch_caton$Stock == "hke.27.3a46-8abd"& intercatch_caton$Year %in% YEARS,]
+# addition of 2017 data from stock coordinator - direct extract of data submited to InterCatch by stock coordinators.
+meg_2017 <- read.csv("bootstrap/data/ices_intercatch/meg_StockOverview_2017.csv")
 
-hke_landings_2017 <- 104671
-hke_landings_2018 <- 89671
-hke_landings_2019 <- 82298
+# ~ Area fix 
+meg_2017 <- left_join(meg_2017,area_spp_fix, by = "Area" )
+meg_2017$Area <- meg_2017$ICES_mix_correct
+meg_2017 <- meg_2017[-c(14,15,16,17)]
 
-hke_discards_2017 <- 7386
-hke_discards_2018 <- 7034
-hke_discards_2019 <- 4940
+# ~ Country fix
+meg_2017 <- left_join(meg_2017,Country_Lookup)
+meg_2017$Country <- meg_2017$CorrectCountry
+meg_2017 <- meg_2017[-c(13)]
 
-intercatch_caton_hke$prop <- NaN
-intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"], na.rm=T)
-intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"], na.rm=T)
-intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3]& intercatch_caton_hke$CatchCat == "Discards"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"], na.rm=T)
+meg_2017$lvl4 <- substr(meg_2017$Fleets, 1,7)
+meg_2017$Species <- toupper(substr(meg_2017$Stock, 1,3))
+meg_2017$CATON <- (meg_2017$Catch..kg*1000)
+meg_2017 <- meg_2017 %>% select(Year, Stock, Country, Fleets, Catch.Cat.,Catch..kg, lvl4, Area, Species, CATON) %>% 
+  group_by(Year, Stock, Country, Fleets, Catch.Cat., lvl4, Area, Species) %>% summarise(Catch..kg = sum(Catch..kg, na.rm=T), CATON = sum(CATON, na.rm = T)) %>%data.frame()
+meg_2017 <- meg_2017 %>% select(Year, Stock, Country, Fleets, Catch.Cat.,Catch..kg, lvl4, Area, Species, CATON)
+names(meg_2017) <- names(intercatch_caton_meg)
 
-intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"], na.rm=T)
-intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"], na.rm=T)
-intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3]& intercatch_caton_hke$CatchCat == "Landings"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Landings"], na.rm=T)
+intercatch_caton_meg <- rbind(intercatch_caton_meg, meg_2017)
+# sanity check again
+advice_sheet_values[advice_sheet_values$stock %in% c("meg.27.7b-k8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+intercatch_caton_meg[intercatch_caton_meg$Stock %in% c("meg.27.7b-k8abd") & intercatch_caton_meg$Year %in% YEARS,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
 
-intercatch_caton_hke$CATON_new <- NaN
-intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"]* hke_discards_2017
-intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"]* hke_discards_2018
-intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"]* hke_discards_2019
-
-intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"]* hke_landings_2017
-intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"]* hke_landings_2018
-intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3]& intercatch_caton_hke$CatchCat == "Landings"]* hke_landings_2019
-
-advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
-intercatch_caton_hke %>% select( Year,Stock, CatchCat, CATON_new) %>% group_by(Year,Stock, CatchCat) %>% summarise(CATON_new = sum(CATON_new, na.rm=T)) %>% data.frame()
-# Notes - hke.27.3a46-8abd, now we have a match
-intercatch_caton_hke$CATON <- intercatch_caton_hke$CATON_new
-intercatch_caton_hke <- intercatch_caton_hke[-c(11,12)]
+# #  ~~ hke.27.3a46-8abd ####
+# This stock has been excluded until futher data has been supplied by stock cordinator
+# advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+# intercatch_caton[intercatch_caton$Stock %in% c("hke.27.3a46-8abd") & intercatch_caton$Year %in% YEARS,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
+# # Notes - hke.27.3a46-8abd poor match for landings in last 2 years, and as you can see form plot below there is no problem with units
+# # Difference is minor but still needs to be raised to the total level of the fleet
+# ggplot(intercatch_caton[intercatch_caton$Stock %in% c("hke.27.3a46-8abd") & intercatch_caton$Year %in% YEARS,], aes(Year, CATON_in_kg/1000, colour = CatchCat)) + geom_bar(stat="identity") +facet_wrap(~Country)+ scale_y_continuous(labels = scales::comma) +theme_classic()
+# intercatch_caton_hke <- intercatch_caton[intercatch_caton$Stock == "hke.27.3a46-8abd"& intercatch_caton$Year %in% YEARS,]
+# 
+# hke_landings_2017 <- 104671
+# hke_landings_2018 <- 89671
+# hke_landings_2019 <- 82298
+# 
+# hke_discards_2017 <- 7386
+# hke_discards_2018 <- 7034
+# hke_discards_2019 <- 4940
+# 
+# intercatch_caton_hke$prop <- NaN
+# intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"], na.rm=T)
+# intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"], na.rm=T)
+# intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3]& intercatch_caton_hke$CatchCat == "Discards"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"], na.rm=T)
+# 
+# intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"], na.rm=T)
+# intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"], na.rm=T)
+# intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3]& intercatch_caton_hke$CatchCat == "Landings"]/ sum(intercatch_caton_hke$CATON[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Landings"], na.rm=T)
+# 
+# intercatch_caton_hke$CATON_new <- NaN
+# intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Discards"]* hke_discards_2017
+# intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Discards"]* hke_discards_2018
+# intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Discards"]* hke_discards_2019
+# 
+# intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[1] & intercatch_caton_hke$CatchCat == "Landings"]* hke_landings_2017
+# intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[2] & intercatch_caton_hke$CatchCat == "Landings"]* hke_landings_2018
+# intercatch_caton_hke$CATON_new[intercatch_caton_hke$Year == YEARS[3] & intercatch_caton_hke$CatchCat == "Landings"] <- intercatch_caton_hke$prop[intercatch_caton_hke$Year == YEARS[3]& intercatch_caton_hke$CatchCat == "Landings"]* hke_landings_2019
+# 
+# advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
+# intercatch_caton_hke %>% select( Year,Stock, CatchCat, CATON_new) %>% group_by(Year,Stock, CatchCat) %>% summarise(CATON_new = sum(CATON_new, na.rm=T)) %>% data.frame()
+# # Notes - hke.27.3a46-8abd, now we have a match
+# intercatch_caton_hke$CATON <- intercatch_caton_hke$CATON_new
+# intercatch_caton_hke <- intercatch_caton_hke[-c(11,12)]
 
 # ~~ mon.27.78abd ####
+# Intercatch does not match advice sheet
+# Raising done by stock cordinator - not clear for all years
+# So we are useing the data avaiable on the bob mixfish site
+summary_from_bob_mixfish <- read.csv("bootstrap/data/ices_intercatch/WGBIE_catch_by_country.csv")
+mon_caton <- summary_from_bob_mixfish[summary_from_bob_mixfish$CatchCategory %in% c("Discards", "Landings")& summary_from_bob_mixfish$stock %in% c("MON"),] 
+
 advice_sheet_values[advice_sheet_values$stock %in% c("mon.27.78abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
-intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd") & intercatch_caton$Year %in% YEARS,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
-# Notes - mon.27.78abd very poor match for landings and discards! There is no unit difference, just some general cumulative differences
-ggplot(intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd")& intercatch_caton$Year %in% YEARS,], aes(Year, CATON_in_kg/1000, colour = CatchCat)) + geom_bar(stat="identity") +facet_wrap(~Country)+ scale_y_continuous(labels = scales::comma) +theme_classic()
+mon_caton[mon_caton$Year %in% YEARS,] %>% select( Year,stock, CatchCategory, tons) %>% group_by(Year,stock, CatchCategory) %>% summarise(tons = sum(tons, na.rm=T)) %>% data.frame()
+mon_caton$stock <-  "mon.27.78abd")
 
-intercatch_caton[intercatch_caton$Stock %in% c("mon.27.78abd" ) & intercatch_caton$Year %in% YEARS & intercatch_caton$Country == "FRA" ,] %>% select( Year,Stock, CatchCat, CATON_in_kg) %>% group_by(Year,Stock, CatchCat) %>% summarise(caton = sum(CATON_in_kg, na.rm=T)/1000) %>% data.frame()
-intercatch_caton_mon <- intercatch_caton[intercatch_caton$Stock == "mon.27.78abd"& intercatch_caton$Year %in% YEARS,]
+# need to read in stock overviews 
+intercatch_caton_mon <- left_join(intercatch_caton_mon,Country_Lookup)
+intercatch_caton_mon$Country <- intercatch_caton_mon$CorrectCountry
+intercatch_caton_mon <- intercatch_caton_mon[-c(13)]
 
-mon_landings_2017 <- 25634
-mon_landings_2018 <- 22345
-mon_landings_2019 <- 21266
-mon_discards_2017 <- 2175
-mon_discards_2018 <- 1250
-mon_discards_2019 <- 1444
+intercatch_caton_mon$lvl4 <- substr(intercatch_caton_mon$Fleets, 1,7)
+intercatch_caton_mon$Species <- toupper(substr(intercatch_caton_mon$Stock, 1,3))
+intercatch_caton_mon$CATON <- (intercatch_caton_mon$Catch..kg/1000)
+intercatch_caton_mon <- intercatch_caton_mon %>% select(Year, Stock, Country, Fleets, Catch.Cat.,Catch..kg, lvl4, Area, Species, CATON) %>% 
+  group_by(Year, Stock, Country, Fleets, Catch.Cat., lvl4, Area, Species) %>% summarise(Catch..kg = sum(Catch..kg, na.rm=T), CATON = sum(CATON, na.rm = T)) %>%data.frame()
+intercatch_caton_mon <- intercatch_caton_mon %>% select(Year, Stock, Country, Fleets, Catch.Cat.,Catch..kg, lvl4, Area, Species, CATON)
+names(intercatch_caton_mon) <- names(intercatch_caton_meg)
 
-intercatch_caton_mon$prop <- NaN
-intercatch_caton_mon$prop[ intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Discards"] <- intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Discards"]/ sum(intercatch_caton_mon$CATON[ intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Discards"], na.rm=T)
-intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Discards"] <- intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Discards"]/ sum(intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Discards"], na.rm=T)
-intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Discards"] <- intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[3]& intercatch_caton_mon$CatchCat == "Discards"]/ sum(intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Discards"], na.rm=T)
-
-intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Landings"] <- intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Landings"]/ sum(intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Landings"], na.rm=T)
-intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Landings"] <- intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Landings"]/ sum(intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Landings"], na.rm=T)
-intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Landings"] <- intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Landings"]/ sum(intercatch_caton_mon$CATON[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Landings"], na.rm=T)
-
-intercatch_caton_mon$CATON_new <- NaN
-intercatch_caton_mon$CATON_new[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Discards"] <- intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Discards"]* mon_discards_2017
-intercatch_caton_mon$CATON_new[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Discards"] <- intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Discards"]* mon_discards_2018
-intercatch_caton_mon$CATON_new[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Discards"] <- intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Discards"]* mon_discards_2019
-
-intercatch_caton_mon$CATON_new[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Landings"] <- intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[1] & intercatch_caton_mon$CatchCat == "Landings"]* mon_landings_2017
-intercatch_caton_mon$CATON_new[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Landings"] <- intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[2] & intercatch_caton_mon$CatchCat == "Landings"]* mon_landings_2018
-intercatch_caton_mon$CATON_new[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Landings"] <- intercatch_caton_mon$prop[intercatch_caton_mon$Year == YEARS[3] & intercatch_caton_mon$CatchCat == "Landings"]* mon_landings_2019
 
 advice_sheet_values[advice_sheet_values$stock %in% c("mon.27.78abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
 intercatch_caton_mon %>% select( Year,Stock, CatchCat, CATON) %>% group_by(Year,Stock, CatchCat) %>% summarise(CATON = sum(CATON, na.rm=T)) %>% data.frame()
-intercatch_caton_mon %>% select( Year,Stock, CatchCat, CATON_new) %>% group_by(Year,Stock, CatchCat) %>% summarise(CATON_new = sum(CATON_new, na.rm=T)) %>% data.frame()
+
+
 # Notes - mon.27.78abd, now we have a match
 intercatch_caton_mon$CATON <- intercatch_caton_mon$CATON_new
 intercatch_caton_mon <- intercatch_caton_mon[-c(11,12)]
