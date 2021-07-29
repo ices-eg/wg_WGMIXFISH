@@ -10,6 +10,7 @@ library(FLCore)
 library(FLFleet)
 library(Hmisc)
 library(icesTAF)
+library(readxl)
 # Purpose -----------------------------------------------------------------
 # This script is to process avalible effort, catch and logbook data from
 # disparrate sources into something useable and format the data into 
@@ -151,8 +152,7 @@ nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE
 
 
 # Moniter for differences -------------------------------------------------
-
-
+## so we get the IC file and the AC file and comapre for differances between the two
 names(InterCatch)
 check_IC <- InterCatch %>% select(Year,Stock,Country,Landings,Discards) %>% group_by(Year,Stock,Country) %>% summarise(Landing_IC=sum(Landings)) %>% ungroup()
 names(catch_start)
@@ -160,8 +160,11 @@ check_AC <- catch_start %>% select(Year,Stock,Country,Landings) %>% group_by(Yea
 
 CHECK_IC_AC <- full_join(check_AC,check_IC)
 
+#No stock no play
 CHECK_IC_AC <- CHECK_IC_AC %>% filter(is.na(Stock)==F)
 
+#now we need to get the stock objects which represemt what was actually in the single
+#species advice
 wg.stock <- FLStocks(lapply(list.files("results/clean_data/clean_stock_objects/"), function(x) {
   load(paste("results/clean_data/clean_stock_objects/","/",x,sep=""))
   res<-get("stock")
@@ -169,7 +172,7 @@ wg.stock <- FLStocks(lapply(list.files("results/clean_data/clean_stock_objects/"
   res
 }))
 
-
+##make a data frame
 res.out <- as.data.frame(landings(
   wg.stock$`cod.27.7e-k.RData`
 ))
@@ -185,28 +188,58 @@ for(i in 2:length(wg.stock)){
 
 res.out <- res.out %>% select(stock,year,data)
 names(res.out) <- c("Stock","Year","SObj_Landings")
+### we need to remove 8abd from the WGBIE stocks
+Catch_by_country <- readxl::read_excel("catch_by_country_wgs.xlsx")
+Catch_by_country <- Catch_by_country %>% select(-Country)%>%  filter(Year %in% c(2017:2019),stock %in% c("HKE","MEG","MON"),CatchCategory %in% c("Landings"),Area %in% c("8","27.8","8abd")) %>%select(-Area) %>% group_by_at(vars(-tons))%>% summarise(tons=sum(tons)) 
 
+names(res.out)
+names(Catch_by_country)
+names(Catch_by_country)[names(Catch_by_country)=="stock"] <- "Stock"
+Catch_by_country$Stock[Catch_by_country$Stock=="HKE"] <- "hke.27.3a46-8abd"
+Catch_by_country$Stock[Catch_by_country$Stock=="MEG"] <- "meg.27.7b-k8abd"
+Catch_by_country$Stock[Catch_by_country$Stock=="MON"] <- "mon.27.78abd"
+
+res.out <- left_join(res.out,Catch_by_country)
+
+res.out <- res.out %>% group_by_at(vars(-tons,-SObj_Landings)) %>% mutate(SObj_Landings=SObj_Landings-ifelse(is.na(tons)==F,tons,0)) %>% ungroup() %>% select(-CatchCategory,-tons)
+
+##Now join everything together
 CHECK_IC_AC_OBJ <- full_join(CHECK_IC_AC,res.out)
-
-
+#sum and check
 CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ %>% group_by(Year,Stock) %>% summarise(Landing_AC=sum(Landing_AC,na.rm = T),Landing_IC=sum(Landing_IC,na.rm = T),SObj_Landings=unique(SObj_Landings)) %>% ungroup()
-
-
+#just the last 3 year
 CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% filter(Year %in% c(2017:2020)) %>% mutate(diff_AC=Landing_AC-SObj_Landings,diff_IC=Landing_IC-SObj_Landings )
 
 CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB=ifelse(diff_AC > ((SObj_Landings/100)*10)|diff_AC < -((SObj_Landings/100)*10),"YES","NO"),IC_PROB=ifelse(diff_IC > ((SObj_Landings/100)*10)|diff_IC < -((SObj_Landings/100)*10),"YES","NO")) %>% ungroup()
 
-
-
+#now do some graphs, this is just counts of problems
 Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB),names_to ="Prob")
 
 ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()
 
-
+### this is the actuall value we are out by
 Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC) %>% pivot_longer(cols =c(diff_AC,diff_IC),names_to ="Diff")
 
-ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+ 
-  scale_y_continuous(breaks = seq(-7000,1100,500),limits =c(-7000,1100))
+ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+   scale_y_continuous(breaks = seq(-7000,1100,500),limits =c(-7000,1100))
+
+
+# Notes -------------------------------------------------------------------
+
+8abd landings of mon
+L.budeo
+2017 4172
+2018 3734
+2019 2880 
+L.piscat
+2017 3154
+2018 3506
+2019 2181
+
+hke.abd
+2017 28852 
+2018 25894
+2020 21492
+
 
 
 #  3.0 script starts -----------------------------------------------------------
