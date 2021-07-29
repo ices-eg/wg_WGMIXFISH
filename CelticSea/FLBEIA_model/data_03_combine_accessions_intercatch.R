@@ -11,6 +11,7 @@ library(FLFleet)
 library(Hmisc)
 library(icesTAF)
 library(readxl)
+library(icesSAG)
 # Purpose -----------------------------------------------------------------
 # This script is to process avalible effort, catch and logbook data from
 # disparrate sources into something useable and format the data into 
@@ -190,7 +191,7 @@ res.out <- res.out %>% select(stock,year,data)
 names(res.out) <- c("Stock","Year","SObj_Landings")
 ### we need to remove 8abd from the WGBIE stocks
 Catch_by_country <- readxl::read_excel("catch_by_country_wgs.xlsx")
-Catch_by_country <- Catch_by_country %>% select(-Country)%>%  filter(Year %in% c(2017:2019),stock %in% c("HKE","MEG","MON"),CatchCategory %in% c("Landings"),Area %in% c("8","27.8","8abd")) %>%select(-Area) %>% group_by_at(vars(-tons))%>% summarise(tons=sum(tons)) 
+Catch_by_country <- Catch_by_country %>% select(-Country)%>%  filter(Year %in% (Yearwg-3):(Yearwg-1),stock %in% c("HKE","MEG","MON"),CatchCategory %in% c("Landings"), Area %in% c("8","8abd","27.8")) %>% select(-"Area") %>% group_by_at(vars(-tons))%>% summarise(tons=sum(tons)) 
 
 names(res.out)
 names(Catch_by_country)
@@ -203,42 +204,67 @@ res.out <- left_join(res.out,Catch_by_country)
 
 res.out <- res.out %>% group_by_at(vars(-tons,-SObj_Landings)) %>% mutate(SObj_Landings=SObj_Landings-ifelse(is.na(tons)==F,tons,0)) %>% ungroup() %>% select(-CatchCategory,-tons)
 
+
 ##Now join everything together
 CHECK_IC_AC_OBJ <- full_join(CHECK_IC_AC,res.out)
 #sum and check
 CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ %>% group_by(Year,Stock) %>% summarise(Landing_AC=sum(Landing_AC,na.rm = T),Landing_IC=sum(Landing_IC,na.rm = T),SObj_Landings=unique(SObj_Landings)) %>% ungroup()
-#just the last 3 year
-CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% filter(Year %in% c(2017:2020)) %>% mutate(diff_AC=Landing_AC-SObj_Landings,diff_IC=Landing_IC-SObj_Landings )
 
-CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB=ifelse(diff_AC > ((SObj_Landings/100)*10)|diff_AC < -((SObj_Landings/100)*10),"YES","NO"),IC_PROB=ifelse(diff_IC > ((SObj_Landings/100)*10)|diff_IC < -((SObj_Landings/100)*10),"YES","NO")) %>% ungroup()
+#### now add advice 
+Advice <- getSAG(stock = "hke.27.3a46-8abd",year = Yearwg)
+Advice <-Advice %>%  select(Year,landings,fishstock) %>% filter(Year %in% c((Yearwg-3):(Yearwg-1)))
+
+Stocks_list <- c(unique(check_IC$Stock))[unique(check_IC$Stock) != "hke.27.3a46-8abd"]
+
+for(i in Stocks_list){
+  Advice_out <- getSAG(stock = i,year = Yearwg)
+  Advice_out <-Advice_out %>%  select(Year,landings,fishstock) %>% filter(Year %in% c((Yearwg-3):(Yearwg-1)))
+  Advice<- rbind(Advice,Advice_out)
+}
+
+names(Advice)[names(Advice)=="landings"] <- "Advice_Landings"
+names(Advice)[names(Advice)=="fishstock"] <- "Stock"
+
+CHECK_IC_AC_OBJ_SUM <- left_join(CHECK_IC_AC_OBJ_SUM,Advice)
+
+
+#just the last 3 year
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% filter(Year %in% (Yearwg-3):(Yearwg-1)) %>% mutate(diff_AC=Landing_AC-SObj_Landings,diff_IC=Landing_IC-SObj_Landings,diff_Advice=Advice_Landings-SObj_Landings )
+
+
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB=ifelse(diff_AC > ((SObj_Landings/100)*10)|diff_AC < -((SObj_Landings/100)*10),"YES","NO"),IC_PROB=ifelse(diff_IC > ((SObj_Landings/100)*10)|diff_IC < -((SObj_Landings/100)*10),"YES","NO"),ADVICE_PROB=ifelse(diff_Advice > ((SObj_Landings/100)*10)|diff_Advice < -((SObj_Landings/100)*10),"YES","NO")) %>% ungroup()
 
 #now do some graphs, this is just counts of problems
-Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB),names_to ="Prob")
+Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB,ADVICE_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB,ADVICE_PROB),names_to ="Prob")
 
 ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()
 
 ### this is the actuall value we are out by
-Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC) %>% pivot_longer(cols =c(diff_AC,diff_IC),names_to ="Diff")
+Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC,diff_Advice) %>% pivot_longer(cols =c(diff_AC,diff_IC,diff_Advice),names_to ="Diff")
 
 ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+   scale_y_continuous(breaks = seq(-7000,1100,500),limits =c(-7000,1100))
 
 
 # Notes -------------------------------------------------------------------
 
-8abd landings of mon
-L.budeo
-2017 4172
-2018 3734
-2019 2880 
-L.piscat
-2017 3154
-2018 3506
-2019 2181
 
-hke.abd
-2017 28852 
-2018 25894
-2020 21492
+# 8abd landings of mon
+# L.budeo
+# 2017 4172
+# 2018 3734
+# 2019 2880 
+# L.piscat
+# 2017 3154
+# 2018 3506
+# 2019 2181
+
+# hke.abd
+# 2017  area 3,4,5,6,
+# 775+ 19690+ 9614
+# 2018 
+# 98+18915+7281 
+# 2020 
+# 1522+15569 +6835
 
 
 
