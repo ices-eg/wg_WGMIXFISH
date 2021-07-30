@@ -47,6 +47,13 @@ wg.stocks <- FLStocks(lapply(stock.list, function(s) {
 				     name(res) <- s
 				     res
 }))
+
+
+## Want to extend any stock objects back to earliest year, even if filled with
+## NAs
+
+wg.stocks <- FLStocks(lapply(wg.stocks,window, start = 2009))
+
 ##############################################################################
 
 ## Data rationalisation --
@@ -115,7 +122,149 @@ ef %>% group_by(Fleet_keep) %>% summarise(kw_days = sum(kw_days))  %>% select(kw
 
 ######################################################################################
 ## catch-at-age generation
+#################################################
 
-# Here we want 
+# Here we want to disaggregate the landings in ca by the age disaggregated data
+# in ad.
+
+disaggregate_catch <- function(ac_dat = NULL, ic_dat = NULL, wg.stocks = NULL, year = NULL, stk = NULL, Fl = NULL, Met = NULL) {
+
+print(paste0(Fl, "  ", Met, "  ", stk, "  ", year ))
+
+#############
+## AC data ##
+#############
+
+ac_catch <- filter(ac_dat, Fleet == Fl, Metier == Met, Stock == stk, Year == year)
+
+#############
+## IC data ##
+#############
+
+## First look for a complete match
+ic <- filter(ic_dat, Country == sapply(strsplit(Fl,"_"), "[[", 1),
+				 lvl4 == substr(Met,1,7), 
+				 Area == substr(Met, 8, 13), Stock == stk, Year == year)
+## Next drop area
+if(nrow(ic)==0) {
+ic <- filter(ic_dat, Country == sapply(strsplit(Fl,"_"), "[[", 1),
+				 lvl4 == substr(Met,1,7),
+				 Area == "27.7",
+				 Stock == stk, Year == year)
+}
+
+## Get the ages within the stock
+stk.ages <- as.numeric(dimnames(wg.stocks[[stk]])$age)
+
+## Final fall-back is stock level if no ic match
+## Multiply weights by 1000 to get in grams
+if(nrow(ic)==0) {
+ic <- data.frame(CatchCat = rep(c("Landings", "Discards"), each = length(stk.ages)),
+		 Age = rep(dimnames(wg.stocks[[stk]])$age, times =  2),
+		 CANUM = c(c(wg.stocks[[stk]]@landings.n[,ac(year)]),c(wg.stocks[[stk]]@discards.n[,ac(year)])),
+		 Mean_Weight_in_g = 1000 * c(c(wg.stocks[[stk]]@landings.wt[,ac(year)]),c(wg.stocks[[stk]]@discards.wt[,ac(year)])))
+}
+
+## Need to aggregate across any plus groups
+stk.plus <- range(wg.stocks[[stk]])[["plusgroup"]]
+
+# Convert any above plus group to the plus group
+ic$Age <- ifelse(ic$Age > stk.plus, stk.plus, ic$Age)
+
+###############################################
+## Re-aggregate the data with new mean weight
+###############################################
+
+ic <- ic %>% select(CatchCat, Age, CANUM, Mean_Weight_in_g) 
+
+## Make sure we have each age for each category
+
+## What to do about IC ages below the stock range? - Remove for now
+ic <- ic[ic$Age %in% stk.ages,]
+
+## Now add any missing ages
+for(a in stk.ages) {
+
+## Landings
+if(!a %in% ic[ic$CatchCat == "Landings","Age"]) {
+ic <- rbind(ic, data.frame(CatchCat = "Landings", Age = a, CANUM = 0, Mean_Weight_in_g = NA))
+}
+## Discards 
+if(!a %in% ic[ic$CatchCat == "Discards","Age"]) {
+ic <- rbind(ic, data.frame(CatchCat = "Discards", Age = a, CANUM = 0, Mean_Weight_in_g = NA))
+}
+
+}
+
+ic <- ic %>%
+	group_by(CatchCat, Age, .drop = FALSE) %>% 
+	summarise(N = sum(CANUM),
+	wt = weighted.mean(x = Mean_Weight_in_g, w = CANUM)) %>% 
+	group_by(CatchCat) %>%
+	mutate(SOP = sum(N*(wt/1e3),na.rm = TRUE)) %>% 
+	as.data.frame()
+
+## Now disaggregate the landings and discards tonnages according to these
+## distributions
+
+## What is the number of fish at age for each category for 1 tonne of fish
+ic_stand <- ic %>% group_by(CatchCat, Age) %>%
+	summarise(N = N/SOP, wt = wt) %>% as.data.frame()
+
+## Add the tonnage on to the data
+ic_stand$tonnes <- ifelse(ic_stand$CatchCat == "Landings", ac_catch$Landings, ac_catch$Discards)
+
+## Multiply through, taking care of units
+ic_stand$FinalN <- ic_stand$N * ic_stand$tonnes 
+
+## Return a data frame with the right information for the fleet object
+res <- data.frame(Fleet = Fl, Metier = Met, Year = year, Stock = stk, Age = stk.ages,
+	   landings.n = ic_stand[ic_stand$CatchCat == "Landings","FinalN"]/1e3, # in thousands
+	   landings.wt = ic_stand[ic_stand$CatchCat == "Landings","wt"]/1e3, # in kg
+	   discards.n = ic_stand[ic_stand$CatchCat == "Discards","FinalN"]/1e3,  # in thousands
+	   discards.wt = ic_stand[ic_stand$CatchCat == "Discards","wt"]/1e3 # in kg
+	   )
+
+## For Nephrops, we fill the results with the actual landings and discards and
+## the weights with 1, as per a non-analytical stock in FLBEIA.
+## We would also do this for other non-analytical stocks (i.e. non cat 1
+## stocks)
+
+if(grepl("nep",stk)) {
+res$landings.n  <- ac_catch$Landings
+res$discards.n  <- ac_catch$Discards
+res$landings.wt <- 1
+res$discards.wt <- 1
+}
+
+## Final check that SOP matches
+
+## Not nephrops, units in 1000s
+if(!grepl("nep",stk)) {
+if(!round(sum(1e3 * res$landings.n * res$landings.wt, na.rm = TRUE),3) == round(ac_catch$Landings ,3)) stop("SOP for landings does not match")
+if(!round(sum(1e3 * res$discards.n * res$discards.wt, na.rm = TRUE),3) == round(ac_catch$Discards ,3)) stop("SOP for discards does not match")
+}
+
+if(grepl("nep",stk)) {
+if(!round(sum(res$landings.n * res$landings.wt, na.rm = TRUE),3) == round(ac_catch$Landings ,3)) stop("SOP for landings does not match")
+if(!round(sum(res$discards.n * res$discards.wt, na.rm = TRUE),3) == round(ac_catch$Discards ,3)) stop("SOP for discards does not match")
+}
+
+return(res)
+
+}
 
 
+## Apply the function across all rows of ca -- that's a lot!!
+options(dplyr.summarise.inform = FALSE) ## <- this right here is the ticket.
+
+
+fleet_data <- lapply(seq_len(nrow(ca)), function(i) {
+			     print(i)
+disaggregate_catch(ac_dat = ca, ic_dat = ic_dat, wg.stocks = wg.stocks, year = ca[i,"Year"], stk = ca[i,"Stock"], Fl = ca[i,"Fleet"], Met = ca[i,"Metier"])
+	   })
+
+
+fleet_data <- bind_rows(fleet_data)
+
+## Summarise the totals
