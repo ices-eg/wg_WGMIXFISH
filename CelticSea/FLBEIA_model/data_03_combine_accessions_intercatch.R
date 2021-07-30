@@ -65,7 +65,7 @@ nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE
 # Moniter for differences -------------------------------------------------
 ## so we get the IC file and the AC file and comapre for differances between the two
 names(InterCatch)
-check_IC <- InterCatch %>% select(Year,Stock,Country,Landings,Discards) %>% group_by(Year,Stock,Country) %>% summarise(Landing_IC=sum(Landings)) %>% ungroup()
+check_IC <- InterCatch %>% select(Year,Stock,Country,Landings,Discards) %>% group_by(Year,Stock,Country) %>% summarise(Landing_IC=sum(Landings),Discard_IC=sum(Discards,na.rm = T),IC_Discards=sum(Discards,na.rm = T)) %>% ungroup()
 names(catch_start)
 check_AC <- catch_start %>% select(Year,Stock,Country,Landings) %>% group_by(Year,Stock,Country)%>% summarise(Landing_AC=sum(Landings)) %>% ungroup()
 
@@ -99,9 +99,34 @@ for(i in 2:length(wg.stock)){
 
 res.out <- res.out %>% select(stock,year,data)
 names(res.out) <- c("Stock","Year","SObj_Landings")
+
+#### discards
+##make a data frame
+res.out_disc <- as.data.frame(discards(
+  wg.stock$`cod.27.7e-k.RData`
+))
+res.out_disc <- res.out_disc %>% mutate(stock="cod.27.7e-k")
+for(i in 2:length(wg.stock)){
+  
+  stock <- wg.stock[[i]]
+  res_disc <- as.data.frame(discards(stock))
+  res_disc <- res_disc %>% mutate(stock=gsub(".RData","",names(wg.stock)[i]))
+  res.out_disc <- rbind(res.out_disc,res_disc)
+  
+}
+
+res.out_disc <- res.out_disc %>% select(stock,year,data)
+names(res.out_disc) <- c("Stock","Year","SObj_Discards")
+
+####add discard data to landings
+
+res.out <- left_join(res.out,res.out_disc)
+
 ### we need to remove 8abd from the WGBIE stocks
 Catch_by_country <- read.csv(file.path(BootstrapPath, "data", "ices_intercatch", "WGBIE_catch_by_country.csv")) 
-Catch_by_country <- Catch_by_country %>% select(-Country)%>%  filter(Year %in% YEARS,stock %in% c("HKE","MEG","MON"),CatchCategory %in% c("Landings"), Area %in% c("8","8abd","27.8")) %>% select(-"Area") %>% group_by_at(vars(-tons))%>% summarise(tons=sum(tons)) 
+Catch_by_country$CatchCategory[Catch_by_country$CatchCategory %in% c("discards","Logbook Registered Discard")] <- "Discards"
+Catch_by_country <- Catch_by_country %>% select(-Country)%>%  filter(Year %in% YEARS,stock %in% c("HKE","MEG","MON"),CatchCategory %in% c("Landings","landings","Discards"), Area %in% c("8","8abd","27.8")) %>% select(-"Area") %>% group_by_at(vars(-tons))%>% summarise(tons=sum(tons)) %>% ungroup() %>% pivot_wider(names_from  = CatchCategory,values_from = tons)
+
 
 names(res.out)
 names(Catch_by_country)
@@ -112,26 +137,27 @@ Catch_by_country$Stock[Catch_by_country$Stock=="MON"] <- "mon.27.78abd"
 
 res.out <- left_join(res.out,Catch_by_country)
 
-res.out <- res.out %>% group_by_at(vars(-tons,-SObj_Landings)) %>% mutate(SObj_Landings=SObj_Landings-ifelse(is.na(tons)==F,tons,0)) %>% ungroup() %>% select(-CatchCategory,-tons)
+res.out <- res.out %>% group_by_at(vars(-SObj_Landings,-SObj_Discards,-Landings,-Discards)) %>% mutate(SObj_Landings=SObj_Landings-ifelse(is.na(Landings)==F,Landings,0),SObj_Discards=SObj_Discards-ifelse(is.na(Discards)==F,Discards,0)) %>% ungroup() %>% select(-Landings,-Discards)
 
 
 ##Now join everything together
 CHECK_IC_AC_OBJ <- full_join(CHECK_IC_AC,res.out)
 #sum and check
-CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ %>% group_by(Year,Stock) %>% summarise(Landing_AC=sum(Landing_AC,na.rm = T),Landing_IC=sum(Landing_IC,na.rm = T),SObj_Landings=unique(SObj_Landings)) %>% ungroup()
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ %>% group_by(Year,Stock) %>% summarise(Landing_AC=sum(Landing_AC,na.rm = T),Landing_IC=sum(Landing_IC,na.rm = T),Discard_IC=sum(Discard_IC,na.rm = T),SObj_Landings=unique(SObj_Landings),SObj_Discards=unique(SObj_Discards)) %>% ungroup()
 
 #### now add advice 
 Advice <- getSAG(stock = "hke.27.3a46-8abd",year = Yearwg)
-Advice <-Advice %>%  select(Year,landings,fishstock) %>% filter(Year %in% YEARS)
+Advice <-Advice %>%  select(Year,landings,discards,fishstock) %>% filter(Year %in% YEARS)
 
 Stocks_list <- c(unique(check_IC$Stock))[unique(check_IC$Stock) != "hke.27.3a46-8abd"]
 
 for(i in Stocks_list){
   Advice_out <- getSAG(stock = i,year = Yearwg)
-  Advice_out <-Advice_out %>%  select(Year,landings,fishstock) %>% filter(Year %in% YEARS)
+  Advice_out <-Advice_out %>%  select(Year,landings,discards,fishstock) %>% filter(Year %in% YEARS)
   Advice<- rbind(Advice,Advice_out)
 }
 
+names(Advice)[names(Advice)=="discards"] <- "Advice_Discards"
 names(Advice)[names(Advice)=="landings"] <- "Advice_Landings"
 names(Advice)[names(Advice)=="fishstock"] <- "Stock"
 
@@ -140,46 +166,35 @@ CHECK_IC_AC_OBJ_SUM <- left_join(CHECK_IC_AC_OBJ_SUM,Advice)
 
 #just the last 3 year
 CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% filter(Year %in% YEARS) %>% 
-  mutate(diff_AC=Landing_AC-SObj_Landings,diff_IC=Landing_IC-SObj_Landings,diff_Advice=Advice_Landings-SObj_Landings )
+  mutate(diff_AC=Landing_AC-SObj_Landings,diff_IC=Landing_IC-SObj_Landings,diff_Advice=Advice_Landings-SObj_Landings, diff_Advice_Disc=Advice_Discards-SObj_Discards )
 
 
-CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB=ifelse(diff_AC > ((SObj_Landings/100)*10)|diff_AC < -((SObj_Landings/100)*10),"YES","NO"),IC_PROB=ifelse(diff_IC > ((SObj_Landings/100)*10)|diff_IC < -((SObj_Landings/100)*10),"YES","NO"),ADVICE_PROB=ifelse(diff_Advice > ((SObj_Landings/100)*10)|diff_Advice < -((SObj_Landings/100)*10),"YES","NO")) %>% ungroup()
+# CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB=ifelse(diff_AC > ((
+#   SObj_Landings/100)*10)|diff_AC < -((SObj_Landings/100)*10),"YES","NO"),IC_PROB=ifelse(diff_IC > ((SObj_Landings/100)*10)|diff_IC < -((SObj_Landings/100)*10),"YES","NO"),
+#   ADVICE_PROB=ifelse(diff_Advice > ((SObj_Landings/100)*10)|diff_Advice < -((SObj_Landings/100)*10),"YES","NO"),
+#   ADVICE_PROB_DISC=ifelse(diff_Advice_Disc > ((SObj_Discards/100)*10)|diff_Advice_Disc < -((SObj_Discards/100)*10),"YES","NO")) %>% ungroup()
 
-#now do some graphs, this is just counts of problems
-Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB,ADVICE_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB,ADVICE_PROB),names_to ="Prob")
+CHECK_IC_AC_OBJ_SUM <- CHECK_IC_AC_OBJ_SUM %>% group_by(Year,Stock) %>% mutate(AC_PROB= round(Landing_AC/SObj_Landings,2),
+                                                                               IC_PROB= round(Landing_IC/SObj_Landings,2),
+                                                                               IC_PROB_DISC= round(Discard_IC/SObj_Discards,2),
+                                                                               ADVICE_PROB=round(Advice_Landings/SObj_Landings,2),
+                                                                               ADVICE_PROB_DISC=round(Advice_Discards/SObj_Discards,2)
+                                                                                 ) %>% ungroup()
 
-ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()
-  ggsave(file.path(Data_path,"intermediate_products","03_crosschecking_counts.png"))
+
+# 
+# #now do some graphs, this is just counts of problems
+# Graph_data <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,AC_PROB,IC_PROB,ADVICE_PROB) %>% pivot_longer(cols =c(AC_PROB,IC_PROB,ADVICE_PROB),names_to ="Prob")
+# 
+# ggplot(Graph_data,aes(x=value,group=Prob,fill=Prob))+geom_bar(position="dodge")+facet_wrap(~Stock)+theme_classic()
+#   ggsave(file.path(Data_path,"intermediate_products","03_crosschecking_counts.png"))
 ### this is the actuall value we are out by
-Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC,diff_Advice) %>% pivot_longer(cols =c(diff_AC,diff_IC,diff_Advice),names_to ="Diff")
+Graph_data2 <- CHECK_IC_AC_OBJ_SUM %>% select(Year,Stock,diff_AC,diff_IC,diff_Advice,diff_Advice_Disc) %>% pivot_longer(cols =c(diff_AC,diff_IC,diff_Advice,diff_Advice_Disc),names_to ="Diff")
 
-ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+   scale_y_continuous(breaks = seq(-5000,5000,500),limits =c(-5000,5000))
+ggplot(Graph_data2,aes(y=value,x=Year,group=Diff,fill=Diff))+geom_col(position="dodge")+facet_wrap(~Stock)+theme_classic()+   scale_y_continuous(breaks = seq(-5000,5000,500),limits =c(-5000,5000))+ggtitle("Differance from Stock Object")
   ggsave(file.path(Data_path,"\\intermediate_products\\03_crosschecking_landings.png"))
 
 write.csv(CHECK_IC_AC_OBJ_SUM,file = file.path(Data_path,"\\intermediate_products\\03_crosschecking.csv"))
-
-# Notes -------------------------------------------------------------------
-
-
-# 8abd landings of mon
-# L.budeo
-# 2017 4172
-# 2018 3734
-# 2019 2880 
-# L.piscat
-# 2017 3154
-# 2018 3506
-# 2019 2181
-
-# hke.abd
-# 2017  area 3,4,5,6,
-# 775+ 19690+ 9614
-# 2018 
-# 98+18915+7281 
-# 2020 
-# 1522+15569 +6835
-
-
 
 #  3.0 script starts -----------------------------------------------------------
 #allows us to keep the orignal object in GE for specific checks 
@@ -213,7 +228,7 @@ Catch3 <- catch2
 effort3 <- effort2
 
 # ~adjust species names for intercatch ------------------------------------------------
-Catch3 <-subset(Catch3,Species %in% Sps)
+Catch3 <-filter(Catch3,Stock %in% sp.lst)
 
 InterCatch <- InterCatch[InterCatch$Stock %in% tolower(sp.lst),]
 InterCatch$Species <- toupper(substr(InterCatch$Stock, 1, 3))
