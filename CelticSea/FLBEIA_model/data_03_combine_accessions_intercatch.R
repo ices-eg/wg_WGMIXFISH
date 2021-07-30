@@ -27,110 +27,20 @@ BootstrapPath <- "bootstrap"
 Yearwg<-2020
 # MR change to last three Year
 Year<-(Yearwg-3):(Yearwg-1)
-PERCENTAGE <- "0.01"
-FLEET_PERCENTAGE <- "0.01"
-## NOTE: Have these read from Reproduce the advice output
-# Nephrops setting.... T for including Nephrops, else F
-nep <- TRUE
-nep_latest <- TRUE
-
-
-# ~Tiered demersal spp --------------------------------------------------
-tier_1 <- TRUE # cod, haddock, whiting
-tier_2 <- TRUE # sole 7fg, monkfish, megrim
-tier_3 <- FALSE # sole 7e, hake
-
-# Landings obligation settings!! - do we want to forecast catch, no discards?
-LO <- TRUE
+PERCENTAGE <- "0"
+FLEET_PERCENTAGE <- "0"
 
 # Making lists
 
-
 # ~ 2020 shortlist --------------------------------------------------------
-tier_1stk <- c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k")
-tier_2stk <- c("sol.27.7fg", "mon.27.78abd", "meg.27.7b-k8abd")
-tier_3stk <- c("sol.27.7e", "hke.27.3a46-8abd")
-tier_IC_1 <- tier_1stk
-tier_IC_2 <- tier_2stk
-tier_IC_3 <- tier_3stk
-tier_IC_nep<-c("NEP.FU.16","NEP.FU.17","NEP.FU.19","NEP.FU.2021" ,"NEP.FU.22", "NEP.OUT.7")
-
-
-
-add_Nep<-nep
-
-## For file names
-options_dem <- ifelse(tier_1 & !tier_2 & !tier_3, "tier1",
-                      ifelse(!tier_1 & tier_2 & tier_3, "tier2",
-                             ifelse(!tier_1 & !tier_2 & tier_3, "tier3",
-                                    ifelse(tier_1 & tier_2 & tier_3, "tier123",
-                                           ifelse(tier_1 & tier_2 & !tier_3, "tier12",
-                                                  ifelse(tier_1 & !tier_2 & tier_3, "tier13",
-                                                         ifelse(!tier_1 & tier_2 & tier_3, "tier23",
-                                                                "")))))))
-
-options_nep <- ifelse(nep & nep_latest, "nepnew",
-                      ifelse(nep & !nep_latest, "nepold",
-                             ""))
-
-
-# ~Use SAM? replace the FLR STF with a SAM STF median values -------------
-# Note, these are incompatible
-UseSAM   <- TRUE
-UseFwdF3 <- FALSE
-
-options_lo  <- ifelse(LO, "LO", "")
-options_SAM <- ifelse(UseSAM, "UsingSAM", ifelse(UseFwdF3, "UsingFwdF3",""))                   
-options <- paste0(options_dem, options_nep, options_lo, options_SAM)
-#save(ver,options, file = "results/clean_data/tmp.RData")
-
-
-sp.lst<-NULL
-
-Sps<-NULL
-
-ICs<-NULL
-
-
-if (tier_1) {
-  
-  sp.lst 	<- c(sp.lst,paste(c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k")))
-  Sps	<- c(Sps,c("COD","HAD","WHG"))
-  #	sp.lst<-"cod.27.7e-k"
-  #	SPS<-"COD"
-  ICs	<- c(ICs,tier_IC_1)
-}
-
-
-if (tier_2) {
-  
-  sp.lst 	<- c(sp.lst,tier_2stk)
-  Sps	<- c(Sps,c("SOL","MON","ANK","ANF","MEG","LEZ")) # 2020
-  ICs	<- c(ICs,tier_IC_2)
-}
-
-if (tier_3) {
-  
-  sp.lst 	<- c(sp.lst,tier_3stk)
-  Sps	<- c(Sps,c("SOL","HKE")) # this might need to be changed to this "sol.27.7e","sol.27.7fg"
-  # to recode like for nephrops with SOL*area
-  ICs	<- c(ICs,tier_IC_3)
-}
-
-if (add_Nep) {
-  
-  sp.lst 	<- c(sp.lst,"NEP.FU.16","NEP.FU.17","NEP.FU.19","NEP.FU.2021","NEP.FU.22", "NEP.OUT.7")
-  Sps	<- c(Sps, "NEP.FU.16", "NEP.FU.17", "NEP.FU.19", "NEP.FU.2021", "NEP.FU.22", "NEP.OUT.7")
-  ICs	<- c(ICs,tier_IC_nep)
-}
+sp.list <- c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k", "sol.27.7fg", 
+             "mon.27.78abd", "meg.27.7b-k8abd", "NEP.FU.16","NEP.FU.17","NEP.FU.19",
+             "NEP.FU.2021" ,"NEP.FU.22", "NEP.OUT.7")
 
 
 # ~Print species selection -------------------------------------------------
-# Are we okay with the selection of species ?
-
 print(sp.lst)
 
-print(Sps)
 
 # 2.0 Read in data ------------------------------------------------------------
 #actual data
@@ -190,7 +100,7 @@ for(i in 2:length(wg.stock)){
 res.out <- res.out %>% select(stock,year,data)
 names(res.out) <- c("Stock","Year","SObj_Landings")
 ### we need to remove 8abd from the WGBIE stocks
-Catch_by_country <- readxl::read_excel("catch_by_country_wgs.xlsx")
+Catch_by_country <- readxl::read_excel("catch_by_country_wgs.xlsx") '## change path reference!!'
 Catch_by_country <- Catch_by_country %>% select(-Country)%>%  filter(Year %in% (Yearwg-3):(Yearwg-1),stock %in% c("HKE","MEG","MON"),CatchCategory %in% c("Landings"), Area %in% c("8","8abd","27.8")) %>% select(-"Area") %>% group_by_at(vars(-tons))%>% summarise(tons=sum(tons)) 
 
 names(res.out)
@@ -606,8 +516,3 @@ sort(unique(effort$Fleet))
 # 12.0 Write out to clean_data --------------------------------------------
 write.taf(catch,file = file.path(Data_path,"clean_data/Catch_4_Makefleets.csv"))
 write.taf(effort,file = file.path(Data_path,"clean_data/Effort_4_Makefleets.csv"))
-
-
-
-
-
