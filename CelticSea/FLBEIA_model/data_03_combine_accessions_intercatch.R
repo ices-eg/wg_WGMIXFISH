@@ -403,7 +403,7 @@ summa <- Catch3 %>% select(Landings,Country,Year,Stock) %>% group_by_at(vars(-La
 
 summa<-summa[,c(3,2,1,4)]
 summafleet<-aggregate(list(Landings=Catch3$Landings),by=list(Discard_ID=Catch3$Discard_ID, Year=Catch3$Year,   Stock=Catch3$Stock),sum)
-write.csv(summa,file=file.path(Data_path,paste("/intermediate_products/catch_per_country_", ".csv")))
+write.csv(summa,file=file.path(Data_path,paste0("/intermediate_products/catch_per_country", ".csv")))
 
 # ~Calculate discards ------------------------------------------------------
 #hashed out old code
