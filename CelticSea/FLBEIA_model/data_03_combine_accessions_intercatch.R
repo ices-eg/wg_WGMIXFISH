@@ -82,7 +82,7 @@ UseFwdF3 <- FALSE
 options_lo  <- ifelse(LO, "LO", "")
 options_SAM <- ifelse(UseSAM, "UsingSAM", ifelse(UseFwdF3, "UsingFwdF3",""))                   
 options <- paste0(options_dem, options_nep, options_lo, options_SAM)
-save(ver,options, file = "results/clean_data/tmp.RData")
+#save(ver,options, file = "results/clean_data/tmp.RData")
 
 
 sp.lst<-NULL

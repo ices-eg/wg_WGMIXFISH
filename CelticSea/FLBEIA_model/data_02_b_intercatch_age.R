@@ -28,7 +28,7 @@ library(ggplotFL)
 library(icesSAG)
 
 ### not gonna edit an entire script everytime we want to update the years
-YEARS <- c(2017:2019)
+YEARS <- 2009:2019
 ####Note there are still some hard coded years as there are year specific fixes Q? how permenant are these 
 #and cany the be moved to a lookup somehow (probably not)
 
@@ -99,7 +99,7 @@ intercatch_canum$samples_weight_tonnes <- (intercatch_canum$MeanWeight_in_g/1000
 advice_sheet_values[advice_sheet_values$stock %in% c("sol.27.7fg") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
 intercatch_canum[intercatch_canum$Stock %in% c("sol.27.7fg") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, CatchCat, samples_weight_tonnes) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_tonnes))
 # Notes - sol.27.7fg there is a good match
-intercatch_canum_sol_checks <- intercatch_canum[intercatch_canum$Stock == "sol.27.7fg" & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
+intercatch_canum_sol_checks <- intercatch_canum[intercatch_canum$Stock == "sol.27.7fg" & intercatch_canum$Datayear %in% YEARS,] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
 intercatch_canum_sol_checks$Acceptable <- ifelse(intercatch_canum_sol_checks$SOP>0.94, "Acceptable", "Suspect")
 intercatch_canum_sol_checks$Acceptable <- ifelse(intercatch_canum_sol_checks$SOP>1.05, "Suspect", intercatch_canum_sol_checks$Acceptable)
 ggplot(intercatch_canum_sol_checks, aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("sol.27.7fg")
@@ -109,7 +109,7 @@ ggplot(intercatch_canum_sol_checks, aes(Acceptable, CATON)) + geom_bar(stat="ide
 advice_sheet_values[advice_sheet_values$stock %in% c("hke.27.3a46-8abd") & advice_sheet_values$year %in% YEARS,] %>% select( year,stock, catch_cat, total) %>% group_by(year,stock, catch_cat) %>% summarise(caton = sum(total, na.rm=T))
 intercatch_canum[intercatch_canum$Stock %in% c("hke.27.3a46-8abd") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, CatchCat, samples_weight_tonnes) %>% group_by(Datayear,Stock, CatchCat) %>% summarise(caton = sum(samples_weight_tonnes)) %>% data.frame()
 # Notes - hke.27.3a46-8abd not a good match, sometimes too little landings and other time too many discards!
-intercatch_canum_hke_checks <- intercatch_canum[intercatch_canum$Stock == "hke.27.3a46-8abd" & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
+intercatch_canum_hke_checks <- intercatch_canum[intercatch_canum$Stock == "hke.27.3a46-8abd" & intercatch_canum$Datayear %in% YEARS,] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
 intercatch_canum_hke_checks$Acceptable <- ifelse(intercatch_canum_hke_checks$SOP>0.94, "Acceptable", "Suspect")
 intercatch_canum_hke_checks$Acceptable <- ifelse(intercatch_canum_hke_checks$SOP>1.05, "Suspect", intercatch_canum_hke_checks$Acceptable)
 ggplot(intercatch_canum_hke_checks, aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("hke.27.3a46-8abd")
@@ -121,7 +121,7 @@ intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_c
 intercatch_canum[intercatch_canum$Stock %in% c("meg.27.7b-k8abd") & intercatch_canum$Datayear %in% YEARS,] %>% select( Datayear,Stock, Country, CatchCat, samples_weight_tonnes) %>% group_by(Datayear,Stock,Country, CatchCat) %>% summarise(caton = sum(samples_weight_tonnes)) %>% data.frame()
 
 # Notes - meg.27.7b-k8abd not a good match, sometimes too little landings and other time too many discards!
-intercatch_canum_meg_checks <- intercatch_canum[intercatch_canum$Stock == "meg.27.7b-k8abd" & intercatch_canum$Datayear %in% c(2017, 2018, 2019),] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
+intercatch_canum_meg_checks <- intercatch_canum[intercatch_canum$Stock == "meg.27.7b-k8abd" & intercatch_canum$Datayear %in% YEARS,] %>%  select(Datayear,Country, Area, CatchCat, CATON, samples_weight_tonnes) %>% group_by(Datayear,Country, Area, CatchCat, CATON) %>% summarise(samples_weight_tonnes = sum(samples_weight_tonnes, na.rm=T)) %>% mutate(course_difference = (CATON -samples_weight_tonnes) , SOP = (samples_weight_tonnes/CATON)) %>% data.frame() 
 intercatch_canum_meg_checks$Acceptable <- ifelse(intercatch_canum_meg_checks$SOP>0.94, "Acceptable", "Suspect")
 intercatch_canum_meg_checks$Acceptable <- ifelse(intercatch_canum_meg_checks$SOP>1.05, "Suspect", intercatch_canum_meg_checks$Acceptable)
 ggplot(intercatch_canum_meg_checks, aes(CATON, SOP)) + geom_point() + facet_wrap(~Country) + theme_classic()+ggtitle("meg.27.7b-k8abd")
@@ -168,7 +168,7 @@ intercatch_canum_hke
 #plot new age data
 ggplot(intercatch_canum_hke, aes(age, samples_weight_tonnes)) + geom_bar(stat="identity")+ theme_classic()
 ggplot(intercatch_canum_hke, aes(age,samples_weight_tonnes)) + geom_bar(stat="identity")+ facet_wrap(~Year) + theme_classic()
-ggplot(intercatch_canum_hke, aes(Datayear, CATON)) + geom_bar(stat="identity") + theme_classic()
+ggplot(intercatch_canum_hke, aes(Year, CATON)) + geom_bar(stat="identity") + theme_classic()
 
 #conclusion delete all sample data prior to 2011
 intercatch_canum_hke <- intercatch_canum_hke[intercatch_canum_hke$Datayear>2010,]
@@ -285,6 +285,8 @@ lan_total_2019 <- 21266
 dis_total_2017 <- 2175
 dis_total_2018 <- 1250
 dis_total_2019 <- 1444
+
+YEARS <- 2017:2019
 
 caton_dis$prop[caton_dis$Year == YEARS[1]] <- caton_dis$caton[caton_dis$Year == YEARS[1]]/sum(caton_dis$caton[caton_dis$Year == YEARS[1]], na.rm=T)
 caton_dis$prop[caton_dis$Year == YEARS[2]] <- caton_dis$caton[caton_dis$Year == YEARS[2]]/sum(caton_dis$caton[caton_dis$Year == YEARS[2]], na.rm=T)

@@ -20,7 +20,7 @@ library(ggplot2)
 library(icesSAG)
 
 ### not gonna edit and entire scritp everytime we want to update the years
-YEARS <- c(2017:2019)
+YEARS <- 2009:2019
 
 # 00 - Single species advice sheet values ####
 # All intercatch canum should total to these values. 
@@ -204,7 +204,7 @@ mon_caton$Country <- mon_caton$CorrectCountry
 mon_caton <- mon_caton[-c(7)]
 mon_caton$stock <-  "mon.27.78abd"
 mon_caton$topup_ID <- paste(mon_caton$Year,mon_caton$Country,mon_caton$Area, mon_caton$CatchCategory) 
-mon_caton <- mon_caton[mon_caton$Year %in% c(2017, 2018, 2019),] %>% select(topup_ID, tons) %>% group_by(topup_ID)%>% summarise(tons = sum(tons, na.rm=T)) %>% data.frame()
+mon_caton <- mon_caton[mon_caton$Year %in% YEARS,] %>% select(topup_ID, tons) %>% group_by(topup_ID)%>% summarise(tons = sum(tons, na.rm=T)) %>% data.frame()
 
 mon_2017 <- read.csv("bootstrap/data/ices_intercatch/mon_StockOverview_2017.csv")
 mon_2018 <- read.csv("bootstrap/data/ices_intercatch/mon_StockOverview_2018.csv")
