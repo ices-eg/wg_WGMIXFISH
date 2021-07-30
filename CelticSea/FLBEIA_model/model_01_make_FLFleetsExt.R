@@ -204,6 +204,16 @@ ic <- ic %>%
 	mutate(SOP = sum(N*(wt/1e3),na.rm = TRUE)) %>% 
 	as.data.frame()
 
+## Small fix for particular case, need to check why landings and discards are
+## the same for this case.
+
+if(Fl == "ES_Otter_24<40m" & Met == "OTB_DEF_27.7.c" & year == 2018 & stk == "had.27.7b-k") {
+ic[ic$CatchCat =="Landings","N"] <- ic[ic$CatchCat =="Discards","N"]
+ic[ic$CatchCat =="Landings","wt"] <- ic[ic$CatchCat =="Discards","wt"]
+ic[ic$CatchCat =="Landings","SOP"] <- ic[ic$CatchCat =="Discards","SOP"]
+
+}
+
 ## Now disaggregate the landings and discards tonnages according to these
 ## distributions
 
@@ -222,7 +232,8 @@ res <- data.frame(Fleet = Fl, Metier = Met, Year = year, Stock = stk, Age = stk.
 	   landings.n = ic_stand[ic_stand$CatchCat == "Landings","FinalN"]/1e3, # in thousands
 	   landings.wt = ic_stand[ic_stand$CatchCat == "Landings","wt"]/1e3, # in kg
 	   discards.n = ic_stand[ic_stand$CatchCat == "Discards","FinalN"]/1e3,  # in thousands
-	   discards.wt = ic_stand[ic_stand$CatchCat == "Discards","wt"]/1e3 # in kg
+	   discards.wt = ic_stand[ic_stand$CatchCat == "Discards","wt"]/1e3, # in kg
+	   price = ac_catch$Value / ac_catch$Landings # in euro per tonne
 	   )
 
 ## For Nephrops, we fill the results with the actual landings and discards and
@@ -237,17 +248,34 @@ res$landings.wt <- 1
 res$discards.wt <- 1
 }
 
-## Final check that SOP matches
+## FLBEIA does not like NAs or 0s for catch weights due to over-quota discard
+## calculations, so where these exist we will fill with the stock level values
+if(nrow(res[is.na(res$landings.wt) | res$landings.wt == 0,])!=0) {
+zero.lw.ages <- res[is.na(res$landings.wt) | res$landings.wt == 0,"Age"]
+res[res$Age %in% zero.lw.ages,"landings.wt"] <- c(wg.stocks[[stk]]@landings.wt[ac(zero.lw.ages),ac(year)])
+}
+
+if(nrow(res[is.na(res$discards.wt) | res$discards.wt == 0,])!=0) {
+zero.dw.ages <- res[is.na(res$discards.wt) | res$discards.wt == 0,"Age"]
+res[res$Age %in% zero.dw.ages,"discards.wt"] <- c(wg.stocks[[stk]]@discards.wt[ac(zero.dw.ages),ac(year)])
+}
+
+
+#################################
+## Final check that SOP matches #
+#################################
+
+## Having a rounding issue here, not sure how to address
 
 ## Not nephrops, units in 1000s
 if(!grepl("nep",stk)) {
-if(!round(sum(1e3 * res$landings.n * res$landings.wt, na.rm = TRUE),3) == round(ac_catch$Landings ,3)) stop("SOP for landings does not match")
-if(!round(sum(1e3 * res$discards.n * res$discards.wt, na.rm = TRUE),3) == round(ac_catch$Discards ,3)) stop("SOP for discards does not match")
+if(!near(round(sum(1e3 * res$landings.n * res$landings.wt, na.rm = TRUE),3),round(ac_catch$Landings ,3))) stop("SOP for landings does not match")
+if(!near(round(sum(1e3 * res$discards.n * res$discards.wt, na.rm = TRUE),3), round(ac_catch$Discards ,3))) stop("SOP for discards does not match")
 }
 
 if(grepl("nep",stk)) {
-if(!round(sum(res$landings.n * res$landings.wt, na.rm = TRUE),3) == round(ac_catch$Landings ,3)) stop("SOP for landings does not match")
-if(!round(sum(res$discards.n * res$discards.wt, na.rm = TRUE),3) == round(ac_catch$Discards ,3)) stop("SOP for discards does not match")
+if(!near(round(sum(res$landings.n * res$landings.wt, na.rm = TRUE),3),round(ac_catch$Landings ,3))) stop("SOP for landings does not match")
+if(!near(round(sum(res$discards.n * res$discards.wt, na.rm = TRUE),3),round(ac_catch$Discards ,3))) stop("SOP for discards does not match")
 }
 
 return(res)
@@ -261,7 +289,11 @@ options(dplyr.summarise.inform = FALSE) ## <- this right here is the ticket.
 
 fleet_data <- lapply(seq_len(nrow(ca)), function(i) {
 			     print(i)
-disaggregate_catch(ac_dat = ca, ic_dat = ic_dat, wg.stocks = wg.stocks, year = ca[i,"Year"], stk = ca[i,"Stock"], Fl = ca[i,"Fleet"], Met = ca[i,"Metier"])
+disaggregate_catch(ac_dat = ca, ic_dat = ic_dat, wg.stocks = wg.stocks, 
+		   year = ca[i,"Year"], 
+		   stk = ca[i,"Stock"], 
+		   Fl = ca[i,"Fleet"], 
+		   Met = ca[i,"Metier"])
 	   })
 
 
