@@ -35,10 +35,13 @@ ca <- read.csv(file.path(data_path, "Catch_4_Makefleets.csv")) %>%
 ## Currently some -Inf in discards, REMOVE WHEN JOHN FIXES!!
 ca[!is.finite(ca$Discards),"Discards"] <- 0
 
-
 ## Age distribution (cod, had, whg, sol only)
 ad <- read.csv(file.path(data_path, "canum_summary.csv")) %>%
 	filter(Stock %in% stock.list)
+
+## Correction in IC data
+unique(grep("-", ad$lvl4, value = TRUE))
+ad$lvl4 <- gsub("-", "_", ad$lvl4)
 
 ## stock objects
 wg.stocks <- FLStocks(lapply(stock.list, function(s) {
@@ -151,7 +154,7 @@ ic_land <- filter(ic_dat, CatchCat == "Landings",
 		     lvl4 == substr(Met,1,7), 
 		     Area == substr(Met, 9, 14), Stock == stk, Year == year)
 
-L_lvl <- "Perfect" # record what level the match was made
+L_lvl <- "Area_Metier" # record what level the match was made
 
 ## Next drop area
 if(nrow(ic_land)==0) {
@@ -186,7 +189,7 @@ ic_disc <- filter(ic_dat, CatchCat == "Discards",
 		     lvl4 == substr(Met,1,7), 
 		     Area == substr(Met, 9, 14), Stock == stk, Year == year)
 
-D_lvl <- "Perfect" # record what level the match was made
+D_lvl <- "Area_Metier" # record what level the match was made
 
 ## Next drop area
 if(nrow(ic_disc)==0) {
@@ -359,6 +362,16 @@ disaggregate_catch(ac_dat = ca, ic_dat = ad, wg.stocks = wg.stocks,
 fleet_data <- bind_rows(fleet_data)
 
 ## What level have the data matched to...
+## Summarise the data and compare to the stock objects
+
+stock_land <- lapply(wg.stocks, function(x) cbind(stock = x@name, as.data.frame(x@landings))) 
+stock_land <- do.call(rbind, stock_land)
+colnames(stock_land)[c(1,3,8)] <- c("Stock", "Year", "landings")
+
+stock_disc <- lapply(wg.stocks, function(x) cbind(stock = x@name, as.data.frame(x@discards))) 
+stock_disc <- do.call(rbind, stock_disc)
+colnames(stock_disc)[c(1,3,8)] <- c("Stock", "Year", "discards")
+
 
 theme_set(theme_bw())
 
@@ -371,7 +384,8 @@ fleet_data %>% group_by(Stock, Year, match_level_land) %>%
 	summarise(landings = 1e3 * sum(landings.n * landings.wt,na.rm = TRUE))  %>%
 	ggplot(aes(x = Year, y = landings, group = Stock)) +
 	       geom_bar(stat= "identity", aes(fill = match_level_land)) +
-	       facet_wrap(~Stock)
+	       facet_wrap(~Stock) +
+	       geom_point(data = stock_land)
 
 ## Discards
 fleet_data %>% group_by(Stock, Year, match_level_disc) %>%
@@ -382,14 +396,14 @@ fleet_data %>% group_by(Stock, Year, match_level_disc) %>%
 	summarise(discards = 1e3 * sum(discards.n * discards.wt,na.rm = TRUE)) %>% 
 	ggplot(aes(x = Year, y = discards, group = Stock)) +
 	       geom_bar(stat= "identity", aes(fill = match_level_disc)) +
-	       facet_wrap(~Stock)
+	       facet_wrap(~Stock) +
+	       geom_point(data = stock_disc)
 
 
-## Summarise the totals and compare what's in the stock object...
-
-
-
-
+##########################################################################
 ## Aggregate the data according to the fleet keep and métier keep list...
+##########################################################################
+
+
 
 

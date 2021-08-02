@@ -204,6 +204,10 @@ names(canum_whg) <- c("Year", "Country", "Area", "CatchCat", "lvl4", "Age","Stoc
 
 gad_canum <- rbind(canum_cod, canum_whg, canum_had)
 gad_canum$Area <- as.character(gad_canum$Area)
+
+## Lose the French mesh sizes that are beyond level 4
+gad_canum$lvl4 <- substr(gad_canum$lvl4, 1, 7)
+
 gad_canum_saftey_check <- gad_canum
 
 # ~ Country fix  ####
