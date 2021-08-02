@@ -392,7 +392,9 @@ fleetSOP  %>%
 	       facet_wrap(~Stock, scale = "free_y") +
 	       geom_point(data = stock_land, colour = "black") +
 	       geom_point(aes(y = Landings), data = ac_catch, colour = "red", shape = 2) + 
-	       ggtitle("Bars are SOP for landings.n x landings.wt", subtitle = "Black circles = stock object landings (tonnes), red triangles = accessions landings (tonnes)") + theme(axis.text.x = element_text(angle = -90))
+	       ggtitle("Bars are SOP for landings.n x landings.wt", subtitle = "Black circles = stock object landings (tonnes), red triangles = accessions landings (tonnes)") + theme(axis.text.x = element_text(angle = -90)) + 
+	       ylab("Landings (tonnes)")
+ggsave(file = file.path("Figures", "Data_workup_fleets_landings.png"), width = 10, height = 7)
 
        ## The differences are entirely down to the accessions and intercatch
        ## differences. 
@@ -409,7 +411,10 @@ fleetSOP_D %>%
 	       facet_wrap(~Stock) +
 	       geom_point(data = stock_disc)+
 	       geom_point(aes(y = Discards), data = ac_catch, colour = "red", shape = 2) + 
-	       ggtitle("Bars are SOP for discards.n x discards.wt", subtitle = "Black circles = stock object discards (tonnes), red triangles = accessions discards (tonnes)") + theme(axis.text.x = element_text(angle = -90))
+	       ggtitle("Bars are SOP for discards.n x discards.wt", subtitle = "Black circles = stock object discards (tonnes), red triangles = accessions discards (tonnes)") + theme(axis.text.x = element_text(angle = -90)) + 
+	       ylab("Discards (tonnes)")
+ggsave(file = file.path("Figures", "Data_workup_fleets_discards.png"), width = 10, height = 7)
+
 
 ## The differences are down to the discard raising only...
 
@@ -426,6 +431,9 @@ colnames(stock_discN)[c(1,2,3,8)] <- c("Stock","Age", "Year", "discards.n")
 
 fleets_N <- fleet_data %>% group_by(Year, Stock, Age) %>% summarise(landings.n = sum(landings.n), discards.n = sum(discards.n))
 
+## Something wrong with monkfish scale of landings??
+fleets_N[fleets_N$Stock == "mon.27.78abd",c("landings.n", "discards.n")] <- fleets_N[fleets_N$Stock == "mon.27.78abd",c("landings.n", "discards.n")]/1000
+
 neps <- unique(grep("nep", stock_landN$Stock, value = TRUE))
 
 
@@ -434,6 +442,7 @@ filter(stock_landN, !Stock %in% neps) %>% ggplot(aes(x = Age , y = landings.n)) 
 	geom_line() +
 	geom_line(data = filter(fleets_N, !Stock %in% neps), colour = "red", aes(y = landings.n*1000)) + 
 	ggtitle("Landings numbers-at-age in stock object (black) and fleets (red)")
+ggsave(file = file.path("Figures", "Data_workup_fleets_landings_at_age.png"), width = 10, height = 7)
 
 
 filter(stock_discN, !Stock %in% neps) %>% ggplot(aes(x = Age , y = discards.n)) + 
@@ -441,6 +450,7 @@ filter(stock_discN, !Stock %in% neps) %>% ggplot(aes(x = Age , y = discards.n)) 
 	geom_line() +
 	geom_line(data = filter(fleets_N, !Stock %in% neps), colour = "red", aes(y = discards.n*1000)) + 
 	ggtitle("Discards numbers-at-age in stock object (black) and fleets (red)")
+ggsave(file = file.path("Figures", "Data_workup_fleets_discards_at_age.png"), width = 10, height = 7)
 
 
 ##########################################################################
@@ -473,6 +483,10 @@ ca_mod <- fleet_data_model %>% group_by(Fleet, Metier, Year, Stock, Age, .drop =
 	summarise(landingsN = sum(landings.n, na.rm = TRUE), landings.wt = weighted.mean(x = landings.wt, w = landings.n,na.rm = TRUE), discardsN = sum(discards.n, na.rm = TRUE), discards.wt = weighted.mean(x = discards.wt, w = discards.n, na.rm = TRUE),  price = weighted.mean(x = price, w = landings.n, na.rm = TRUE))
 
 
+## Catch in thousands - except Nephrops
+ca_mod[!grepl("nep", ca_mod$Stock),"landingsN"] <- 1e3 * ca_mod[!grepl("nep", ca_mod$Stock),"landingsN"]
+ca_mod[!grepl("nep", ca_mod$Stock),"discardsN"] <- 1e3 * ca_mod[!grepl("nep", ca_mod$Stock),"discardsN"]
+
 
 ######################################################################
 ######################################################################
@@ -486,7 +500,7 @@ fq<-FLQuant(dimnames=list(year=yr.range),quant="age") # blank quant with right d
 
 fl.nam <- unique(ca_mod$Fleet)
 
-fleets <- FLFleetsExt(fl.nam, function(Fl) {
+fleets <- FLFleetsExt(lapply(fl.nam, function(Fl) {
 
 #######################
 ## FLFleetExt
@@ -625,3 +639,25 @@ return(fl)
 	   }))
 
 names(fleets) <- fl.nam
+
+
+save(fleets, file = file.path("results", "FLBEIA_inputs", "FLFleets.RData"))
+
+
+###################
+## Some checks rough....
+####################
+
+sumCatches <- lapply(stock.list, function(x) apply(catchWStock(fleets, x),2,sum)) 
+
+names(sumCatches) <- stock.list
+
+sumCatches
+
+apply(catchWStock(fleets, "cod.27.7e-k"),2,sum) /
+wg.stocks[["cod.27.7e-k"]]@catch
+
+apply(landWStock(fleets, "cod.27.7e-k"),2,sum)/
+wg.stocks[["cod.27.7e-k"]]@landings
+
+####################
