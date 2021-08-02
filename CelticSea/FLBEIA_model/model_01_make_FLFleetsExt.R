@@ -373,37 +373,255 @@ stock_disc <- do.call(rbind, stock_disc)
 colnames(stock_disc)[c(1,3,8)] <- c("Stock", "Year", "discards")
 
 
+## Accessions
+ac_catch <- ca %>% group_by(Year, Stock) %>%
+	summarise(Landings = sum(Landings), Discards = sum(Discards))
+
+
 theme_set(theme_bw())
 
 ## Landings
-fleet_data %>% group_by(Stock, Year, match_level_land) %>%
-	summarise(landings = 1e3 * sum(landings.n * landings.wt,na.rm = TRUE)) %>% 
-	reshape2::dcast(Stock + Year ~ match_level_land, value.var = "landings")
+fleetSOP <- fleet_data %>% group_by(Stock, Year, match_level_land) %>%
+	summarise(landings = 1e3 * sum(landings.n * landings.wt,na.rm = TRUE)) 
 
-fleet_data %>% group_by(Stock, Year, match_level_land) %>%
-	summarise(landings = 1e3 * sum(landings.n * landings.wt,na.rm = TRUE))  %>%
+fleetSOP$landings <- ifelse(grepl("nep", fleetSOP$Stock), fleetSOP$landings/1e3, fleetSOP$landings)
+
+fleetSOP  %>%
 	ggplot(aes(x = Year, y = landings, group = Stock)) +
 	       geom_bar(stat= "identity", aes(fill = match_level_land)) +
-	       facet_wrap(~Stock) +
-	       geom_point(data = stock_land)
+	       facet_wrap(~Stock, scale = "free_y") +
+	       geom_point(data = stock_land, colour = "black") +
+	       geom_point(aes(y = Landings), data = ac_catch, colour = "red", shape = 2) + 
+	       ggtitle("Bars are SOP for landings.n x landings.wt", subtitle = "Black circles = stock object landings (tonnes), red triangles = accessions landings (tonnes)") + theme(axis.text.x = element_text(angle = -90))
+
+       ## The differences are entirely down to the accessions and intercatch
+       ## differences. 
 
 ## Discards
-fleet_data %>% group_by(Stock, Year, match_level_disc) %>%
-	summarise(discards = 1e3 * sum(discards.n * discards.wt,na.rm = TRUE)) %>% 
-	reshape2::dcast(Stock + Year ~ match_level_disc, value.var = "discards")
+fleetSOP_D <- fleet_data %>% group_by(Stock, Year, match_level_disc) %>%
+	summarise(discards = 1e3 * sum(discards.n * discards.wt,na.rm = TRUE)) 
 
-fleet_data %>% group_by(Stock, Year, match_level_disc) %>%
-	summarise(discards = 1e3 * sum(discards.n * discards.wt,na.rm = TRUE)) %>% 
+fleetSOP_D$discards <- ifelse(grepl("nep", fleetSOP_D$Stock), fleetSOP_D$discards/1e3, fleetSOP_D$discards)
+
+fleetSOP_D %>% 
 	ggplot(aes(x = Year, y = discards, group = Stock)) +
 	       geom_bar(stat= "identity", aes(fill = match_level_disc)) +
 	       facet_wrap(~Stock) +
-	       geom_point(data = stock_disc)
+	       geom_point(data = stock_disc)+
+	       geom_point(aes(y = Discards), data = ac_catch, colour = "red", shape = 2) + 
+	       ggtitle("Bars are SOP for discards.n x discards.wt", subtitle = "Black circles = stock object discards (tonnes), red triangles = accessions discards (tonnes)") + theme(axis.text.x = element_text(angle = -90))
+
+## The differences are down to the discard raising only...
+
+## Now let's compare numbers-at-age
+
+stock_landN <- lapply(wg.stocks, function(x) cbind(stock = x@name, as.data.frame(x@landings.n))) 
+stock_landN <- do.call(rbind, stock_landN)
+colnames(stock_landN)[c(1,2,3,8)] <- c("Stock","Age", "Year", "landings.n")
+
+stock_discN <- lapply(wg.stocks, function(x) cbind(stock = x@name, as.data.frame(x@discards.n))) 
+stock_discN <- do.call(rbind, stock_discN)
+colnames(stock_discN)[c(1,2,3,8)] <- c("Stock","Age", "Year", "discards.n")
+
+
+fleets_N <- fleet_data %>% group_by(Year, Stock, Age) %>% summarise(landings.n = sum(landings.n), discards.n = sum(discards.n))
+
+neps <- unique(grep("nep", stock_landN$Stock, value = TRUE))
+
+
+filter(stock_landN, !Stock %in% neps) %>% ggplot(aes(x = Age , y = landings.n)) + 
+	facet_grid(Stock ~ Year, scale = "free") +
+	geom_line() +
+	geom_line(data = filter(fleets_N, !Stock %in% neps), colour = "red", aes(y = landings.n*1000)) + 
+	ggtitle("Landings numbers-at-age in stock object (black) and fleets (red)")
+
+
+filter(stock_discN, !Stock %in% neps) %>% ggplot(aes(x = Age , y = discards.n)) + 
+	facet_grid(Stock ~ Year, scale = "free") +
+	geom_line() +
+	geom_line(data = filter(fleets_N, !Stock %in% neps), colour = "red", aes(y = discards.n*1000)) + 
+	ggtitle("Discards numbers-at-age in stock object (black) and fleets (red)")
 
 
 ##########################################################################
 ## Aggregate the data according to the fleet keep and métier keep list...
 ##########################################################################
 
+fleet_data_model <- fleet_data
+
+## Remove any effort for fleets that do not catch these stocks
+ef_mod <- filter(ef, Fleet %in% flt_keep)
+
+## Relabel other fleets
+fleet_data_model$Fleet  <- ifelse(fleet_data_model$Fleet %in% flt_keep, fleet_data_model$Fleet, "Other_fleets")
+fleet_data_model$Metier <- ifelse(fleet_data_model$Fleet %in% flt_keep, fleet_data_model$Metier, "Other_Metier")
+
+## Relabel other metier
+ef_mod$Metier <- ifelse(paste0(ef_mod$Fleet, ef_mod$Metier) %in% paste0(mt_keep$Fleet, mt_keep$Metier), ef_mod$Metier, "Other_Metier")
+
+fleet_data_model$Metier <- ifelse(paste0(fleet_data_model$Fleet, fleet_data_model$Metier) %in% paste0(mt_keep$Fleet, mt_keep$Metier), fleet_data_model$Metier, "Other_Metier")
+
+## Now aggregate the data
+
+## Effort
+ef_mod <- ef_mod %>% group_by(Fleet, Metier, Year, .drop = FALSE) %>% summarise(kw_days = sum(kw_days)) %>%
+	arrange(Fleet, Metier, Year)
+
+## Catch
+
+ca_mod <- fleet_data_model %>% group_by(Fleet, Metier, Year, Stock, Age, .drop = FALSE) %>%
+	summarise(landingsN = sum(landings.n, na.rm = TRUE), landings.wt = weighted.mean(x = landings.wt, w = landings.n,na.rm = TRUE), discardsN = sum(discards.n, na.rm = TRUE), discards.wt = weighted.mean(x = discards.wt, w = discards.n, na.rm = TRUE),  price = weighted.mean(x = price, w = landings.n, na.rm = TRUE))
 
 
 
+######################################################################
+######################################################################
+## Make the FLFleet Object
+######################################################################
+######################################################################
+
+yr.range<- min(ca_mod$Year):max(ca_mod$Year)
+
+fq<-FLQuant(dimnames=list(year=yr.range),quant="age") # blank quant with right dimensions...
+
+fl.nam <- unique(ca_mod$Fleet)
+
+fleets <- FLFleetsExt(fl.nam, function(Fl) {
+
+#######################
+## FLFleetExt
+#######################
+
+print(paste("#############",Fl,"###########",sep=" "))
+
+## Metiers in the fleet with catches of the modelled stocks
+met.nam <- unique(filter(ca_mod, Fleet == Fl)$Metier)
+
+# Blank quants with same dims
+eff <- fq
+cap <- fq
+
+## Fleets effort ##
+fl_ef <- filter(ef_mod, Fleet == Fl, Metier %in% met.nam)
+
+## Add to quant
+fl_ef_sum <- fl_ef %>% group_by(Year) %>% summarise(kw_days = sum(kw_days)) %>% arrange(Year) %>%
+	as.data.frame()
+
+yrs <- fl_ef_sum$Year ## years in data
+eff[,ac(yrs)] <- fl_ef_sum$kw_days  / 1e3
+
+## Fleets capacity ##
+
+## Maximum observed inter-annual change
+maxD <- max(abs(1-c(eff)[-1]/c(eff)[-length(eff)]))
+
+cap <- eff * (1+maxD) ## Assume effort overall will not increase by more than 20%. Note: need to explore assumption -
+# this is also really for the conditioning step, historic data should be based
+# on years observed values
+
+units(eff) <- units(cap) <- "000 kwdays"
+
+## Metiers in the catch data for the fleet
+fl_ca <- filter(ca_mod, Fleet == Fl, Metier %in% met.nam)
+
+## Metiers effort
+mt_ef <- fl_ef %>% filter(Metier %in% met.nam) %>% 
+	group_by(Year) %>% 
+	mutate(effshare = kw_days / sum(kw_days))
+
+####################
+### FLMetierExt
+####################
+
+metiers <- FLMetiersExt(lapply(met.nam, function(met) {
+
+print(met)
+
+## Metier effort (and effort share)
+met_E <- filter(mt_ef, Metier == met)  %>% arrange(Year)
+
+## Years in metier effort
+yrs <- met_E$Year 
+
+effmet <- fq
+
+effmet[,ac(yrs)] <- met_E$effshare
+
+## Stocks caught by the metier
+
+mt_ca <- filter(fl_ca, Metier == met)
+
+stk.nam <- unique(mt_ca$Stock)
+
+####################
+## FLCatches
+###################
+
+catch <- FLCatchesExt(lapply(stk.nam, function(S) {
+
+## Fl-Met-Stk catch
+
+caa <- filter(mt_ca, Stock == S) %>% arrange(Year, Age) %>% as.data.frame()
+
+print(S)
+
+# create the objects with the right dimensions
+la.age<- la.wt <- di.age <- di.wt <- pr. <- al <- be <- FLQuant(dimnames=list(age=range(wg.stocks[[ac(S)]])[["min"]]:range(wg.stocks[[ac(S)]])[["max"]],year=yr.range),quant="age")
+ 
+## years with catch data
+yrs <- unique(caa$Year)
+
+## Landings numbers
+la.age[,ac(yrs)] <- caa$landingsN
+# landings weights
+la.wt[,ac(yrs)]  <- caa$landings.wt
+## Discards numbers
+di.age[,ac(yrs)] <- caa$discardsN
+# discards weights
+di.wt[,ac(yrs)]  <- caa$discards.wt
+# price (per kg)
+pr.[,ac(yrs)] <- caa$price/1e3
+# cobb-douglas alpha and beta
+al[,ac(yrs)] <- 1
+be[,ac(yrs)] <- 1
+
+# range
+rg. <-  range(wg.stocks[[S]])
+
+
+## FLCatch object
+res <- FLCatchExt(range=rg., name=ac(S), landings.n=la.age,discards.n=di.age,
+                        landings.wt=la.wt,discards.wt=di.wt,price=pr.,alpha=al,beta=be)
+  
+## Add the units 
+units(res@landings.n)  <- units(res@discards.n) <-  '1000'
+units(res@landings.wt) <-  units(res@discards.wt) <- "kg"
+units(res@landings)    <- units(res@discards) <- "tonnes"
+units(res@price)       <- "euro per kg"
+
+## Add the catch with inbuilt functions
+
+res@landings <- computeLandings(res)
+res@discards <- computeDiscards(res)
+
+
+return(res)
+})) ## end FLCatches
+names(catch) <- catchNames(catch)
+
+m <- FLMetierExt(effshare = effmet, catches = catch, name = ac(met))
+return(m)
+}))
+
+names(metiers) <- met.nam
+
+fl <- FLFleetExt(metiers = metiers, name = Fl, effort = eff, capacity = cap)
+
+fl@range <-  range(wg.stocks)
+
+return(fl)
+
+	   }))
+
+names(fleets) <- fl.nam
