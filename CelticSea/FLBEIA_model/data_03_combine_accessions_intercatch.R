@@ -34,8 +34,8 @@ FLEET_PERCENTAGE <- "0"
 
 # ~ 2020 shortlist --------------------------------------------------------
 sp.lst <- c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k", "sol.27.7fg", 
-             "mon.27.78abd", "meg.27.7b-k8abd", "NEP.FU.16","NEP.FU.17","NEP.FU.19",
-             "NEP.FU.2021" ,"NEP.FU.22", "NEP.OUT.7")
+             "mon.27.78abd", "meg.27.7b-k8abd", "nep.fu.16","nep.fu.17","nep.fu.19",
+             "nep.fu.2021" ,"nep.fu.22", "nep.out.7")
 
 
 # ~Print species selection -------------------------------------------------
