@@ -43,6 +43,15 @@ ad <- read.csv(file.path(data_path, "canum_summary.csv")) %>%
 unique(grep("-", ad$lvl4, value = TRUE))
 ad$lvl4 <- gsub("-", "_", ad$lvl4)
 
+##############################################################
+## Correction for mon.27.78abd where mean weight are not in g 
+## n.b. maybe this correction should be elsewhere
+##############################################################
+
+# Something wrong with monkfish scale of landings and discards
+ad[ad$Stock == "mon.27.78abd" & ad$Year %in% 2017:2019,c("Mean_Weight_in_g")] <- ad[ad$Stock == "mon.27.78abd" & ad$Year %in% 2017:2019,c("Mean_Weight_in_g")]*1000
+
+
 ## stock objects
 wg.stocks <- FLStocks(lapply(stock.list, function(s) {
 				     print(s)
@@ -361,6 +370,7 @@ disaggregate_catch(ac_dat = ca, ic_dat = ad, wg.stocks = wg.stocks,
 
 fleet_data <- bind_rows(fleet_data)
 
+
 ## What level have the data matched to...
 ## Summarise the data and compare to the stock objects
 
@@ -408,7 +418,7 @@ fleetSOP_D$discards <- ifelse(grepl("nep", fleetSOP_D$Stock), fleetSOP_D$discard
 fleetSOP_D %>% 
 	ggplot(aes(x = Year, y = discards, group = Stock)) +
 	       geom_bar(stat= "identity", aes(fill = match_level_disc)) +
-	       facet_wrap(~Stock) +
+	       facet_wrap(~Stock, scale = "free_y") +
 	       geom_point(data = stock_disc)+
 	       geom_point(aes(y = Discards), data = ac_catch, colour = "red", shape = 2) + 
 	       ggtitle("Bars are SOP for discards.n x discards.wt", subtitle = "Black circles = stock object discards (tonnes), red triangles = accessions discards (tonnes)") + theme(axis.text.x = element_text(angle = -90)) + 
@@ -430,9 +440,6 @@ colnames(stock_discN)[c(1,2,3,8)] <- c("Stock","Age", "Year", "discards.n")
 
 
 fleets_N <- fleet_data %>% group_by(Year, Stock, Age) %>% summarise(landings.n = sum(landings.n), discards.n = sum(discards.n))
-
-## Something wrong with monkfish scale of landings??
-fleets_N[fleets_N$Stock == "mon.27.78abd",c("landings.n", "discards.n")] <- fleets_N[fleets_N$Stock == "mon.27.78abd",c("landings.n", "discards.n")]/1000
 
 neps <- unique(grep("nep", stock_landN$Stock, value = TRUE))
 
