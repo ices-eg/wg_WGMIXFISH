@@ -326,6 +326,10 @@ dim(Catch5)[1]-(dim(Catch4_DR_NA)[1])
 ##check na
 table(is.na(Catch5$DR))
 
+#### so this repalces the DR rate for french 2017_FRA_MEG_OTB_CRU which had an insane DR rate
+Catch5$DR[Catch5$Discard_ID_NO_AREA=="2017_FRA_MEG_OTB_CRU"] <- mean(Catch5$DR[Catch5$Discard_ID_NO_AREA %in% c("2009_FRA_MEG_OTB_CRU","2010_FRA_MEG_OTB_CRU","2011_FRA_MEG_OTB_CRU","2012_FRA_MEG_OTB_CRU","2013_FRA_MEG_OTB_CRU","2014_FRA_MEG_OTB_CRU","2015_FRA_MEG_OTB_CRU","2016_FRA_MEG_OTB_CRU","2018_FRA_MEG_OTB_CRU","2019_FRA_MEG_OTB_CRU")],na.rm=T)
+
+
 Catch5_DR <- Catch5 %>% filter(is.na(DR)==F)
 Catch5_DR_NA <-Catch5 %>% filter(is.na(DR)==T) 
 # ~DR removeing gear but keeping area -------------------------------------------
