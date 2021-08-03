@@ -263,7 +263,8 @@ a %>% group_by(CatchCat) %>% summarise(SopR=sum(SOP)/sum(CATON))
 # sop correction
 a <- sop(gad_caton,gad_canum,Country,Year,Area,lvl4,CatchCat,Stock)
 #gad_canum$CANUM <- canum$Frequency
-gad_canum <- inner_join(gad_canum,a)
+gad_canum <- full_join(gad_canum,a)
+
 gad_canum$CANUM <- gad_canum$CANUM/gad_canum$SopR # only run this line once
 gad_canum <- gad_canum[-c(12,13)]
 gad_canum$Mean_Weight_in_g <- gad_canum$Mean_Weight_in_kg*1000 
