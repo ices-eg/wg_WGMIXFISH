@@ -280,14 +280,14 @@ names(discard_dat_NO_METIER)[names(discard_dat_NO_METIER)=="Landings"] <- "IC_La
 Discard_ID_NO_COUNTRY <- InterCatch %>% select(Discard_ID_NO_COUNTRY, DR,Landings)
 names(Discard_ID_NO_COUNTRY)[names(Discard_ID_NO_COUNTRY)=="Landings"] <- "IC_Landings"
 ### so this line is takeing the maximum discard rate do we need this to be weighed?
-discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+discard_dat<- discard_dat %>% group_by(Discard_ID) %>% dplyr::summarise( DR = weighted.mean(x=DR,w=IC_Landings,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 #no araa
-discard_dat_NO_AREA<- discard_dat_NO_AREA %>% group_by(Discard_ID_NO_AREA) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+discard_dat_NO_AREA<- discard_dat_NO_AREA %>% group_by(Discard_ID_NO_AREA) %>% dplyr::summarise( DR = weighted.mean(x=DR,w=IC_Landings,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 ##noMetier
 #no araa
-discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+discard_dat_NO_METIER<- discard_dat_NO_METIER %>% group_by(Discard_ID_NO_METIER) %>% dplyr::summarise( DR = weighted.mean(x=DR,w=IC_Landings,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 ##no country but with everything elese
-Discard_ID_NO_COUNTRY<- Discard_ID_NO_COUNTRY %>% group_by(Discard_ID_NO_COUNTRY) %>% dplyr::summarise( DR = max(DR,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
+Discard_ID_NO_COUNTRY<- Discard_ID_NO_COUNTRY %>% group_by(Discard_ID_NO_COUNTRY) %>% dplyr::summarise( DR = weighted.mean(x=DR,w=IC_Landings,na.rm = T),IC_Landings=sum(IC_Landings,na.rm = T) )
 
 # 7.0 Join discard and catch --------------------------------------------------
 sum(Catch3$Landings)
@@ -405,8 +405,8 @@ rm(Catch4,Catch4_DR,Catch4_DR_NA,Catch5,Catch5_DR,Catch5_DR_NA,Catch6,Catch6_DR,
 # dim(Catch3)
 
 # ~subset out lines without stock -----------------------------------------
-Catch3_NA_Stocks <- Catch3[is.na(Catch3$Stock)==T,] 
-Catch3<- Catch3[is.na(Catch3$Stock)==F,]
+Catch3_NA_Stocks <- Catch3[is.na(Catch3$Stock)==TRUE,] 
+Catch3<- Catch3[is.na(Catch3$Stock)==FALSE,]
 # check residuals
 table(Catch3_NA_Stocks$Species,Catch3_NA_Stocks$Area)
 #check what we keep
@@ -424,7 +424,7 @@ write.csv(summa,file=file.path(Data_path,paste0("/intermediate_products/catch_pe
 #hashed out old code
 ## Question is this not simply landigns*discard rate?
 # Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Quarter,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
-Catch3<-mutate(Catch3,Discards=(Landings*DR)) %>%  select(Country,Year,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
+Catch3<-mutate(Catch3,Discards=(Landings/(1-DR)-Landings)) %>%  select(Country,Year,Metier,Vessel_length,Area,Species,Stock, DR,Landings,Discards,Value)
 
 # 9.0 Assigning a fleet ------------------------------------------------------
 
