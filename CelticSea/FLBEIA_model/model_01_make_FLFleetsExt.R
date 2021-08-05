@@ -16,6 +16,8 @@ library(FLBEIA)
 data_path  <- file.path("results", "clean_data")
 stock_path <- file.path("results", "clean_data", "clean_stock_objects")
 
+data_yr <- 2019
+
 ##############################################################################
 ## Load in data
 
@@ -62,10 +64,9 @@ wg.stocks <- FLStocks(lapply(stock.list, function(s) {
 }))
 
 
-## Want to extend any stock objects back to earliest year, even if filled with
+## Want to extend any stock objects back to earliest fleet data year, even if filled with
 ## NAs
-
-wg.stocks <- FLStocks(lapply(wg.stocks,window, start = 2009))
+wg.stocks <- FLStocks(lapply(wg.stocks,window, start = 2009, end = data_yr))
 
 ##############################################################################
 
@@ -648,23 +649,190 @@ return(fl)
 names(fleets) <- fl.nam
 
 
-save(fleets, file = file.path("results", "FLBEIA_inputs", "FLFleets.RData"))
+##########################
+##
+## Now for the residual catch
+## from fleets
+##
+##########################
 
+eff <- fq 
+eff[] <- 1e5
+
+fcost <- cap <- crew <- fq
+
+cap <- eff * 2
+
+## set correct units
+units(eff) <- "000 kwdays"
+units(fcost) <- "000 euros"
+units(cap) <- "000 kwdays"
+units(crew) <-  "NA"
+
+## Metier
+effsh <- fq 
+effsh[] <- 1
+
+## vcost
+vcost <- fq 
+
+units(effsh) <- "NA"
+units(vcost) <- "000 euros"
+
+
+#### Now we create the "Others fleets for each stock. This should cover the
+#### residual catch not accounted for by the data we have.. IDEALLY, this would
+#### be specific for area 8abd monkfish and megrim, but for now we will just
+#### take the difference between stock object and fleet object.
+
+
+## We can loop this...
+
+for(S in sort(catchNames(fleets))) {  ## only the stocks we have in fleets
+
+print(S)
+
+## Empty quants
+Q_age   <- wg.stocks[[S]]@stock.n; Q_age[] <- NA 
+Q_bio   <- ssb(wg.stocks[[S]]); Q_bio[] <- NA
+
+## landings ##
+land <- Q_bio
+
+## landings weight for the Irish fleets
+flt     <- apply(landWStock(fleets, S),c(2), sum)
+
+## landings of others fleets
+res	<- wg.stocks[[S]]@landings - flt
+print(paste("landings of", S, "in fleets = ", round(flt,2), "(", round(100* flt/(flt+res),2), "%)"))
+print(paste("landings of", S, "in other fleets = ", round(res,2), "(", round(100* res/(flt+res),2), "%)"))
+
+## If the landings are <0, i.e. more in fleets than stock, set to zero 
+res[res<0] <- 0
+
+land <- res
+
+## landings.n
+land_age <- Q_age
+
+flt	<- landStock(fleets, S)
+
+res	<- wg.stocks[[S]]@landings.n - flt
+
+res[res<0] <- 0
+
+## For Nephrops, numbers same as the total landings
+if(grepl(S, "nep")) {
+  land_age  <- land } else {
+land_age <- res
+}
+
+## landings.wt - from the stock object 
+land_wt <- Q_age
+
+if(grepl(S, "nep")) {
+  land_wt[] <- 1  } else {
+
+## Make sure the SOP matches, by adjusting the residual landings at age
+## Should really do this at age, but need to adjust for -ve/zeros?
+land_wt_flt <- landWStock(fleets, S)
+land_wt_stk <- wg.stocks[[S]]@landings.wt * wg.stocks[[S]]@landings.n
+land_wt_stk - land_wt_flt
+
+## Need to correct this...
+land_wt[] <-  wg.stocks[[S]]@landings.wt
+}
+
+## discards
+disc <- Q_bio
+
+flt	<- apply(discWStock(fleets, S),c(2), sum)
+res	<- wg.stocks[[S]]@discards - flt
+
+res[res<0] <- 0
+
+disc <- res 
+
+## discards.n
+disc_age <- Q_age
+
+flt	<- apply(discStock(fleets, S), c(1,2), sum)
+res	<- wg.stocks[[S]]@discards.n - flt
+
+res[res<0] <- 0
+
+if(grepl(S, "nep")) {
+ disc_age  <- disc } else {
+disc_age <- res 
+}
+
+
+## discards.wt - from biols
+disc_wt <- Q_age
+if(grepl(S, "nep")) {
+  disc_wt[] <- 1 } else {
+disc_wt <- wg.stocks[[S]]@discards.wt
+}
+## price
+
+## alpha
+al <- Q_age
+al[] <- 1
+
+## beta
+
+be <- Q_age
+be[] <- 1
+
+## Units
+units(land) <- "tonnes"
+units(disc) <- "tonnes"
+units(land_age) <- '1000'
+units(disc_age) <- '1000'
+units(land_wt) <- "kg"
+units(disc_wt) <- "kg"
+units(al) <- "1"
+units(be) <- "1"
+
+ca <- FLCatchExt(name = S, landings = land, landings.n = land_age, 
+		 landings.wt = land_wt, discards = disc, discards.n = disc_age,
+		 discards.wt = disc_wt, alpha = al, beta = be)
+
+## Metier
+m <- FLMetiersExt(FLMetierExt(name = paste0(S, "_metier"), 
+		 catches = ca, 
+		 effshare = effsh, vcost = vcost))
+names(m) <- paste0(S, "_metier")
+## Fleet
+
+assign(paste0(S, "_fleet"),
+       FLFleetExt(metiers = m, name = paste0(S, "_fleet"),
+		       effort = eff, capacity = cap, fcost = fcost,
+		       crewshare = crew)
+       )
+
+}
+
+## set ranges
 
 ###################
-## Some checks rough....
-####################
+## Combine fleets
+###################
 
-sumCatches <- lapply(stock.list, function(x) apply(catchWStock(fleets, x),2,sum)) 
+residual_fleets <- ls(pattern="_fleet")
 
-names(sumCatches) <- stock.list
+fleets2 <- fleets
 
-sumCatches
+for(i in residual_fleets) {
+fleets2 <- c(fleets2, get(i))
+}
 
-apply(catchWStock(fleets, "cod.27.7e-k"),2,sum) /
-wg.stocks[["cod.27.7e-k"]]@catch
+names(fleets2) <- c(names(fleets), residual_fleets)
 
-apply(landWStock(fleets, "cod.27.7e-k"),2,sum)/
-wg.stocks[["cod.27.7e-k"]]@landings
 
-####################
+fleets <- FLFleetsExt(fleets2)
+
+
+save(fleets, file = file.path("results", "FLBEIA_inputs", "preconditioned", "FLFleets.RData"))
+
+
