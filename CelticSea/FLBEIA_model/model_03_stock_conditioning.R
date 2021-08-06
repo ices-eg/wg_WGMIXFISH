@@ -1,6 +1,6 @@
 ##############################################################################
 ##
-## Making the stock object inputs 
+## Conditioning the stock object inputs 
 
 ## Author:  Paul Dolder
 ## Created: 05/08/2021
@@ -120,11 +120,20 @@ names(SRs) <- aspg
 
 # For fixedPopulation stocks fill the biols @n with a value
 
-for(i in fixed) {
-biols[[i]]@n[,ac(sim_yrs)]<-biols[[i]]@n[,ac(data_yrs[length(data_yrs)])]  # fill the population n with last
-}
+#for(i in fixed) {
+#biols[[i]]@n[,ac(sim_yrs)]<-biols[[i]]@n[,ac(data_yrs[length(data_yrs)])]  # fill the population n with last
+#}
 
+## For Nephrops, we should input the UWTV biomass estimates (N * wt) as the
+## abundance, ensuring we reflect biomass changes in catch rates per FU...
+## This should be the total catch / hr
 
+biols[["nep.fu.16"]]@n[,ac(sim_yrs)] <- 3290/0.062
+biols[["nep.fu.17"]]@n[,ac(sim_yrs)] <- 508/0.062
+biols[["nep.fu.19"]]@n[,ac(sim_yrs)] <- 595/0.069
+biols[["nep.fu.2021"]]@n[,ac(sim_yrs)] <- 1710/0.06
+biols[["nep.fu.22"]]@n[,ac(sim_yrs)] <- 1710/0.06
+biols[["nep.out.7"]]@n[,ac(sim_yrs)] <- biols[["nep.out.7"]]@n[,ac(data_yrs[length(data_yrs)])] 
 
 ##############################################
 ## Save to model inputs

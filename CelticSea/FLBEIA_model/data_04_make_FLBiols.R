@@ -30,6 +30,42 @@ stock_path <- file.path("results", "clean_data", "clean_stock_objects")
 source(file.path("bootstrap", "software", "functions", "make_FLBiols.R"))
 biols <- make_FLBiols(stock_path)
 
+######################################################################
+## Nephrops stocks need to be biomass based, so we fill the n with the
+## abundance x wt, and wt with 1, correcting the units
+## Except we don't have stock weight, so how to address? 
+## For now we use the landings weight, but need to ask Mikel...
+
+## Load in the Nephrops wg,stocks
+nep.stocks <- FLStocks(lapply(grep("nep", names(biols), value = TRUE), function(s) {
+				     print(s)
+				     load(file.path(stock_path, paste0(s,".RData")))
+				     res <- get("stock")
+				     name(res) <- s
+				     res
+}))
+
+## Function to get the mean weight in stock
+nep_stock_weights <- function(obj) {
+	hr    <- obj@catch.n / obj@stock.n ## hr, numbers
+	stock <- obj@catch / hr            ## total abundance in tonnes
+	return(stock/obj@stock.n)  ## return the mean weight
+}
+
+
+## apply
+for(i in names(nep.stocks)) {
+	print(i)
+biols[[i]]@n  <- nep.stocks[[i]]@stock.n * nep_stock_weights(nep.stocks[[i]])
+biols[[i]]@wt[] <- 1
+units(biols[[i]]@n)  <- "tonnes"
+units(biols[[i]]@wt) <- "1"
+}
+
+## For stocks without UWTV surveys, we need to do something else
+## Enough biomass to sustain the stock
+biols[["nep.out.7"]]@n <- nep.stocks[["nep.out.7"]]@catch * 2
+
 biols <- lapply(biols, window, end = data_yr)
 
 ## Remove the stocks not in model
