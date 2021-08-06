@@ -794,6 +794,12 @@ units(disc_wt) <- "kg"
 units(al) <- "1"
 units(be) <- "1"
 
+if(grepl(S, "nep")) {
+units(land_wt) <- 1
+units(disc_wt) <- 1
+
+}
+
 ca <- FLCatchExt(name = S, landings = land, landings.n = land_age, 
 		 landings.wt = land_wt, discards = disc, discards.n = disc_age,
 		 discards.wt = disc_wt, alpha = al, beta = be)
