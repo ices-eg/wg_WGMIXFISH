@@ -838,7 +838,6 @@ names(fleets2) <- c(names(fleets), residual_fleets)
 
 fleets <- FLFleetsExt(fleets2)
 
-
+  
 save(fleets, file = file.path("results", "FLBEIA_inputs", "preconditioned", "FLFleets.RData"))
-
-
+ 

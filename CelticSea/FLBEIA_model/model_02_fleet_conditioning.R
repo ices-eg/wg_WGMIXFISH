@@ -226,6 +226,11 @@ st <- "cod.27.7e-k"
 fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
 apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
 
+### Need to insert fixes here for years / ages conditioned with NAs
+
+
+
+
 sapply(fleets, checkFleets)
 validObject(fleets)
 
