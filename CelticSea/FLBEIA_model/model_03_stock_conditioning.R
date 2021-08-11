@@ -30,7 +30,7 @@ load(file.path(flbeia_precon, "FLBiols.RData"))
 ###########################################################################
 ## Expand the FLBiols to the right dimension and condition the future years
 
-biols<-FLBiols(lapply(biols,window,data_yrs[1],sim_yrs[length(sim_yrs)]))
+biols<-FLBiols(lapply(biols,window,start = data_yrs[1],end = sim_yrs[length(sim_yrs)]))
 
 # data_yrs[1] fill the slots in projection years for FLBiols
 ## Note, we will want to do specifically for each stock and this is a short-cut

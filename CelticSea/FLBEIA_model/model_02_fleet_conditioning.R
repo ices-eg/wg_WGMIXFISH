@@ -11,6 +11,9 @@
 library(tidyverse)
 library(FLBEIA)
 
+Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_effort.cpp"))
+source(file.path("bootstrap", "software", "functions", "calculate.q.sel.flrObjs.cpp.R"))
+
 ## Paths
 data_path      <- file.path("results", "clean_data")
 stock_path     <- file.path("results", "clean_data", "clean_stock_objects")
@@ -60,83 +63,24 @@ Cond <- TRUE
 
 if(Cond) {
 
- fleets<-lapply(fleets,window,data_yrs[1],sim_yrs[length(sim_yrs)]) # Note: keep as list, as slower to access FLFleetsExt 
+ fleets<-FLFleetsExt(lapply(fleets,window,start = data_yrs[1],end = sim_yrs[length(sim_yrs)])) # Note: keep as list, as slower to access FLFleetsExt 
 
+ 
+ ## Now use the new Cpp function to set the effort values
+ yrs  <- as.numeric(dimnames(fleets[[1]]@effort)$year)
+ first_yr_sim <- which(yrs == sim_yrs[1]) - 1
+ last_yr_sim  <- which(yrs == sim_yrs[length(sim_yrs)]) - 1
+ first_avg_yr <- which(yrs == fl.proj.avg.yrs[1]) - 1
+ last_avg_yr  <- which(yrs == fl.proj.avg.yrs[length(fl.proj.avg.yrs)]) - 1
+ 
+ fleets <-  condition_fleet_effort(fleets, 
+                                   dim = dim(fleets[[1]]@effort),
+                                   sim_yrs = first_yr_sim:last_yr_sim,
+                                   mean_yrs = first_avg_yr:last_avg_yr
+ )
+ 
+ 
 
-fleets <- unclass(fleets)
-
-nms.fls <- names(fleets)
-l.fls   <- length(nms.fls)
-
-for(i in 1:l.fls){
-  print(paste0("-----", nms.fls[i], "-------"))
-  
-  nms.metiers <- names(fleets[[i]]@metiers)
-  l.metiers   <- length(nms.metiers)
-  
-  fleets[[i]]@effort[, ac(sim_yrs)]    <- yearMeans(fleets[[i]]@effort[, ac(sel.yrs)])
-  fleets[[i]]@fcost[, ac(sim_yrs)]     <- yearMeans(fleets[[i]]@fcost[, ac(fl.proj.avg.yrs)])
-  fleets[[i]]@capacity[, ac(sim_yrs)]  <- yearMeans(fleets[[i]]@capacity[, ac(fl.proj.avg.yrs)])
-  fleets[[i]]@crewshare[, ac(sim_yrs)] <- yearMeans(fleets[[i]]@crewshare[, ac(fl.proj.avg.yrs)])
-  
-  for( j in 1:l.metiers){
-    print(paste0("--", fleets[[i]]@metiers[[j]]@name, "--"))
-    fleets[[i]]@metiers[[j]]@effshare[, ac(sim_yrs)] <- yearMeans(fleets[[i]][[j]]@effshare[, ac(sel.yrs)])
-    fleets[[i]]@metiers[[j]]@vcost[, ac(sim_yrs)]    <- yearMeans(fleets[[i]][[j]]@vcost[, ac(fl.proj.avg.yrs)])
-    
-
-    nms.stks <- names(fleets[[nms.fls[i]]]@metiers[[nms.metiers[j]]]@catches)
-    l.stks <- length(nms.stks)
-    
-    for( k in 1:l.stks){
-      print(fleets[[i]]@metiers[[j]]@catches[[k]]@name)
-      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[,ac(fl.proj.avg.yrs)])
-      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[,ac(fl.proj.avg.yrs)])
-
-      
-      ## If NAs
-       if(any(is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)]))){
-      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)])] <- 0
-      }
-      
-      if(any(is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)]))) {
-      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)])] <- 0
-      }
-
-      ## Even where there are zero catches at an age, we want to have a value
-      if(any(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)][fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)] == 0])){
-      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)][fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)] == 0] <- 
-        yearMeans(biols[[fleets[[i]]@metiers[[j]]@catches[[k]]@name]]@wt[,ac(sim_yrs)][fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(sim_yrs)] == 0])
-      }
-      
-      if(any(fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)][fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)] == 0])) {
-      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)][fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)] == 0] <- 
-        yearMeans(biols[[fleets[[i]]@metiers[[j]]@catches[[k]]@name]]@wt[,ac(sim_yrs)][fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(sim_yrs)] == 0])
-      }
-      
-      
-      ## selection 
-      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(sim_yrs)] <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[,ac(sel.yrs)])
-  
-      # set any NAs in the proj year to 0 (in case of no catch)
-      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(sim_yrs)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(sim_yrs)])]<-0
-      # discards selectivity as the inverse of the landings sel
-      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.sel[, ac(sim_yrs)] <- 1-fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(sim_yrs)]
-       fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[,ac(sim_yrs) ]     <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[,ac(sel.yrs)])
-      fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[, ac(sim_yrs)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[, ac(sim_yrs)])]<-0     
-     
-      # Catch prod values 
-      fleets[[i]]@metiers[[j]]@catches[[k]]@alpha[, ac(sim_yrs)]        <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@alpha[,ac(fl.proj.avg.yrs)])
-      fleets[[i]]@metiers[[j]]@catches[[k]]@beta[, ac(sim_yrs)]         <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@beta[,ac(fl.proj.avg.yrs)])
-      
-
-      fleets[[i]]@metiers[[j]]@catches[[k]]@price[, ac(sim_yrs)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@price[,ac(fl.proj.avg.yrs)])
-      
-    }
-  }
-}
-
-fleets <- FLFleetsExt(fleets)
  } else {
 load(file.path(flbeia_cond, "FLFleetsExt.RData"))
 
@@ -216,7 +160,7 @@ fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stks
 ##############################################################################################
 
 if(Cond) {
-fleets <- calculate.q.sel.flrObjs(biols, fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+fleets <- calculate.q.sel.flrObjs.cpp(biols, fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
 }
 
 Fl <- "BE_Beam_10<24m"
@@ -226,9 +170,15 @@ st <- "cod.27.7e-k"
 fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
 apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
 
-### Need to insert fixes here for years / ages conditioned with NAs
+
+Fl <- "IE_Otter_10<24m"
+Mt <- "OTB_DEF_27.7.g"
+
+fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
+apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
 
 
+### May need to insert fixes here for years / ages conditioned with NAs
 
 
 sapply(fleets, checkFleets)
@@ -237,4 +187,5 @@ validObject(fleets)
 ### Save the fleets and fleets_ctrl
 
 save(fleets, file = file.path(flbeia_cond, "FLFleetsExt.RData"))
+save(fleets.ctrl, file = file.path(flbeia_cond, "fleets_ctrl.RData"))
 

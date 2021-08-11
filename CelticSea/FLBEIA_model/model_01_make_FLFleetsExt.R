@@ -18,6 +18,8 @@ stock_path <- file.path("results", "clean_data", "clean_stock_objects")
 
 data_yr <- 2019
 
+workup_data <- FALSE ## will load if FALSE
+
 ##############################################################################
 ## Load in data
 
@@ -79,7 +81,7 @@ wg.stocks <- FLStocks(lapply(wg.stocks,window, start = 2009, end = data_yr))
 ## "Others" fleets and métiers later...
 
 flt_threshold <- 0.01      ## Fleet must have at least 1% of any stock
-met_threshold <- 0.01      ## Métier within a fleet must have at least 1% of any stock
+met_threshold <- 0.02      ## Métier within a fleet must have at least 2% of any stock
 yrs_threshold <- 2017:2019 ## Years on which thresholds applied.
 
 # Fleets to keep--
@@ -359,6 +361,8 @@ return(res)
 options(dplyr.summarise.inform = FALSE) ## <- this right here is the ticket.
 
 
+if(workup_data) {
+
 fleet_data <- lapply(seq_len(nrow(ca)), function(i) {
 			     print(i)
 disaggregate_catch(ac_dat = ca, ic_dat = ad, wg.stocks = wg.stocks, 
@@ -370,6 +374,12 @@ disaggregate_catch(ac_dat = ca, ic_dat = ad, wg.stocks = wg.stocks,
 
 
 fleet_data <- bind_rows(fleet_data)
+
+save(fleet_data, file = file.path("results", "intermediate_products", "fleet_data_workup.RData"))
+} else {
+  
+  load(file.path("results", "intermediate_products", "fleet_data_workup.RData"))
+}
 
 
 ## What level have the data matched to...
