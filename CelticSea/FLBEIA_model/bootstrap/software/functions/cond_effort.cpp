@@ -12,6 +12,8 @@ List condition_fleet_effort(List fl, IntegerVector dim, IntegerVector sim_yrs, I
   
   S4 eff = x.slot("effort");              // effort slot
   NumericVector dat = eff.slot(".Data");  
+  S4 cap = x.slot("capacity");              // capacity slot
+  NumericVector cap_dat = cap.slot(".Data");  
 
 // Loop through updating the variable //
 
@@ -25,24 +27,33 @@ List condition_fleet_effort(List fl, IntegerVector dim, IntegerVector sim_yrs, I
 
     // Calculate the mean for the year/age combination
     NumericVector hist_yrs(mean_yrs.size());
+    NumericVector cap_hist_yrs(mean_yrs.size());
 
     for(int i=mean_yrs[0];i<mean_yrs[mean_yrs.size()-1]+1; i++) { // loop over the years to fill the matrix
       hist_yrs[i-mean_yrs[0]] = dat[a*mean_yrs.size() + i];
+      cap_hist_yrs[i-mean_yrs[0]] = cap_dat[a*mean_yrs.size() + i];
                   }
    
     double meanval = mean(na_omit((hist_yrs))); // calculate the mean
+    double cap_meanval = mean(na_omit((cap_hist_yrs)));
            if(R_IsNA(meanval)) meanval = 0; // zeros if no value
+           if(R_IsNA(cap_meanval)) cap_meanval = 0; 
 
     dat[a*sim_yrs.size() + y] = meanval;
+    cap_dat[a*sim_yrs.size() + y] = cap_meanval;
                            }
                     }
    
 // Return the dimensions to the object    
 dat.attr("dim") = dim;
+cap_dat.attr("dim") = dim;
   
 // Return to FLFleet
 eff.slot(".Data") = dat;
 x.slot("effort") = eff;
+cap.slot(".Data") = cap_dat;
+x.slot("capacity")= cap;
+
 
 // Metier loop
 
@@ -68,10 +79,11 @@ for(int m=0; m<met.length();m++){
       
       for(int i=mean_yrs[0];i<mean_yrs[mean_yrs.size()-1]+1; i++) { // loop over the years to fill the matrix
         effsh_hist_yrs[i-mean_yrs[0]] = effsh_dat[a*mean_yrs.size() + i];
+        if(R_IsNA(effsh_hist_yrs[i-mean_yrs[0]])) effsh_hist_yrs[i-mean_yrs[0]] = 0;// If it#s NA, it's really a zero - important for calculating the mean correctly
       }
       
       double effsh_meanval = mean(na_omit(effsh_hist_yrs)); // calculate the mean
-             if(R_IsNA(effsh_meanval)) effsh_meanval = 0; // zeros if no value
+             if(R_IsNA(effsh_meanval)) effsh_meanval = 0;   // zeros if no value
       
       effsh_dat[a*sim_yrs.size() + y] = effsh_meanval;
     }

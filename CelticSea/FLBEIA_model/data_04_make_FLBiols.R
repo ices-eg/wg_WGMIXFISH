@@ -87,6 +87,9 @@ data_yrs  <-c(min(sapply(biols, function(x) x@range[["minyear"]])),
 	    max(sapply(biols, function(x) x@range[["maxyear"]])))
 sim_yrs   <- c(data_yrs[2]+1):c(data_yrs[2]+3)
 
+## To save time, only keep > 2008
+data_yrs[1] <- 2009
+
 save(data_yrs, sim_yrs, file = file.path("results", "FLBEIA_inputs", "year_references.RData"))
 
 

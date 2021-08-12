@@ -28,11 +28,13 @@ load(file.path(flbeia_in, "year_references.RData"))
 load(file.path(flbeia_precon, "FLBiols.RData"))
 
 ###########################################################################
-## Expand the FLBiols to the right dimension and condition the future years
+## Reduce / Expand the FLBiols to the data and simulation years and condition the future years
+## First save a copy for conditioning recruitment
 
-biols<-FLBiols(lapply(biols,window,start = data_yrs[1],end = sim_yrs[length(sim_yrs)]))
+biols_rec <- biols
 
-# data_yrs[1] fill the slots in projection years for FLBiols
+biols<-FLBiols(lapply(biols,window,start = data_yrs[1], end = sim_yrs[length(sim_yrs)]))
+
 ## Note, we will want to do specifically for each stock and this is a short-cut
 
 stk.avg.yrs <- 2017:2019  ## Note, may want to be stock specific
@@ -55,7 +57,7 @@ biols<-FLBiols(lapply(names(biols),function(x) {
 ###################
 ## Biols control
 ###################
-
+## ASPG = Age structured population growth
 aspg  <- names(biols)[!grepl("nep", names(biols))] ## not nephrops
 fixed <- names(biols)[grepl("nep", names(biols))] ## nephrops
 
@@ -97,13 +99,14 @@ flq_dims <- FLQuant(1, dim = c(1, length(data_yrs[1]:sim_yrs[length(sim_yrs)])),
 # ICES recr forecast (set recruitment numbers - in thousands)
 Recr <- FLPar(NA, dimnames=list(params=aspg, year=sim_yrs,iter=1))
 
-     Recr["cod.27.7e-k",] <- rep(median(rec(biols[["cod.27.7e-k"]])[,ac(2005:c(data_yrs[2]-1))]),length(sim_yrs))
-     Recr["had.27.7b-k",] <- rep(median(rec(biols[["had.27.7b-k"]])[,ac(1993:c(data_yrs[2]-1))]),length(sim_yrs))
-     Recr["whg.27.7b-ce-k",] <- rep(median(rec(biols[["whg.27.7b-ce-k"]])[,ac(2010:c(data_yrs[2]-1))]),length(sim_yrs))
-     Recr["mon.27.78abd",] <- rep(gm_mean(rec(biols[["mon.27.78abd"]])[,ac(1986:c(data_yrs[2]-3))]),length(sim_yrs))
-     Recr["sol.27.7fg",] <- rep(median(rec(biols[["sol.27.7fg"]])[,ac(1972:c(data_yrs[2]-3))]),length(sim_yrs))
-     Recr["meg.27.7b-k8abd",] <- rep(gm_mean(rec(biols[["meg.27.7b-k8abd"]])[,ac(1984:c(data_yrs[2]-3))]),length(sim_yrs))
+     Recr["cod.27.7e-k",] <- rep(median(rec(biols_rec[["cod.27.7e-k"]])[,ac(2005:c(data_yrs[2]-1))]),length(sim_yrs))
+     Recr["had.27.7b-k",] <- rep(median(rec(biols_rec[["had.27.7b-k"]])[,ac(1993:c(data_yrs[2]-1))]),length(sim_yrs))
+     Recr["whg.27.7b-ce-k",] <- rep(median(rec(biols_rec[["whg.27.7b-ce-k"]])[,ac(2010:c(data_yrs[2]-1))]),length(sim_yrs))
+     Recr["mon.27.78abd",] <- rep(gm_mean(rec(biols_rec[["mon.27.78abd"]])[,ac(1986:c(data_yrs[2]-3))]),length(sim_yrs))
+     Recr["sol.27.7fg",] <- rep(median(rec(biols_rec[["sol.27.7fg"]])[,ac(1972:c(data_yrs[2]-3))]),length(sim_yrs))
+     Recr["meg.27.7b-k8abd",] <- rep(gm_mean(rec(biols_rec[["meg.27.7b-k8abd"]])[,ac(1985:c(data_yrs[2]-3))]),length(sim_yrs))
 
+     
 SRs <- lapply(aspg, function(x) {
   print(x)
     sr <- FLSRsim(rec = biols[[x]]@n[1,], ssb = ssb(biols[[x]]), 
@@ -113,6 +116,8 @@ SRs <- lapply(aspg, function(x) {
     })
 
 names(SRs) <- aspg 
+
+
 
 ##########################################################
 ## fixed population stocks

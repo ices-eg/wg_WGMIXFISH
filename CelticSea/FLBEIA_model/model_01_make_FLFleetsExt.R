@@ -496,7 +496,6 @@ ef_mod <- ef_mod %>% group_by(Fleet, Metier, Year, .drop = FALSE) %>% summarise(
 	arrange(Fleet, Metier, Year)
 
 ## Catch
-
 ca_mod <- fleet_data_model %>% group_by(Fleet, Metier, Year, Stock, Age, .drop = FALSE) %>%
 	summarise(landingsN = sum(landings.n, na.rm = TRUE), landings.wt = weighted.mean(x = landings.wt, w = landings.n,na.rm = TRUE), discardsN = sum(discards.n, na.rm = TRUE), discards.wt = weighted.mean(x = discards.wt, w = discards.n, na.rm = TRUE),  price = weighted.mean(x = price, w = landings.n, na.rm = TRUE))
 
