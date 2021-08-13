@@ -158,17 +158,30 @@ fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stks
 ##############################################################################################
 ## Calculate the catchability for the projection years - uses either CobbDouglas or Baranov ##
 ##############################################################################################
+source(file.path("bootstrap", "software", "functions","calculate.q.sel.flrObjs.cpp.R")) 
 
 if(Cond) {
-fleets <- calculate.q.sel.flrObjs.cpp(biols, fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+
+fleets <- calculate.q.sel.flrObjs.cpp(biols,fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+
 }
+
+
 
 Fl <- "BE_Beam_10<24m"
 Mt <- "Other_Metier"
-st <- "cod.27.7e-k"
-
+st <- "had.27.7b-k"
 fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
+
+st <- "cod.27.7e-k"
+fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
+
 apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
+
+lapply(fleets[[Fl]]@metiers[["TBB_DEF_27.7.e"]]@catches, function(x) x@catch.q)
+lapply(fleets[["IE_Otter_10<24m"]]@metiers[["OTB_DEF_27.7.g"]]@catches, function(x) x@catch.q)
+
+lapply(fleets[["UKE_Other_<10m"]]@metiers[[2]]@catches, function(x) x@catch.q)
 
 
 Fl <- "IE_Otter_10<24m"
@@ -176,9 +189,6 @@ Mt <- "OTB_DEF_27.7.g"
 
 fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
 apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
-
-
-### May need to insert fixes here for years / ages conditioned with NAs
 
 
 sapply(fleets, checkFleets)

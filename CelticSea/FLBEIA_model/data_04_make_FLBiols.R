@@ -30,6 +30,15 @@ stock_path <- file.path("results", "clean_data", "clean_stock_objects")
 source(file.path("bootstrap", "software", "functions", "make_FLBiols.R"))
 biols <- make_FLBiols(stock_path)
 
+
+for(i in grep("nep", names(biols), value = TRUE, invert = TRUE)) {
+  print(i)
+  units(biols[[i]]@n)               <- "1000"
+  units(biols[[i]]@wt)              <- "kg"
+  units(biols[[i]]@rec@params)      <- "1000"
+  units(biols[[i]]@rec$rec)         <- "1000"
+}
+
 ######################################################################
 ## Nephrops stocks need to be biomass based, so we fill the n with the
 ## abundance x wt, and wt with 1, correcting the units

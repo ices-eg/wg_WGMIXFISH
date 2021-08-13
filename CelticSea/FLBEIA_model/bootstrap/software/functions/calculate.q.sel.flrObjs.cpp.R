@@ -5,7 +5,7 @@ Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches.c
 calculate.q.sel.flrObjs.cpp <- function(biols, fleets, BDs, fleets.ctrl, mean.yrs, sim.yrs){
   
   for(st in names(biols)){
-    
+  
     na <- dim(biols[[st]]@n)[1]
     
     ## Year references
@@ -27,10 +27,12 @@ calculate.q.sel.flrObjs.cpp <- function(biols, fleets, BDs, fleets.ctrl, mean.yr
     
     fleets <- condition_flcatches(fl =fleets, 
                         B = as.vector(B), 
-                        st, 
+                        st = st, 
                         mean_yrs = first_avg_yr:last_avg_yr, 
                         sim_yrs = first_yr_sim:last_yr_sim)
-      }
+    
+  }
+      
   return(fleets)
 }
 

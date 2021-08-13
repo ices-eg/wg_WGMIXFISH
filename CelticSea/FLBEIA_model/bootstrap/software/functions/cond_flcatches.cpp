@@ -25,23 +25,29 @@ List condition_flcatches(List fl,
      NumericVector mteffsh = mt.slot("effshare");
      
      S4 catches = mt.slot("catches");
-     StringVector catchNames = catches.slot("names");
-       if(is_true(any(catchNames == st)))  {
-  
-  // Need to extract the FLCatch object here.       
-  // Find where the st is in the order of the names slot, this gives the list number...
-  IntegerVector pos = match(st, catchNames) - 1;
-         int pos2 = pos[0]; // trick to get back to int from IntegerVector
-         
-         List CL = catches.slot(".Data");   // the FLCatch Data as a list
-         S4 C = CL[pos2];                  // The specific stock data
+     CharacterVector catchNames = catches.slot("names");
+     List CL = catches.slot(".Data");   // the FLCatch Data as a list
+     
+     if(is_true(any(in(st, catchNames)))) {
+       
+      IntegerVector pos = match(st, catchNames) -1;     // this is an R function, so references from 1     
+      int pos2 = pos[0]; 
+      
+      // trick to get back to int from IntegerVector
+     
+      // This is not working where st is not first in catchNames
+      // pos2 gets set as zero each time, where its not before..
+      // Problem may be in the if statement, only letting through where 
+      
+      S4 C = CL[pos2];                               // The specific stock data
          
          S4 flq = C.slot("landings.n");                // just used to get the right dimensions
          NumericVector dim = flq.attr("dim");          // save the dimensions attribute
          
          int na = dim[0];                             // number ages for stock
          
-         NumericVector E = rep(Ef * mteffsh, na);     // effort vector, repeated across all ages
+	 NumericVector Efm = Ef * mteffsh;
+         NumericVector E = rep_each(Efm, na);     // effort vector, repeated across all ages
     
          S4 L = C.slot("landings.n");     // landings.n
          NumericVector L_dat = L.slot(".Data");
@@ -115,8 +121,9 @@ List condition_flcatches(List fl,
               double meanval_b = mean(na_omit((hist_yrs_b))); 
               
                           
-              if(R_IsNA(meanval_q)) meanval_q = 0; // zeros if no value
-              if(R_IsNaN(meanval_q)) meanval_q = 0; // zeros if NaN
+              if(R_IsNA(meanval_q)) meanval_q = 0;    // zeros if no value
+              if(R_IsNaN(meanval_q)) meanval_q = 0;   // zeros if NaN
+              if(!R_finite(meanval_q)) meanval_q = 0; // If we have no effort but catches, get infinte q.
               if(R_IsNA(meanval_s)) meanval_s = 0; 
               if(R_IsNaN(meanval_s)) meanval_s = 0; 
               if(R_IsNA(meanval_lw)) meanval_lw = 0; 
@@ -187,7 +194,6 @@ List condition_flcatches(List fl,
           CL[pos2] = C; // Return to CL
           catches.slot(".Data") = CL; // Return CL to catches
           
-          
        }
         mt.slot("catches") = catches; // return FLCatches to the metier
         met[m] = mt;                  // return metier to the list of metier
@@ -195,7 +201,6 @@ List condition_flcatches(List fl,
         x.slot("metiers") = met; // return metier to fleet
         fl[f] = x;   // return fleet to the fleet list
         
-        // NEED TO RETURN TO THE .DATA SLOT, ELSE WE ARE GETTING ARRAYS INSTEAD OF FLQUANTS!!
   }
   
   return(fl);

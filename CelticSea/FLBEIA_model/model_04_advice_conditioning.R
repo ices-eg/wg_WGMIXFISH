@@ -121,7 +121,7 @@ names(advice$quota.share) <- stks
 for(st in stks){
   for(fl in names(fleets)) {
     if(st %in% catchNames(fleets[[fl]])){
-
+      
       advice$quota.share[[st]][fl,ac(2009:data_yrs[2])] <- quantSums(landWStock.f(fleets[[fl]], st))/
                                        quantSums(landWStock(fleets, st))
 

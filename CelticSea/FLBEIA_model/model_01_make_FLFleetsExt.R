@@ -541,6 +541,7 @@ fl_ef_sum <- fl_ef %>% group_by(Year) %>% summarise(kw_days = sum(kw_days)) %>% 
 
 yrs <- fl_ef_sum$Year ## years in data
 eff[,ac(yrs)] <- fl_ef_sum$kw_days  / 1e3
+eff[is.na(eff)] <- 0
 
 ## Fleets capacity ##
 
@@ -550,6 +551,7 @@ maxD <- max(abs(1-c(eff)[-1]/c(eff)[-length(eff)]))
 cap <- eff * (1+maxD) ## Assume effort overall will not increase by more than 20%. Note: need to explore assumption -
 # this is also really for the conditioning step, historic data should be based
 # on years observed values
+cap[is.na(cap)] <- 0
 
 units(eff) <- units(cap) <- "000 kwdays"
 
@@ -578,6 +580,7 @@ yrs <- met_E$Year
 effmet <- fq
 
 effmet[,ac(yrs)] <- met_E$effshare
+effmet[is.na(effmet)] <- 0
 
 ## Stocks caught by the metier
 
@@ -605,14 +608,19 @@ yrs <- unique(caa$Year)
 
 ## Landings numbers
 la.age[,ac(yrs)] <- caa$landingsN
+la.age[is.na(la.age)] <- 0
 # landings weights
 la.wt[,ac(yrs)]  <- caa$landings.wt
+la.wt[is.na(la.wt)] <- 0
 ## Discards numbers
 di.age[,ac(yrs)] <- caa$discardsN
+di.age[is.na(di.age)] <- 0
 # discards weights
 di.wt[,ac(yrs)]  <- caa$discards.wt
+di.wt[is.na(di.wt)] <- 0
 # price (per kg)
 pr.[,ac(yrs)] <- caa$price/1e3
+pr.[is.na(pr.)] <- 0
 # cobb-douglas alpha and beta
 al[,ac(yrs)] <- 1
 be[,ac(yrs)] <- 1
@@ -718,6 +726,7 @@ print(paste("landings of", S, "in other fleets = ", round(res,2), "(", round(100
 
 ## If the landings are <0, i.e. more in fleets than stock, set to zero 
 res[res<0] <- 0
+res[is.na(res)] <- 0
 
 land <- res
 
@@ -729,6 +738,7 @@ flt	<- landStock(fleets, S)
 res	<- wg.stocks[[S]]@landings.n - flt
 
 res[res<0] <- 0
+res[is.na(res)] <- 0
 
 ## For Nephrops, numbers same as the total landings
 if(grepl(S, "nep")) {
@@ -759,6 +769,7 @@ flt	<- apply(discWStock(fleets, S),c(2), sum)
 res	<- wg.stocks[[S]]@discards - flt
 
 res[res<0] <- 0
+res[is.na(res)] <- 0
 
 disc <- res 
 
@@ -769,6 +780,7 @@ flt	<- apply(discStock(fleets, S), c(1,2), sum)
 res	<- wg.stocks[[S]]@discards.n - flt
 
 res[res<0] <- 0
+res[is.na(res)] <- 0
 
 if(grepl(S, "nep")) {
  disc_age  <- disc } else {
