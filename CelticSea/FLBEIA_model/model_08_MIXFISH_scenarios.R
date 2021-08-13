@@ -48,20 +48,11 @@ for(st in names(SRs)) SRs[[st]]@ssb[,ac(2019:2021)] <- ssb(biols[[st]])[,ac(2019
 
 out <- bioSum(hist)
 
-E <- hist$fleets[["IE_Otter_10<24m"]]@effort * hist$fleets[["IE_Otter_10<24m"]]@metiers[["OTB_DEF_27.7.g"]]@effshare
-
-
-q <- hist$fleets[["IE_Otter_10<24m"]]@metiers[["OTB_DEF_27.7.g"]]@catches[["cod.27.7e-k"]]@catch.q
-
-Lwt <- hist$fleets[["IE_Otter_10<24m"]]@metiers[["OTB_DEF_27.7.g"]]@catches[["cod.27.7e-k"]]@landings.wt
-Dwt <- hist$fleets[["IE_Otter_10<24m"]]@metiers[["OTB_DEF_27.7.g"]]@catches[["cod.27.7e-k"]]@discards.wt
-
-B <- hist$biols[["cod.27.7e-k"]]@n * exp(-hist$biols[["cod.27.7e-k"]]@m/2)
-
-C <- q%*% E * B
-
-apply(C * wt,2,sum)
-
+theme_set(theme_bw())
+ggplot(filter(out, year <2021),aes(x=year, y = f)) + 
+  geom_point(colour = rep(c(rep("grey",8), rep("black",3), "red"), each = length(biols))) + geom_line() + 
+  facet_wrap(~stock, scale = "free_y") + expand_limits(y = 0) + 
+  geom_vline(xintercept =  2017, colour = "grey") +  geom_vline(xintercept =  2019, colour = "grey")
 
 
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
@@ -115,10 +106,6 @@ for(f in flt_list) {
 ##########################################
 
 
-i <- "fixedEffort"
-
-
-
 library(doParallel)
 
 registerDoParallel(cores = parallel::detectCores()-1)
@@ -151,56 +138,8 @@ names(runs) <- sc_list
 
 ## Summarise the results
 
-bio <- rbind(bioSum(runs[["max"]], scenario = "max", years = ac(2019)),
-             bioSum(runs[["min"]], scenario = "min", years = ac(2019)),
-             bioSum(runs[["Esq"]], scenario = "Esq", years = ac(2019)),
-             bioSum(runs[["COD"]], scenario = "COD", years = ac(2019)),
-             bioSum(runs[["HAD"]], scenario = "HAD", years = ac(2019)),
-             bioSum(runs[["MON"]], scenario = "MON", years = ac(2019)),
-             bioSum(runs[["NHKE"]], scenario = "NHKE", years = ac(2019)),
-             bioSum(runs[["NMEG"]], scenario = "NMEG", years = ac(2019)),
-             bioSum(runs[["WHG"]], scenario = "WHG", years = ac(2019))            
-)
 
 ## Save the outputs
 
-save(runs, bio, file = file.path("results", "ScenarioResults.RData"))
-
-
-
-
-### Some checks to delete
-
-
-
-out <- bioSum(res)
-ggplot(filter(out, year %in% 2019:2021), aes(x = year, y = f)) + geom_line() +
-  facet_wrap(~stock, scale = "free_y")
-ggplot(filter(out, year %in% 2019:2021), aes(x = year, y = catch)) + geom_line() +
-  facet_wrap(~stock, scale = "free_y")
-ggplot(filter(out, year %in% 2019:2022), aes(x = year, y = ssb)) + geom_line() +
-  facet_wrap(~stock, scale = "free_y")
-
-
-filter(out, year %in% 2019:2022, stock == "cod.27.7e-k")
-
-outSQ <- bioSum(hist)
-ggplot(out, aes(x = year, y = f)) + geom_line() +
-  facet_wrap(~stock)
-
-filter(out, year == 2020)
-
-ggplot(out, aes(x = year, y = ssb)) + geom_line() +
-  facet_wrap(~stock, scale = "free_y")
-
-
-filter(out, year %in% 2019:2022, stock == "cod.27.7e-k")
-filter(out, year %in% 2019:2022, stock == "had.27.7b-k")
-
-
-ad <- advSum(res)
-
-ad$landings <- ad$catch - ad$discards
-
-filter(ad, year == 2020)
+save(runs, file = file.path("results", "ScenarioResults.RData"))
 

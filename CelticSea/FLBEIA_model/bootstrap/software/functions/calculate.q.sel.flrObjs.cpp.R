@@ -2,7 +2,7 @@
 Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches.cpp"))
 
 
-calculate.q.sel.flrObjs.cpp <- function(biols, fleets, BDs, fleets.ctrl, mean.yrs, sim.yrs){
+calculate.q.sel.flrObjs.cpp <- function(biols, stocks, fleets, BDs, fleets.ctrl, mean.yrs, sim.yrs){
   
   for(st in names(biols)){
   
@@ -25,7 +25,12 @@ calculate.q.sel.flrObjs.cpp <- function(biols, fleets, BDs, fleets.ctrl, mean.yr
       B <- biols[[st]]@n*biols[[st]]@wt + gB
     }
     
-    fleets <- condition_flcatches(fl =fleets, 
+    SLwt <- window(stocks[[st]]@landings.wt, start = yrs[1], end = yrs[length(yrs)])
+    SDwt <- window(stocks[[st]]@discards.wt, start = yrs[1], end = yrs[length(yrs)])
+    
+    fleets <- condition_flcatches(fl =fleets,
+                                  SLwt = as.vector(SLwt),
+                                  SDwt = as.vector(SDwt),
                         B = as.vector(B), 
                         st = st, 
                         mean_yrs = first_avg_yr:last_avg_yr, 

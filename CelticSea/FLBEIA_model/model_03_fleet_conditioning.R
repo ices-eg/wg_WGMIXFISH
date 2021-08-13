@@ -158,15 +158,16 @@ fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stks
 ##############################################################################################
 ## Calculate the catchability for the projection years - uses either CobbDouglas or Baranov ##
 ##############################################################################################
-source(file.path("bootstrap", "software", "functions","calculate.q.sel.flrObjs.cpp.R")) 
 
 if(Cond) {
 
-fleets <- calculate.q.sel.flrObjs.cpp(biols,fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
 
 }
 
 
+fleets[[1]][[1]][[1]]@discards.wt
+wg.stocks[["cod.27.7e-k"]]@discards.wt
 
 Fl <- "BE_Beam_10<24m"
 Mt <- "Other_Metier"

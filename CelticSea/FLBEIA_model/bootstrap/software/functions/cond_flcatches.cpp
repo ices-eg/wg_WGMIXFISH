@@ -2,7 +2,9 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List condition_flcatches(List fl, 
+List condition_flcatches(List fl,
+                         NumericVector SLwt,
+                         NumericVector SDwt,
                             NumericVector B, 
                             CharacterVector st, 
                             IntegerVector mean_yrs, 
@@ -98,6 +100,8 @@ List condition_flcatches(List fl,
               NumericVector hist_yrs_s(mean_yrs.size());
               NumericVector hist_yrs_lw(mean_yrs.size());
               NumericVector hist_yrs_dw(mean_yrs.size());
+              NumericVector hist_yrs_Slw(mean_yrs.size());
+              NumericVector hist_yrs_Sdw(mean_yrs.size()); // stock discard weights
               NumericVector hist_yrs_p(mean_yrs.size());
               NumericVector hist_yrs_a(mean_yrs.size());
               NumericVector hist_yrs_b(mean_yrs.size());
@@ -107,6 +111,8 @@ List condition_flcatches(List fl,
                 hist_yrs_s[i-mean_yrs[0]] = Lsel[na*i + a];
                 hist_yrs_lw[i-mean_yrs[0]] = Lwt_dat[na*i + a];
                 hist_yrs_dw[i-mean_yrs[0]] = Dwt_dat[na*i + a];
+                hist_yrs_Slw[i-mean_yrs[0]] = SLwt[na*i + a];
+                hist_yrs_Sdw[i-mean_yrs[0]] = SDwt[na*i + a];
                 hist_yrs_p[i-mean_yrs[0]] = pr_dat[na*i + a];
                 hist_yrs_a[i-mean_yrs[0]] = alpha_dat[na*i + a];
                 hist_yrs_b[i-mean_yrs[0]] = beta_dat[na*i + a];
@@ -115,7 +121,9 @@ List condition_flcatches(List fl,
               double meanval_q = mean(na_omit((hist_yrs_q))); // calculate the mean
               double meanval_s = mean(na_omit((hist_yrs_s))); 
               double meanval_lw = mean(na_omit((hist_yrs_lw))); 
-              double meanval_dw = mean(na_omit((hist_yrs_dw))); 
+              double meanval_dw = mean(na_omit((hist_yrs_dw)));
+              double meanval_Slw = mean(na_omit((hist_yrs_Slw))); 
+              double meanval_Sdw = mean(na_omit((hist_yrs_Sdw)));
               double meanval_p = mean(na_omit((hist_yrs_p))); 
               double meanval_a = mean(na_omit((hist_yrs_a))); 
               double meanval_b = mean(na_omit((hist_yrs_b))); 
@@ -128,8 +136,10 @@ List condition_flcatches(List fl,
               if(R_IsNaN(meanval_s)) meanval_s = 0; 
               if(R_IsNA(meanval_lw)) meanval_lw = 0; 
               if(R_IsNaN(meanval_lw)) meanval_lw = 0; 
+              if(meanval_lw==0) meanval_lw = meanval_Slw; // need a value where missing, use stock value
               if(R_IsNA(meanval_dw)) meanval_dw = 0; 
-              if(R_IsNaN(meanval_dw)) meanval_dw = 0; 
+              if(R_IsNaN(meanval_dw)) meanval_dw = 0;     // need a value where missing, use stock value
+              if(meanval_dw==0) meanval_dw = meanval_Sdw; 
               if(R_IsNA(meanval_p)) meanval_p = 0; 
               if(R_IsNaN(meanval_p)) meanval_p = 0; 
               if(R_IsNA(meanval_a)) meanval_a = 1; 
