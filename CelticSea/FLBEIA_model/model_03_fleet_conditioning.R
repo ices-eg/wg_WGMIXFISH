@@ -159,9 +159,19 @@ fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stks
 ## Calculate the catchability for the projection years - uses either CobbDouglas or Baranov ##
 ##############################################################################################
 
+## Fix for Nephrops where there are no landings or discard weights
+nep <- grep("nep", names(wg.stocks), value = TRUE)
+
+for(n in nep) {
+  wg.stocks[[n]]@landings.wt[] <- 1
+  wg.stocks[[n]]@discards.wt[] <- 1
+  
+}
+
+
 if(Cond) {
 
-fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
 
 }
 
@@ -190,6 +200,9 @@ Mt <- "OTB_DEF_27.7.g"
 
 fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
 apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
+
+
+fleets[["BE_Beam_24<40m"]]@metiers[[2]]@catches[["nep.out.7"]]@discards.wt
 
 
 sapply(fleets, checkFleets)

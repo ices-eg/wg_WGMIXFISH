@@ -108,6 +108,7 @@ List condition_flcatches(List fl,
               
               for(int i=mean_yrs[0];i<=mean_yrs[mean_yrs.size()-1]; i++) { // loop over the years to fill the vector
                 hist_yrs_q[i-mean_yrs[0]] = q[na*i + a];
+                if(!R_finite(hist_yrs_q[i-mean_yrs[0]])) hist_yrs_q[i-mean_yrs[0]] = 0; // remove infintes, but keep good values
                 hist_yrs_s[i-mean_yrs[0]] = Lsel[na*i + a];
                 hist_yrs_lw[i-mean_yrs[0]] = Lwt_dat[na*i + a];
                 hist_yrs_dw[i-mean_yrs[0]] = Dwt_dat[na*i + a];
@@ -138,8 +139,9 @@ List condition_flcatches(List fl,
               if(R_IsNaN(meanval_lw)) meanval_lw = 0; 
               if(meanval_lw==0) meanval_lw = meanval_Slw; // need a value where missing, use stock value
               if(R_IsNA(meanval_dw)) meanval_dw = 0; 
-              if(R_IsNaN(meanval_dw)) meanval_dw = 0;     // need a value where missing, use stock value
-              if(meanval_dw==0) meanval_dw = meanval_Sdw; 
+              if(R_IsNaN(meanval_dw)) meanval_dw = 0;     
+              if(meanval_dw==0) meanval_dw = meanval_Sdw;  // need a value where missing, use stock value
+	      if(meanval_dw==0) meanval_dw = meanval_Slw;  // If it's still zero, use the landings weight
               if(R_IsNA(meanval_p)) meanval_p = 0; 
               if(R_IsNaN(meanval_p)) meanval_p = 0; 
               if(R_IsNA(meanval_a)) meanval_a = 1; 

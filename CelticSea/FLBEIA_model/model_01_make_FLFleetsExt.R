@@ -611,13 +611,13 @@ la.age[,ac(yrs)] <- caa$landingsN
 la.age[is.na(la.age)] <- 0
 # landings weights
 la.wt[,ac(yrs)]  <- caa$landings.wt
-la.wt[is.na(la.wt)] <- 0
+#la.wt[is.na(la.wt)] <- 0  // Want to keep NAs for averages
 ## Discards numbers
 di.age[,ac(yrs)] <- caa$discardsN
-di.age[is.na(di.age)] <- 0
+di.age[is.na(di.age)] <- 0  
 # discards weights
 di.wt[,ac(yrs)]  <- caa$discards.wt
-di.wt[is.na(di.wt)] <- 0
+#di.wt[is.na(di.wt)] <- 0  // Want to keep NAs for averages
 # price (per kg)
 pr.[,ac(yrs)] <- caa$price/1e3
 pr.[is.na(pr.)] <- 0
