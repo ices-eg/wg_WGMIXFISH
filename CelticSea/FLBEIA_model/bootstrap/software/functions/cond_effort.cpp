@@ -31,14 +31,16 @@ List condition_fleet_effort(List fl, IntegerVector dim, IntegerVector sim_yrs, I
 
     for(int i=mean_yrs[0];i<mean_yrs[mean_yrs.size()-1]+1; i++) { // loop over the years to fill the matrix
       hist_yrs[i-mean_yrs[0]] = dat[a*mean_yrs.size() + i];
+      if(R_IsNA(hist_yrs[i-mean_yrs[0]])) hist_yrs[i-mean_yrs[0]] = 0;
       cap_hist_yrs[i-mean_yrs[0]] = cap_dat[a*mean_yrs.size() + i];
+      if(R_IsNA(cap_hist_yrs[i-mean_yrs[0]])) cap_hist_yrs[i-mean_yrs[0]] = 0;
                   }
    
-    double meanval = mean(na_omit((hist_yrs))); // calculate the mean
-    double cap_meanval = mean(na_omit((cap_hist_yrs)));
+           double meanval = mean(na_omit((hist_yrs))); // calculate the mean
+           double cap_meanval = mean(na_omit((cap_hist_yrs)));
            if(R_IsNA(meanval)) meanval = 0; // zeros if no value
            if(R_IsNA(cap_meanval)) cap_meanval = 0; 
-
+           
     dat[a*sim_yrs.size() + y] = meanval;
     cap_dat[a*sim_yrs.size() + y] = cap_meanval;
                            }
@@ -83,7 +85,8 @@ for(int m=0; m<met.length();m++){
       }
       
       double effsh_meanval = mean(na_omit(effsh_hist_yrs)); // calculate the mean
-             if(R_IsNA(effsh_meanval)) effsh_meanval = 0;   // zeros if no value
+      if(R_IsNA(effsh_meanval)) effsh_meanval = 0;   // zeros if no value
+      
       
       effsh_dat[a*sim_yrs.size() + y] = effsh_meanval;
     }
