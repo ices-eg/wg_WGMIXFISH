@@ -33,15 +33,9 @@ List condition_flcatches(List fl,
      if(is_true(any(in(st, catchNames)))) {
        
       IntegerVector pos = match(st, catchNames) -1;     // this is an R function, so references from 1     
-      int pos2 = pos[0]; 
-      
-      // trick to get back to int from IntegerVector
-     
-      // This is not working where st is not first in catchNames
-      // pos2 gets set as zero each time, where its not before..
-      // Problem may be in the if statement, only letting through where 
-      
-      S4 C = CL[pos2];                               // The specific stock data
+      int pos2 = pos[0];      // trick to get back to int from IntegerVector
+
+         S4 C = CL[pos2];                               // The specific stock data
          
          S4 flq = C.slot("landings.n");                // just used to get the right dimensions
          NumericVector dim = flq.attr("dim");          // save the dimensions attribute
