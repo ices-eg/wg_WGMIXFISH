@@ -1,92 +1,708 @@
 ---
-title: "model_09_reproduce_the_advice"
-author: "Claire Moore"
-date: "7/29/2021"
+title: "Celtic Sea FLBEIA short-term forecast model"
+author: "Paul J. Dolder"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
-
-```{r}
-#Setup
-library(FLCore)
+```{r setup, include=FALSE}
+rm(list = ls())
 library(FLBEIA)
 library(tidyverse)
-library(ggplot2)
+library(knitr)
+library(huxtable)
+opts_chunk$set(echo = TRUE, 
+               tidy = TRUE,
+               comment = "#>")
 ```
 
-__Overview__
-This WD is to record a simple FLBEIA set-up for mixed fisheries forecasts in the Celtic Sea. It outlines the
-following steps:
+## Overview
+
+This WD is to record a simple FLBEIA set-up for mixed fisheries forecasts in the Celtic Sea. It outlines the following steps:
+
 1. Set-up the control parameters for the simulations
-2. Conditioning of the FLBiols objects
-3. Conditioning of the FLFleetExts object
-4. Set-up the Stock-Recruit objects
+2. Conditioning of the *FLBiols* objects
+3. Conditioning of the *FLFleetExts* object
+4. Set-up the *Stock-Recruit* objects
 
-#__Read in the data __
-And convert to format that we need
-```{r}
-stk_path  <- file.path("results/clean_data/clean_stock_objects/")
-stocks_list <- list.files(path = stk_path, pattern = ".RData")
-stocks<-FLStocks(lapply(list.files(path = stk_path, pattern = ".RData"),function(x){
-  load(file.path(stk_path,x))
-  res<-get("stock")
-  name(res)<-gsub('.RData',"",x)
-  res}))
+## Main control object
 
-stocks_list <- str_sub(stocks_list, 1, str_length(stocks_list)-6)
+Here we set out the bounds of our forecasts. 
 
-##~Some fixes ####
-stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2019)]    <- stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2018)]
-stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2017:2019)] <- stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2012)] ## last year of discard rate at age 7
+```{r Main_ctrl}
+## main ctrl
 
-for(st in stocks@names) {
-  if(all(is.na(stocks[[st]]@discards.wt))) {
-    stocks[[st]]@discards.wt <- stocks[[st]]@stock.wt
-  }
-}
+first.yr.sim <- 2020
+last.yr.sim  <- 2022
 
-## For individual ages/years
-for(st in stocks@names) {
-  if(any(is.na(stocks[[st]]@discards.wt))) {
-    stocks[[st]]@discards.wt[is.na(stocks[[st]]@discards.wt)] <- stocks[[st]]@stock.wt[is.na(stocks[[st]]@discards.wt)]
-  }
-}
-
-# Convert to FLBiols and FLFleet ####
-source("funcs/reproduce_the_advice.R")
-
-fleets <- FLFleetsExt()
-biols <- FLBiols()
-
-for(i in 1:length(stocks_list)){
-print(stocks_list[i])
-fleets_sub   <- FLFleetsExt(as(stocks[[i]], "FLFleetExt")); names(fleets)
-biols_sub    <- FLBiols(as(stocks[[i]], "FLBiol"))
-fleets <- rbind(fleets, fleets_sub) # this is empty - shoudl I name and fill wih zeros
-biols <- rbind(biols, biols_sub)
-rm(fleets_sub,biols_sub)
-}
+main.ctrl <- list()
+main.ctrl$sim.years <-c(initial = first.yr.sim, final = last.yr.sim)
+main.ctrl$SimultaneousMngt <- FALSE ## Note, this relates to the multi-stock HCR
 
 ```
 
-#__Main control object__
-Here we set out the bounds of our forecasts.
-```{r}
-data_yrs <- c(range(biols)[["minyear"]],
-              range(biols)[["maxyear"]])
-first_yr_sim <- 2020 
-last_yr_sim  <- 2021
-proj_yrs     <- first_yr_sim:last_yr_sim
+## Load Fleet and Biol objects
 
-ResetRestriciton <- TRUE
-ResetLO <- TRUE
-Cond_Fleet <- TRUE
+We take some short-cuts, in that the FLFleetExt and FLBiol objects are already converted from FLFLeets and FLStocks objects created for FCube. The code is available elsewhere for this as its a bit tedious. 
+
+Loading in the fleet and biols objects. Note that its important the FLFleets object has the same sum catches as the FLBiols object....
+
+```{r load_objs}
+
+# function from Paul
+
+setAs('FLStock', 'FLFleetExt',
+      function(from)
+      {
+        dms <-  dimnames(from@stock.n)
+        
+        ## Fleet level
+        
+        eff   <- cap <- FLQuant(dimnames=list(year=dms$year),quant="all")
+        eff[] <- 1
+        cap[] <- 5
+        
+        ## metier level
+        effsh   <- FLQuant(dimnames=list(year=dms$year),quant="all")
+        effsh[] <- 1
+        
+        ## catch level
+        pr   <- al <- be <- FLQuant(dimnames=list(year=dms$year,
+                                    age = dms$age), quant=ifelse(dms$age[1] == "all","all", "age"))
+        
+        pr[] <- 1
+        al[] <- 1
+        be[] <- 1
+        
+        stk. <- FLCatchExt(landings = from@landings,
+                           landings.n = from@landings.n,
+                           discards = from@discards,
+                           discards.n = from@discards.n,
+                           landings.wt = from@landings.wt,
+                           discards.wt = from@discards.wt,
+                           alpha = al,
+                           beta = be,
+                           price = pr,
+                           )
+        
+        for(i in slotNames(stk.)[!slotNames(stk.) %in% 
+                  c("name", "desc","range","landings.sel","discards.sel", "catch.q", "price", "alpha", "beta")]){
+        units(slot(stk.,i)) <- units(slot(from,i))
+        }
+        
+        range(stk.)[["min"]]       <-range(from)[["min"]]
+        range(stk.)[["max"]]       <-range(from)[["max"]]
+        range(stk.)[["plusgroup"]] <-range(from)[["plusgroup"]]
+        
+        ## Bring it all together
+        ca. <- FLCatchesExt(stk.)
+        names(ca.) <- from@name
+        mt. <- FLMetiersExt(FLMetierExt(name = from@name, effshare = effsh, catches = ca.))
+        names(mt.) <- from@name
+        
+        fl. <- FLFleetExt(name = from@name,
+                          effort = eff,
+                          capacity = cap,
+                          metiers = mt.)
+        fl.@range <- from@range[c("min","max", "minyear","maxyear")]
+        
+        return(fl.)
+      }
+)
+## fleets
+
+#For now lets just do it for cod
+load("results/clean_data/clean_stock_objects/cod.27.7e-k.RData")
+
+fleets   <- FLFleetsExt(as(stock, "FLFleetExt")); 
+names(fleets)
+biols    <- FLBiols(as(stock, "FLBiol"))
+
+#lets see whats in there
+summary(biols)
+summary(fleets)
+
+stks <- sort(names(biols))
+
+```
+
+## Expand the FLFleetExt and FLBiol object
+
+We ensure each object has the same year dimensions as FLBEIA references internally from 1 to n years. This is for both the FLBiols and FLFleetsExt.
+
+```{r expand_obj}
+
+# We take the smallest and largest years from the biols objects to frame our year range
+data.yrs <- c(range(biols)[["minyear"]],
+	    range(biols)[["maxyear"]])
+
+# Expand the FLBiols
+## Expand the biols to simulation years
+biols<-FLBiols(lapply(biols,window,data.yrs[1],last.yr.sim)) 
+summary(biols)
+
+# Expand the FLFleetsExt
+# Q for Paul - here you had just lapply - but this was not right format, I think?
+#fleets<-lapply(fleets,window,data.yrs[1],last.yr.sim) # Note: keep as list, as slower to access FLFleetsExt  
+# summary(fleets_not_use)
+fleets<-FLFleetsExt(lapply(fleets,window,data.yrs[1],last.yr.sim)) 
+summary(fleets)
+
+names(fleets) <- "cod.27.7e-k"
+```
+
+
+## Condition the FLBiol object
+
+Here we condition the biol/stock objects for the simulation. This includes the mean weights, maturity and natural mortality for each age.
+
+
+```{r biol_cond}
+
+# Now fill the slots in projection years for FLBiols
+## Note, we will want to do specifically for each stock and this is a short-cut
+
+stk.avg.yrs <- 2017:2019
+
+biols<-FLBiols(lapply(names(biols),function(x) {
+  s<-biols[[x]]
+  s@m[,ac(first.yr.sim:last.yr.sim)]<-yearMeans(s@m[,ac(stk.avg.yrs)])
+  
+  s@wt[,ac(first.yr.sim:last.yr.sim)]<-yearMeans(s@wt[,ac(stk.avg.yrs)])
+  mat(s)[,ac(first.yr.sim:last.yr.sim)]<-yearMeans(s@mat$mat[,ac(stk.avg.yrs)])
+  fec(s)[,ac(first.yr.sim:last.yr.sim)]<-yearMeans(s@fec$fec[,ac(stk.avg.yrs)])
+  s@spwn <- s@n
+  s@spwn[] <- 0
+  
+  return(s)
+}))
+
+```
+
+## Fleet conditioning
+
+Here we condition the FLFleetsExt for the simulation. We assume a simple average of values in the projection years, but in principle its possible to make this particular for a fleet or parameter. We recalculate the catchabilities for the fleet-metier-stock combinations to ensure they are consistent; we have assumed that alpha and beta are 1 for the simulations, though these can be estimated from the historic data by fleet-metier-stock.
+
+Note:: We may want here to split the OTH_OTH fleet into a series of fleets, one for each stock, e.g. OTH_COD, OTH_HKE etc...
+
+NOTE: We have also included a flag to load an already conditioned fleet, as it take a long time....
+
+```{r fleet_yrs}
+
+Cond_Fleet <- TRUE 
 
 fl.proj.avg.yrs <- 2017:2019 ## weights including landings.wt, discards.wt
-sel.yrs         <- 2017:2019 ## the selection pattern including effort, effshare, catch.q, landings.sel, discards.sel
+sel.yrs <- 2017:2019 ## the selection pattern including effort, effshare, catch.q, landings.sel, discards.sel
+```
+
+```{r fleet_cond, results = 'hide'}
+
+if(Cond_Fleet) {
+
+nms.fls <- names(fleets)
+l.fls   <- length(nms.fls)
+
+for(i in 1:l.fls){
+  print(nms.fls[i])
+  
+  nms.metiers <- names(fleets[[i]]@metiers)
+  l.metiers   <- length(nms.metiers)
+  
+  fleets[[i]]@effort[, ac(first.yr.sim:last.yr.sim)]    <- yearMeans(fleets[[i]]@effort[, ac(sel.yrs)])
+  fleets[[i]]@fcost[, ac(first.yr.sim:last.yr.sim)]     <- yearMeans(fleets[[i]]@fcost[, ac(fl.proj.avg.yrs)])
+  fleets[[i]]@capacity[, ac(first.yr.sim:last.yr.sim)]  <- yearMeans(fleets[[i]]@capacity[, ac(fl.proj.avg.yrs)])
+  fleets[[i]]@crewshare[, ac(first.yr.sim:last.yr.sim)] <- yearMeans(fleets[[i]]@crewshare[, ac(fl.proj.avg.yrs)])
+  
+  for( j in 1:l.metiers){
+    fleets[[i]]@metiers[[j]]@effshare[, ac(first.yr.sim:last.yr.sim)] <- yearMeans(fleets[[i]][[j]]@effshare[, ac(sel.yrs)])
+    fleets[[i]]@metiers[[j]]@vcost[, ac(first.yr.sim:last.yr.sim)]    <- yearMeans(fleets[[i]][[j]]@vcost[, ac(fl.proj.avg.yrs)])
+    
+    nms.stks <- names(fleets[[nms.fls[i]]]@metiers[[nms.metiers[j]]]@catches)
+    l.stks <- length(nms.stks)
+    
+    for( k in 1:l.stks){
+      
+      ## Normally the weights are average of 3 years while the selection is the rescaled F,
+      ## but we need to be stock specific
+      
+      if(nms.stks[k] %in% c("HAD")) { 
+        
+      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(first.yr.sim:last.yr.sim)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[,ac(2017)])
+      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(first.yr.sim:last.yr.sim)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[,ac(2017)])
+        
+        } else {
+      
+      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(first.yr.sim:last.yr.sim)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[,ac(fl.proj.avg.yrs)])
+      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(first.yr.sim:last.yr.sim)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[,ac(fl.proj.avg.yrs)])
+      
+      }
+      
+      ## selection 
+      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)] <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[,ac(sel.yrs)])
+  
+      # set any NAs in the proj year to 0 (in case of no catch)
+      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)])]<-0
+      # discards selectivity as the inverse of the landings sel
+      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.sel[, ac(first.yr.sim:last.yr.sim)] <- 1-fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)]
+       fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[,ac(first.yr.sim:last.yr.sim) ]     <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[,ac(sel.yrs)])
+      fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[, ac(first.yr.sim:last.yr.sim)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@catch.q[, ac(first.yr.sim:last.yr.sim)])]<-0     
+     
+      # Catch prod values 
+      fleets[[i]]@metiers[[j]]@catches[[k]]@alpha[, ac(first.yr.sim:last.yr.sim)]        <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@alpha[,ac(fl.proj.avg.yrs)])
+      fleets[[i]]@metiers[[j]]@catches[[k]]@beta[, ac(first.yr.sim:last.yr.sim)]         <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@beta[,ac(fl.proj.avg.yrs)])
+      
+
+      fleets[[i]]@metiers[[j]]@catches[[k]]@price[, ac(first.yr.sim:last.yr.sim)]  <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@price[,ac(fl.proj.avg.yrs)])
+      
+    }
+  }
+}
+
+fleets <- FLFleetsExt(fleets)
+
+#save(fleets, file = file.path("..", "model_inputs", "fleets_conditioned.RData"))
+
+} 
+
+if(!Cond_Fleet){
+
+#load(file.path("..", "model_inputs", "fleets_conditioned.RData"))
+
+
+  }
+
+## Fix the problem French fleet - metier with zero effort share
+
+#fleets[["FR_Otter_all"]]@metiers[["OTM_DEF_27.7.e"]]@effshare
+
+#excl_met <- "OTM_DEF_27.7.e"
+
+#mets <- fleets[["FR_Otter_all"]]@metiers@names
+#mets <- mets[!mets %in% excl_met]
+
+#fleets[["FR_Otter_all"]]@metiers <- FLMetiersExt(fleets[["FR_Otter_all"]]@metiers[["OTH"]],
+#             fleets[["FR_Otter_all"]]@metiers[["OTT_CRU_27.7.g"]],
+#             fleets[["FR_Otter_all"]]@metiers[["OTT_CRU_27.7.h"]],
+#             fleets[["FR_Otter_all"]]@metiers[["OTT_DEF_27.7.g"]],
+#             fleets[["FR_Otter_all"]]@metiers[["OTT_DEF_27.7.h"]],
+#             fleets[["FR_Otter_all"]]@metiers[["OTT_DEF_27.7.j"]])
+            
+#fleets[["FR_Otter_all"]]@metiers@names <- as.character(sapply(fleets[["FR_Otter_all"]]@metiers, function(x) x@name)[])
+ 
+```
+
+## Stock-Recruit
+
+Here we set up the recruitment parameters for the short-term forecasts. As with FCube, we use the values from the single stock assessment, but here we do this in the form of an FLSRsim object - using a geomean model with the parameters set to the values in the single stock assessment.
+
+For the *Nephrops* stock (or any fixed biomass stock) we would create a dummy FLSRsim object with an arbitrary large value.
+
+```{r SR}
+
+##########################
+#### 1. SR objects for STF
+##########################
+
+## Empty FLQuant with the right dimensions
+
+flq_dims <- FLQuant(1, dim = c(1, length(data.yrs[1]:last.yr.sim)), dimnames = list(quant = 'all', year = data.yrs[1]:last.yr.sim))
+
+## For each ASPG stock, fill the recruitment used in the single stock assessment forecast
+
+COD.sr <- FLSRsim(rec = biols[["cod.27.7e-k"]]@n[1,], ssb = ssb(biols[["cod.27.7e-k"]]), 
+               uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "cod.27.7e-k")
+COD.sr@params[] <- 1640 # this value comes form table 2 on the advice sheet
+
+# HAD.sr <- FLSRsim(rec = biols[["HAD"]]@n[1,], ssb = ssb(biols[["HAD"]]), 
+#                uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "HAD")
+# HAD.sr@params[] <- 265133
+# 
+# WHG.sr <- FLSRsim(rec = biols[["WHG"]]@n[1,], ssb = ssb(biols[["WHG"]]), 
+#                uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "WHG")
+# WHG.sr@params[] <- 971263
+
+SRs <- list(`cod.27.7e-k` = COD.sr) #, HAD = HAD.sr, WHG = WHG.sr)
+range(SRs[[1]])[4] <- 1980
+range(SRs[[1]])[5] <- 2022
 ```
 
 
-#__Main control object__
+## Biols Control
 
+Here we fix the type of growth model for each stock. Normally this would be ASPG (Age-structured population growth), though BDPG (biomass dynamic) and fixedPopulation are also available. We use the latter for the *Nephrops* stocks.
+
+```{r biols_ctrl}
+Baranov          <- c(FALSE)#, FALSE, FALSE)
+growth.model     <- ifelse(!Baranov, c(`cod.27.7e-k`='ASPG'), c(`cod.27.7e-k` = "ASPG_Baranov")) ; names(growth.model) <- c("cod.27.7e-k")
+growth.model <- growth.model[sort(names(growth.model))]
+biols.ctrl       <- create.biols.ctrl(stksnames=stks,growth.models=growth.model)
+```
+
+
+## Advice controls
+
+Here we set two elements which are not used in a short-term forecast: firstly, there is no **observation model** so each stock is set to *'perfectObs'*; secondly there is no **assessment model** so each stock is set accordingly (*NoAssessment*).
+
+For the **advice model**, we want to specify the TACs for the stocks rather than a specific HCR. Therefore the HCR is *fixedAdvice*, which we set to be on the basis of 'catch' rather than 'landings'. 
+
+```{r controls, echo= TRUE}
+
+## Obs ctrl - as a STF, we assume perfect obs
+stkObs.models<-rep('perfectObs',length(stks)) ; names(stkObs.models)<-stks
+obs.ctrl  <- create.obs.ctrl(stksnames = stks,  stkObs.models = stkObs.models)
+
+obs.ctrl <- obs.ctrl[sort(names(obs.ctrl))]
+
+## assess ctrl - as a STF, we do not do an assessment 
+
+assess.models<-rep('NoAssessment',length(stks)); names(assess.models)<-stks
+assess.ctrl<-create.assess.ctrl(stksnames=stks,assess.models=assess.models)
+
+assess.ctrl <- assess.ctrl[sort(names(assess.ctrl))]
+
+################
+## advice ctrl
+################
+
+## We use the actual TAC advice
+advice.ctrl <- create.advice.ctrl(stksnames = stks, HCR.models = rep('fixedAdvice', length(stks)))
+
+## Or ICES HCR
+#ref.pts.COD <- matrix(c(7300, 10300, 0.35),ncol = 1, dimnames = list(c("Blim", "Btrigger", "Fmsy"), c(1)))
+#ref.pts.HAD <- matrix(c(6700, 10000, 0.4), ncol = 1, dimnames = list(c("Blim", "Btrigger", "Fmsy"), c(1)))
+#ref.pts.WHG <- matrix(c(25000, 35000, 0.52),ncol = 1, dimnames = list(c("Blim", "Btrigger", "Fmsy"), c(1)))
+#advice.ctrl <- create.advice.ctrl(stksnames = stks, HCR.models = rep('IcesHCR', length(stks)), ref.pts.COD = ref.pts.COD,
+#                                  ref.pts.HAD = ref.pts.HAD, ref.pts.WHG = ref.pts.WHG, first.yr = 1993, last.yr = last.yr.sim)
+
+# advice based on catch, not landings
+advice.ctrl$`cod.27.7e-k`$AdvCatch[]      <- TRUE 
+# advice.ctrl$HAD$AdvCatch[]      <- TRUE 
+# advice.ctrl$WHG$AdvCatch[]      <- TRUE 
+
+```
+
+## TAC advice
+
+Here we specify the actual **TAC advice** for each stock in both the *intermediate* and the *TAC* years. We also specify our assumption of the future quota share across fleets, which here is set to the same average years as the rest of the fleet parameters.
+
+
+```{r TACs}
+
+advice <- list(TAC = FLQuant(NA, dimnames = list(stocks = stks, year = data.yrs[1]:last.yr.sim)),
+               quota.share = lapply(stks, function(x) {
+                 FLQuant(NA,
+                         dimnames = list(fleets = names(fleets), year = data.yrs[1]:last.yr.sim))
+               }))
+
+## TACs for intermediate and TAC year (note, we extend this to TAC yr + 1)
+## This is the actual TAC, not the catches from the stf
+
+advice$TAC['cod.27.7e-k', ac(2018:2020)] <- c(805, rep(0, 2))
+# advice$TAC['HAD', ac(2018:2020)] <- c(6910, rep(6317, 2))
+# advice$TAC['WHG', ac(2018:2020)] <- c(22213 - 3443, rep(15841, 2))
+
+kable(reshape2::dcast(as.data.frame(advice$TAC[,ac(2018:2020)]), stocks ~ year, value.var = "data"), caption = "TAC advice in intermediate and TAC year")
+
+names(advice$quota.share) <- stks
+#catchNames(fleets) <- "cod.27.7e-k" # CM - added this so it would run! Previous warning - subscript out of bounds
+#st <- "cod.27.7e-k"
+#fl <- "cod.27.7e-k"
+# Q Paul - below dosen't work but I am not sure I need it
+for(st in stks){
+  for(fl in names(fleets)) {
+    if(st %in% catchNames(fleets[[fl]])){
+      advice$quota.share[[st]][fl,] <- quantSums(catchWStock.f(fleets[[fl]], st))/
+                                       quantSums(catchWStock(fleets, st))
+      advice$quota.share[[st]][fl, ac(data.yrs[1]:last.yr.sim)] <-
+        yearMeans(advice$quota.share[[st]][fl, ac(sel.yrs)])  ## change to sel.yrs
+    } else
+      advice$quota.share[[st]][fl,] <- 0
+      
+    }
+  }
+
+
+```
+
+
+## Fleets controls
+
+Here we set up a simple fleets control object. We will use this as a template for the mixed fisheries scenarios. It includes:
+
+* The **fleet model**: to match FCube we used *'fixedEffort'* and *SMFB* (simple mixed fisheries behaviour) with an appropriate catch rule (min, max or stock). But here we just set up a template which we will alter later dependent on the scenario.
+* We define a *catch restriction*, i.e. landings or catch.
+* We define the *catch model* per stock. These should match the biol model, i.e . CobbDouglasAge or CobDouglasBio
+* There are other features which we could use here. For example, the *landing obligation* including de minimis and other rules.
+
+* Other features such as captial and price models can also be configured. However, these have additional data requirements which enter in the Covars,
+
+
+```{r fleets_ctrl}
+
+LO <- FALSE 
+
+fls   <-names(fleets)
+n.fls <-length(fleets) #number of the fleets
+
+n.stks<-sum(sapply(sapply(fleets, catchNames), length)) # number of the fleet/stocks
+n.flts.stks      <- sapply(lapply(fleets, catchNames), length) # number of stocks caught by each fleet.
+flts.stksnames   <- NULL; for(f in 1:length(fleets))  flts.stksnames <- c(flts.stksnames, catchNames(fleets[[f]])) 
+
+
+#### FLEET MODELS
+## Fixed effort, SMFB etc...
+## SMFB, min equivilent to FCube min
+effort.models    <- rep("SMFB",n.fls) ; names(effort.models)<-fls
+eff.res <- "prev"
+## using SMFB set the effort limitation by fleet, i.e. vector with n.fl values with min, max etc..
+## using SMFB, set a restriction on 'catch' or 'landings' by fleet
+restriction  <- rep("catch",n.fls) ; names(restriction) <-fls 
+
+### CATCH MODELS
+## Can change for each fleet/stock
+c.mod<-stack(lapply(fleets,catchNames))
+c.mod$catch.mod<-sapply(c.mod$values,function(x) {
+  if(x %in% c("cod.27.7e-k")) return("CobbDouglasAge") else
+  return("CobbDouglasBio")
+})
+catch.models     <- c.mod$catch.mod ; names(catch.models)<-paste(c.mod$ind,c.mod$values,sep=".")
+
+### CAPTIAL MODELS
+## Options are:
+capital.models   <- rep("fixedCapital",n.fls)           ; names(capital.models)<-fls
+
+### PRICE MODELS
+## Options are:
+price.models     <- rep("fixedPrice",n.stks)            ; names(price.models)<-paste(c.mod$ind,c.mod$values,sep=".")
+
+
+flq   <- FLQuant(dimnames = list(quant = 'all', year = data.yrs[1]:last.yr.sim, season = 1), iter = 1)
+
+fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stksnames=flts.stksnames,
+                                         effort.models= effort.models,catch.models=catch.models,
+                                         capital.models=capital.models, price.models=price.models,flq=flq )
+
+
+if(LO) { 
+  for (f in names(fleets)) { 
+    fleets.ctrl[[f]]$LandObl <- c(rep(FALSE, length(data.yrs[1]:data.yrs[2])), rep(TRUE,length(first.yr.sim:last.yr.sim)) )  
+    names(fleets.ctrl[[f]]$LandObl) <- c(data.yrs[1]:last.yr.sim)
+    
+    fleets.ctrl[[f]]$LandObl_minimis <- c(rep(FALSE, length(data.yrs[1]:last.yr.sim)) )
+    names(fleets.ctrl[[f]]$LandObl_minimis) <- c(data.yrs[1]:last.yr.sim)
+    
+    fleets.ctrl[[f]]$LandObl_minimis_p <- matrix(0, nrow = length(catchNames(fleets[[f]])), ncol = length(data.yrs[1]:last.yr.sim),
+                                                      dimnames = list(sort(catchNames(fleets[[f]])), c(data.yrs[1]:last.yr.sim)))
+    
+    fleets.ctrl[[f]]$LandObl_yearTransfer <- c(rep(FALSE, length(data.yrs[1]:last.yr.sim)))
+    names(fleets.ctrl[[f]]$LandObl_yearTransfer) <- c(data.yrs[1]:last.yr.sim)
+    
+    fleets.ctrl[[f]]$LandObl_yearTransfer_p <- matrix(0, nrow = length(catchNames(fleets[[f]])), ncol = length(data.yrs[1]:last.yr.sim),
+                                                      dimnames = list(sort(catchNames(fleets[[f]])), c(data.yrs[1]:last.yr.sim)))
+    
+    fleets.ctrl[[f]]$LandObl_discount_yrtransfer <- array(0, dim = c(length(catchNames(fleets[[f]])),length(data.yrs[1]:last.yr.sim),1),
+                                                          dimnames = list(sort(catchNames(fleets[[f]])), c(data.yrs[1]:last.yr.sim), 1))
+  }
+  }
+
+
+## Recalculate the catchability for the projection years - uses either CobbDouglas or Baranov
+fleets <- calculate.q.sel.flrObjs(biols, fleets, NULL, fleets.ctrl, sel.yrs, first.yr.sim:last.yr.sim)
+
+## Haddock selection is average of 1993 - 2017
+## Recalculate here
+# load(file.path("..","data", "stocks", "HAD-CS.RData"))
+# had.sel <- apply(stock@landings.n / (stock@landings.n + stock@discards.n), 1, mean)
+# had.sel[1,] <- 0
+# had.sel[8:9,] <- 1
+# 
+
+## Whiting the landings and discards weights are different
+# load(file.path("..","data", "stocks", "WHG-CS.RData"))
+# whg.lwt <- apply(stock@landings.wt[,ac(2015:2017)],1,mean)
+# whg.dwt <- apply(stock@discards.wt[,ac(2015:2017)],1,mean)
+
+## loop
+l.fls   <- length(fleets)#
+nms.fls <- names(fleets)
+
+
+for(i in 1:l.fls){
+  print(nms.fls[i])
+  
+  nms.metiers <- names(fleets[[i]]@metiers)
+  l.metiers   <- length(nms.metiers)
+  
+  for( j in 1:l.metiers){
+    nms.stks <- names(fleets[[nms.fls[i]]]@metiers[[nms.metiers[j]]]@catches)
+    l.stks <- length(nms.stks)
+    
+   for( k in 1:l.stks){
+     
+      ## weight
+           if(fleets[[i]]@metiers[[j]]@catches[[k]]@name == "WHG") {
+           fleets[[i]]@metiers[[j]]@catches[[k]]@landings.wt[, ac(first.yr.sim:last.yr.sim)] <- whg.lwt
+           fleets[[i]]@metiers[[j]]@catches[[k]]@discards.wt[, ac(first.yr.sim:last.yr.sim)] <- whg.dwt
+           }
+      
+      ## selection 
+      if(fleets[[i]]@metiers[[j]]@catches[[k]]@name == "HAD") {
+       fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)] <- had.sel
+      } else {
+     fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)] <- yearMeans(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[,ac(sel.yrs)])
+      }
+     
+      # set any NAs in the proj year to 0 (in case of no catch)
+      fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)][is.na(fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)])]<-0
+      # discards selectivity as the inverse of the landings sel
+      fleets[[i]]@metiers[[j]]@catches[[k]]@discards.sel[, ac(first.yr.sim:last.yr.sim)] <- 1-fleets[[i]]@metiers[[j]]@catches[[k]]@landings.sel[, ac(first.yr.sim:last.yr.sim)]
+      
+      fl <- i
+      mt <- j
+      st <- nms.stks[k] 
+      
+      ## recalculate the catchability
+      B <- biols[[st]]@n * exp(-biols[[st]]@m/2)
+     C <- (fleets[[fl]]@metiers[[mt]]@catches[[st]]@discards.n + 
+                  fleets[[fl]]@metiers[[mt]]@catches[[st]]@landings.n)
+                alpha <- fleets[[fl]]@metiers[[mt]]@catches[[st]]@alpha
+                beta <- fleets[[fl]]@metiers[[mt]]@catches[[st]]@beta
+                E <- fleets[[fl]]@effort * fleets[[fl]]@metiers[[mt]]@effshare
+                
+                  fleets[[fl]]@metiers[[mt]]@catches[[st]]@catch.q <- C/((E %^% 
+                    alpha) * (B %^% beta))
+                  
+    ## and the means for sim years
+    fleets[[fl]]@metiers[[mt]]@catches[[st]]@catch.q[,ac(first.yr.sim:last.yr.sim)] <- 
+      apply(fleets[[fl]]@metiers[[mt]]@catches[[st]]@catch.q[,ac(sel.yrs)],1,mean)
+                
+    }
+  }
+}
+
+## For whiting, let's check the catch weights are right, as per the reproduce the advice
+fleets <- FLFleetsExt(fleets)
+
+```
+
+## QA / Reproduce the advice
+
+Here we seek to mimic the reproduce the advice process, by forecasting each stock as the limiting factor and comparing the catch, F and SSB indicators against those for the single stock advice. This is a bit tedious with a number of stocks, and it may be something that can be automated in a loop and computed in parallel.
+
+```{r QA }
+
+################
+## QA - equivilent to reproduce the advice
+################
+
+fleets.ctrl.COD  <- fleets.ctrl
+# fleets.ctrl.HAD  <- fleets.ctrl
+# fleets.ctrl.WHG  <- fleets.ctrl
+
+## All others are already set to SMFB effort.model, so we just need to modify the option
+
+for(fl in names(fleets)) { fleets.ctrl.COD[[fl]][["effort.restr"]] <- 'COD'}
+# for(fl in names(fleets)) { fleets.ctrl.HAD[[fl]][["effort.restr"]] <- 'HAD'}
+# for(fl in names(fleets)) { fleets.ctrl.WHG[[fl]][["effort.restr"]] <- 'WHG'}
+
+
+```
+
+
+```{r cod, results = 'hide'}
+## We do a forecast with the catch from the single stock advice
+
+## This is a pain, so might want to automate
+
+#########
+## COD
+#########
+
+advice.cod <- advice
+advice.cod$TAC['cod.27.7e-k',ac(c(2019,2020))] <- c(1055, 0)  # catch int yr, TAC. Used catch here, previously paul used landings. Note that for cod this is peculiarly the landings, as the discards aren't in the assessment
+
+## Run FLBEIA with fleets constrained by COD TAC
+
+#for(fl in names(fleets)) { fleets[[fl]]@capacity[] <- 1e12} # ensure not cap limited
+#NOTE CM - need to add extra years
+
+cod <- FLBEIA(biols = biols, 
+              SRs = SRs,
+              BDs = NULL,
+              fleets = fleets,
+              indices = NULL,
+              advice = advice.cod,
+              covars = NULL,
+              main.ctrl = main.ctrl,
+              biols.ctrl = biols.ctrl,
+              fleets.ctrl = fleets.ctrl.COD,
+              covars.ctrl = NULL,
+              obs.ctrl = obs.ctrl,
+              assess.ctrl = assess.ctrl,
+              advice.ctrl = advice.ctrl)
+              
+lapply(biols[], dim)
+lapply(fleets, dim)
+lapply(advice$quota, dim)
+
+#       SRs = SRs,
+#       BDs = NULL,
+#       fleets = fleets,
+#       indices = NULL,
+#       advice = advice,
+#       covars = NULL,
+#       main.ctrl = main.ctrl,
+#       biols.ctrl = biols.ctrl,
+#       fleets.ctrl = fleets.ctrl,
+#       covars.ctrl = NULL,
+#       obs.ctrl = obs.ctrl,
+#       assess.ctrl = assess.ctrl,
+#       advice.ctrl = advice.ctrl)
+
+## Compare to the single stock advice
+ss_cod <- fb_cod <- matrix(NA, ncol = 3, nrow = 5, 
+                 dimnames = list(metric = c("F", "SSB", "catches", "landings", "discards"), 
+                                 year = c(2018:2020)))
+ss_cod["F",] <- c(0.612, 0, NA)
+ss_cod["SSB",] <- c(4179, 3618, 6905)
+ss_cod["catches",] <- c(2551, 0, NA)
+ss_cod["landings",] <- c(2354, 0, NA)
+ss_cod["discards",] <- c(197, 0, NA)
+
+## Need to include a discard "top-up" for cod
+
+DR <- 0.0718 
+
+cod.flbeia <- bioSum(cod, years = ac(2018:2020))
+
+## cod top up
+cod.fb <- cod.flbeia %>% filter(stock == "COD")
+cod.fb$catch[cod.fb$stock== "COD"] <- cod.fb$landings[cod.fb$stock== "COD"] / (1 - DR)
+cod.fb$discards[cod.fb$stock== "COD"] <- cod.fb$catch[cod.fb$stock== "COD"] - cod.fb$landings[cod.fb$stock== "COD"]  
+
+fb_cod["F",] <- cod.fb$f
+fb_cod["SSB",] <- cod.fb$ssb
+fb_cod["catches",] <- cod.fb$catch
+fb_cod["landings",] <- cod.fb$landings
+fb_cod["discards",] <- cod.fb$discards
+
+```
+
+```{r cod_out, echo = FALSE}
+
+kable(round(ss_cod,3), caption = "Single stock forecast for COD")
+kable(round(fb_cod,3), caption = "FLBEIA STF for COD")
+
+## relative difference, flbeia/ single-stock
+## We use a huxtable to automatically highlight big differences
+
+round(fb_cod / ss_cod, 3) %>%
+  as_huxtable(add_colnames = TRUE, add_rownames = "Metric") %>%
+  set_bold(1, everywhere, TRUE) %>%
+  set_bold(everywhere, 1, TRUE) %>%
+  set_bottom_border(1, everywhere, 2) %>%
+  map_text_color(2:nrow(ss_cod), 2:ncol(ss_cod), by_ranges(c(0.9, 1.1), c("red", "black", "red"))) %>%
+  set_caption("Relative difference between single stock and FLBEIA forecasts")
+
+```
 
