@@ -490,6 +490,18 @@ ef_mod$Metier <- ifelse(paste0(ef_mod$Fleet, ef_mod$Metier) %in% paste0(mt_keep$
 fleet_data_model$Metier <- ifelse(paste0(fleet_data_model$Fleet, fleet_data_model$Metier) %in% paste0(mt_keep$Fleet, mt_keep$Metier), fleet_data_model$Metier, "Other_Metier")
 
 ## Now aggregate the data
+## So i think we can triage the metiers here
+## too many metiers aint nobody got time for that 
+unique(ef_mod$Metier)
+ef_mod$Metier <- stringi::stri_replace(ef_mod$Metier,regex = "7.g|7.f",replacement = "7.fg")
+ef_mod$Metier <- stringi::stri_replace(ef_mod$Metier,regex = "7.b|7.c",replacement = "7.bc")
+ef_mod$Metier <- stringi::stri_replace(ef_mod$Metier,regex = "7.h|7.j|7.k",replacement = "7.hjk")
+unique(ef_mod$Metier)
+unique(ca_mod$Metier)
+ca_mod$Metier <- stringi::stri_replace(ca_mod$Metier,regex = "7.g|7.f",replacement = "7.fg")
+ca_mod$Metier <- stringi::stri_replace(ca_mod$Metier,regex = "7.b|7.c",replacement = "7.bc")
+ca_mod$Metier <- stringi::stri_replace(ca_mod$Metier,regex = "7.h|7.j|7.k",replacement = "7.hjk")
+unique(ca_mod$Metier)
 
 ## Effort
 ef_mod <- ef_mod %>% group_by(Fleet, Metier, Year, .drop = FALSE) %>% summarise(kw_days = sum(kw_days)) %>%
