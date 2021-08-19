@@ -113,8 +113,42 @@ setAs('FLStock', 'FLFleetExt',
 #For now lets just do it for cod
 load("results/clean_data/clean_stock_objects/cod.27.7e-k.RData")
 
+#stocks_list <- str_sub(stocks_list, 1, str_length(stocks_list)-6)
+##~Some fixes ####
+
+stock@discards.wt[ac(4:7),ac(2019)]    <- stock@discards.wt[ac(4:7),ac(2018)]
+stock@discards.wt[ac(7),ac(2017:2019)] <- stock@discards.wt[ac(7),ac(2012)] ## last year of discard rate at age 7
+
+
+# stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2019)]    <- stocks[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2018)]
+# stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2017:2019)] <- stocks[["cod.27.7e-k"]]@discards.wt[ac(7),ac(2012)] ## last year of discard rate at age 7
+
+  if(all(is.na(stock@discards.wt))) {
+    stock@discards.wt <- stock@stock.wt
+  }
+
+
+# for(st in stocks@names) {
+#   if(all(is.na(stocks[[st]]@discards.wt))) {
+#     stocks[[st]]@discards.wt <- stocks[[st]]@stock.wt
+#   }
+# }
+
+## For individual ages/years
+if(any(is.na(stock@discards.wt))) {
+    stock@discards.wt[is.na(stock@discards.wt)] <- stock@stock.wt[is.na(stock@discards.wt)]
+  }
+
+
+# for(st in stocks@names) {
+#   if(any(is.na(stocks[[st]]@discards.wt))) {
+#     stocks[[st]]@discards.wt[is.na(stocks[[st]]@discards.wt)] <- stocks[[st]]@stock.wt[is.na(stocks[[st]]@discards.wt)]
+#   }
+# }
+
 fleets   <- FLFleetsExt(as(stock, "FLFleetExt")); 
 names(fleets)
+names(fleets@.Data[[1]]@range) <- c("min", "max" , "minyear", "maxyear")
 biols    <- FLBiols(as(stock, "FLBiol"))
 
 #lets see whats in there
@@ -589,7 +623,7 @@ Here we seek to mimic the reproduce the advice process, by forecasting each stoc
 ```{r QA }
 
 ################
-## QA - equivilent to reproduce the advice
+## QA - equivalent to reproduce the advice
 ################
 
 fleets.ctrl.COD  <- fleets.ctrl
@@ -650,10 +684,16 @@ ss_cod["catches",] <- c(1351,0, NA)
 ss_cod["landings",] <- c(1051, 0, NA)
 ss_cod["discards",] <- c(300, 0, NA)
 
+units(cod$biols[["cod.27.7e-k"]]@wt) <- "kg"
+units(cod$biols[["cod.27.7e-k"]]@n) <- "thousands"
+
+cod$biols[["cod.27.7e-k"]]@range[c("minfbar")] <-  2
+cod$biols[["cod.27.7e-k"]]@range[c("maxfbar")] <-  5
+
 cod.flbeia <- bioSum(cod, years = ac(2019:2021))
 
 ## cod top up
-cod.fb <- cod.flbeia %>% filter(stock == "COD")
+cod.fb <- cod.flbeia %>% filter(stock == "cod.27.7e-k")
 
 fb_cod["F",] <- cod.fb$f
 fb_cod["SSB",] <- cod.fb$ssb
