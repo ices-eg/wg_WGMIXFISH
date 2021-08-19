@@ -83,9 +83,9 @@ setAs('FLStock', 'FLFleetExt',
                            alpha = al,
                            beta = be,
                            price = pr,
+                           name = from@name
                            )
-        
-        for(i in slotNames(stk.)[!slotNames(stk.) %in% 
+           for(i in slotNames(stk.)[!slotNames(stk.) %in% 
                   c("name", "desc","range","landings.sel","discards.sel", "catch.q", "price", "alpha", "beta")]){
         units(slot(stk.,i)) <- units(slot(from,i))
         }
@@ -99,17 +99,16 @@ setAs('FLStock', 'FLFleetExt',
         names(ca.) <- from@name
         mt. <- FLMetiersExt(FLMetierExt(name = from@name, effshare = effsh, catches = ca.))
         names(mt.) <- from@name
-        
+
         fl. <- FLFleetExt(name = from@name,
                           effort = eff,
                           capacity = cap,
                           metiers = mt.)
         fl.@range <- from@range[c("min","max", "minyear","maxyear")]
-        
-        return(fl.)
+              return(fl.)
       }
 )
-## fleets
+
 
 #For now lets just do it for cod
 load("results/clean_data/clean_stock_objects/cod.27.7e-k.RData")
@@ -375,7 +374,7 @@ advice.ctrl <- create.advice.ctrl(stksnames = stks, HCR.models = rep('fixedAdvic
 #                                  ref.pts.HAD = ref.pts.HAD, ref.pts.WHG = ref.pts.WHG, first.yr = 1993, last.yr = last.yr.sim)
 
 # advice based on catch, not landings
-advice.ctrl$`cod.27.7e-k`$AdvCatch[]      <- TRUE 
+advice.ctrl$`cod.27.7e-k`$AdvCatch<- TRUE 
 # advice.ctrl$HAD$AdvCatch[]      <- TRUE 
 # advice.ctrl$WHG$AdvCatch[]      <- TRUE 
 
@@ -404,10 +403,8 @@ advice$TAC['cod.27.7e-k', ac(2018:2020)] <- c(805, rep(0, 2))
 kable(reshape2::dcast(as.data.frame(advice$TAC[,ac(2018:2020)]), stocks ~ year, value.var = "data"), caption = "TAC advice in intermediate and TAC year")
 
 names(advice$quota.share) <- stks
-#catchNames(fleets) <- "cod.27.7e-k" # CM - added this so it would run! Previous warning - subscript out of bounds
-#st <- "cod.27.7e-k"
-#fl <- "cod.27.7e-k"
-# Q Paul - below dosen't work but I am not sure I need it
+#fleets[[1]]@metiers[[1]]@catches[[1]]@name <- "cod.27.7e-k"
+
 for(st in stks){
   for(fl in names(fleets)) {
     if(st %in% catchNames(fleets[[fl]])){
@@ -452,7 +449,7 @@ flts.stksnames   <- NULL; for(f in 1:length(fleets))  flts.stksnames <- c(flts.s
 #### FLEET MODELS
 ## Fixed effort, SMFB etc...
 ## SMFB, min equivilent to FCube min
-effort.models    <- rep("SMFB",n.fls) ; names(effort.models)<-fls
+effort.models    <- rep("fixedEffort",n.fls) ; names(effort.models)<-fls
 eff.res <- "prev"
 ## using SMFB set the effort limitation by fleet, i.e. vector with n.fl values with min, max etc..
 ## using SMFB, set a restriction on 'catch' or 'landings' by fleet
@@ -601,7 +598,7 @@ fleets.ctrl.COD  <- fleets.ctrl
 
 ## All others are already set to SMFB effort.model, so we just need to modify the option
 
-for(fl in names(fleets)) { fleets.ctrl.COD[[fl]][["effort.restr"]] <- 'COD'}
+for(fl in names(fleets)) { fleets.ctrl.COD[[fl]][["effort.restr"]] <- 'cod.27.7e-k'}
 # for(fl in names(fleets)) { fleets.ctrl.HAD[[fl]][["effort.restr"]] <- 'HAD'}
 # for(fl in names(fleets)) { fleets.ctrl.WHG[[fl]][["effort.restr"]] <- 'WHG'}
 
@@ -623,8 +620,10 @@ advice.cod$TAC['cod.27.7e-k',ac(c(2019,2020))] <- c(1055, 0)  # catch int yr, TA
 
 ## Run FLBEIA with fleets constrained by COD TAC
 
-#for(fl in names(fleets)) { fleets[[fl]]@capacity[] <- 1e12} # ensure not cap limited
-#NOTE CM - need to add extra years
+for(fl in names(fleets)) { fleets[[fl]]@capacity[] <- 1e12} # ensure not cap limited
+
+
+#for(fl in names(fleets)) { fleets[[fl]]@effort[] <- 1e12} # ensure not cap limited
 
 cod <- FLBEIA(biols = biols, 
               SRs = SRs,
@@ -641,44 +640,20 @@ cod <- FLBEIA(biols = biols,
               assess.ctrl = assess.ctrl,
               advice.ctrl = advice.ctrl)
               
-lapply(biols[], dim)
-lapply(fleets, dim)
-lapply(advice$quota, dim)
-
-#       SRs = SRs,
-#       BDs = NULL,
-#       fleets = fleets,
-#       indices = NULL,
-#       advice = advice,
-#       covars = NULL,
-#       main.ctrl = main.ctrl,
-#       biols.ctrl = biols.ctrl,
-#       fleets.ctrl = fleets.ctrl,
-#       covars.ctrl = NULL,
-#       obs.ctrl = obs.ctrl,
-#       assess.ctrl = assess.ctrl,
-#       advice.ctrl = advice.ctrl)
-
 ## Compare to the single stock advice
 ss_cod <- fb_cod <- matrix(NA, ncol = 3, nrow = 5, 
                  dimnames = list(metric = c("F", "SSB", "catches", "landings", "discards"), 
-                                 year = c(2018:2020)))
-ss_cod["F",] <- c(0.612, 0, NA)
-ss_cod["SSB",] <- c(4179, 3618, 6905)
-ss_cod["catches",] <- c(2551, 0, NA)
-ss_cod["landings",] <- c(2354, 0, NA)
-ss_cod["discards",] <- c(197, 0, NA)
+                                 year = c(2019:2021)))
+ss_cod["F",] <- c(1.13, 0.477, 0)
+ss_cod["SSB",] <- c(1181, 1587, 2943)
+ss_cod["catches",] <- c(1351,0, NA)
+ss_cod["landings",] <- c(1051, 0, NA)
+ss_cod["discards",] <- c(300, 0, NA)
 
-## Need to include a discard "top-up" for cod
-
-DR <- 0.0718 
-
-cod.flbeia <- bioSum(cod, years = ac(2018:2020))
+cod.flbeia <- bioSum(cod, years = ac(2019:2021))
 
 ## cod top up
 cod.fb <- cod.flbeia %>% filter(stock == "COD")
-cod.fb$catch[cod.fb$stock== "COD"] <- cod.fb$landings[cod.fb$stock== "COD"] / (1 - DR)
-cod.fb$discards[cod.fb$stock== "COD"] <- cod.fb$catch[cod.fb$stock== "COD"] - cod.fb$landings[cod.fb$stock== "COD"]  
 
 fb_cod["F",] <- cod.fb$f
 fb_cod["SSB",] <- cod.fb$ssb
