@@ -364,9 +364,10 @@ fleets.ctrl      <- create.fleets.ctrl(fls = fls,n.fls.stks=n.flts.stks,fls.stks
                                          capital.models=capital.models, price.models=price.models,flq=flq)
 
 
-if(LO) { 
+if(LO== FALSE) { 
   for (f in names(fleets)) { 
-    fleets.ctrl[[f]]$LandObl <- c(rep(FALSE, length(data.yrs[1]:data.yrs[2])), rep(TRUE,length(first.yr.sim:last.yr.sim)) )  
+    #f = "cod.27.7e-k" 
+      fleets.ctrl[[f]]$LandObl <- c(rep(FALSE, length(data.yrs[1]:data.yrs[2])), rep(TRUE,length(first.yr.sim:last.yr.sim)) )  
     names(fleets.ctrl[[f]]$LandObl) <- c(data.yrs[1]:last.yr.sim)
     
     fleets.ctrl[[f]]$LandObl_minimis <- c(rep(FALSE, length(data.yrs[1]:last.yr.sim)) )
@@ -456,19 +457,37 @@ fleets <- FLFleetsExt(fleets)
 
 ## Set up the scenarios
 ```{r}
-sc_list <- c( "min", "cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k")#,, "max", "prev") ## name some
+sc_list <- c( "cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k")#,,"min",  "max", "prev") ## name some
 
 fleets.ctrl.list <- vector(mode = "list", length = length(sc_list))
 
-fleets.ctrl.list[["min"]] <- fleets.ctrl
+fleets.ctrl.list<- fleets.ctrl
 
 ## Non residual fleets
 flt_list <- grep("_fleet", names(fleets), value = TRUE, invert = TRUE)
 
+# for(f in flt_list) {
+#   fleets.ctrl.list[["min"]][[f]]$effort.model <- "SMFB"
+#   fleets.ctrl.list[["min"]][[f]]$effort.restr <- "max"  
+#   fleets.ctrl.list[["min"]][[f]]$restriction  <- "catch" 
+# }
+
 for(f in flt_list) {
-  fleets.ctrl.list[["min"]][[f]]$effort.model <- "SMFB"
-  fleets.ctrl.list[["min"]][[f]]$effort.restr <- "max"  
-  fleets.ctrl.list[["min"]][[f]]$restriction  <- "catch" 
+  fleets.ctrl.list[["cod.27.7e-k"]][[f]]$effort.model <- "SMFB"
+  fleets.ctrl.list[["cod.27.7e-k"]][[f]]$effort.restr <- "cod.27.7e-k"  
+  fleets.ctrl.list[["cod.27.7e-k"]][[f]]$restriction  <- "catch" 
+}
+
+
+for(f in flt_list) {
+  fleets.ctrl.list[["had.27.7b-k"]][[f]]$effort.model <- "SMFB"
+  fleets.ctrl.list[["had.27.7b-k"]][[f]]$effort.restr <- "had.27.7b-k"  
+  fleets.ctrl.list[["had.27.7b-k"]][[f]]$restriction  <- "catch" 
+}
+for(f in flt_list) {
+  fleets.ctrl.list[["whg.27.7b-ce-k"]][[f]]$effort.model <- "SMFB"
+  fleets.ctrl.list[["whg.27.7b-ce-k"]][[f]]$effort.restr <- "whg.27.7b-ce-k"  
+  fleets.ctrl.list[["whg.27.7b-ce-k"]][[f]]$restriction  <- "catch" 
 }
 
 ```
@@ -489,7 +508,9 @@ library(doParallel)
 registerDoParallel(cores = parallel::detectCores()-1)
 
 runs <- foreach(i = sc_list, .export = ls(.GlobalEnv)) %dopar% {
-  cod  <- FLBEIA(biols = biols, 
+  #i = fleets.ctrl.list$`cod.27.7e-k`
+  library(FLBEIA)
+  runs  <- FLBEIA(biols = biols, 
               SRs = SRs,
               BDs = NULL,
               fleets = fleets,
@@ -526,7 +547,7 @@ ss_cod["discards",] <- c(300, 0, NA,NA)
 # units(cod$biols[["cod.27.7e-k"]]@wt) <- "kg"
 # units(cod$biols[["cod.27.7e-k"]]@n) <- "thousands"
 
-cod.flbeia <- bioSum(runs$min , long = TRUE,years = ac(2019:2022))
+cod.flbeia <- bioSum(runs , long = TRUE,years = ac(2019:2022))
 
 ## cod top up
 cod.fb <- cod.flbeia %>% filter(stock == "cod.27.7e-k")
