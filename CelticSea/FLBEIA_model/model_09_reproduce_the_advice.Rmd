@@ -454,6 +454,78 @@ fleets <- FLFleetsExt(fleets)
 
 ```
 
+## COD reproduce the advice
+
+```{r}
+sc_list <- c( "cod.27.7e-k")### name some
+
+fleets.ctrl.list <- vector(mode = "list", length = length(sc_list))
+
+fleets.ctrl.list<- fleets.ctrl
+
+## Non residual fleets
+flt_list <- grep("_fleet", names(fleets), value = TRUE, invert = TRUE)
+
+for(f in flt_list) {
+   fleets.ctrl.list[["cod.27.7e-k"]][[f]]$effort.model <- "SMFB"
+   fleets.ctrl.list[["cod.27.7e-k"]][[f]]$effort.restr <- "cod.27.7e-k"  
+   fleets.ctrl.list[["cod.27.7e-k"]][[f]]$restriction  <- "catch" 
+}
+
+
+for(fl in names(fleets)) { fleets[[fl]]@capacity[] <- 1e12} # ensure not cap limited
+
+
+cod.biols <- FLBiols(biols$`cod.27.7e-k`)
+cod.biols <- biols$`cod.27.7e-k`
+
+runs  <- FLBEIA(biols = cod.biols, 
+              SRs = SRs$`cod.27.7e-k`,
+              BDs = NULL,
+              fleets = FLFleet(fleets$`cod.27.7e-k`,
+              indices = NULL,
+              advice = advice,
+              covars = NULL,
+              main.ctrl = main.ctrl,
+              biols.ctrl = biols.ctrl$`cod.27.7e-k`,
+              fleets.ctrl = fleets.ctrl.list , #[[i]]
+              covars.ctrl = NULL,
+              obs.ctrl = obs.ctrl,
+              assess.ctrl = assess.ctrl,
+              advice.ctrl = advice.ctrl)
+  
+
+
+
+
+stopImplicitCluster()
+
+names(runs) <- sc_list
+
+
+## Compare to the single stock advice
+ss_cod <- fb_cod <- matrix(NA, ncol = 4, nrow = 5, 
+                 dimnames = list(metric = c("F", "SSB", "catches", "landings", "discards"), 
+                                 year = c(2019:2022)))
+ss_cod["F",] <- c(1.13, 0.477, 0,NA)
+ss_cod["SSB",] <- c(1181, 1587, 2943,6078)
+ss_cod["catches",] <- c(1351,1055, NA,NA)
+ss_cod["landings",] <- c(1051, 0, NA,NA)
+ss_cod["discards",] <- c(300, 0, NA,NA)
+
+# units(cod$biols[["cod.27.7e-k"]]@wt) <- "kg"
+# units(cod$biols[["cod.27.7e-k"]]@n) <- "thousands"
+
+cod.flbeia <- bioSum(runs , long = TRUE,years = ac(2019:2022))
+
+## cod top up
+cod.fb <- cod.flbeia %>% filter(stock == "cod.27.7e-k")
+fb_cod <- data.frame("F" = cod.fb$value[cod.fb$indicator == "f"],"SSB" = cod.fb$value[cod.fb$indicator == "ssb"], "catches" = cod.fb$value[cod.fb$indicator == "catch"], "landings" = cod.fb$value[cod.fb$indicator == "landings"], "discards"= cod.fb$value[cod.fb$indicator == "discards"]) %>% t() 
+colnames(fb_cod) <- c(first.yr.sim-1, first.yr.sim:last.yr.sim)
+
+
+```
+
 
 ## Set up the scenarios
 ```{r}
@@ -508,7 +580,7 @@ library(doParallel)
 registerDoParallel(cores = parallel::detectCores()-1)
 
 runs <- foreach(i = sc_list, .export = ls(.GlobalEnv)) %dopar% {
-  #i = fleets.ctrl.list$`cod.27.7e-k`
+  #i = 1
   library(FLBEIA)
   runs  <- FLBEIA(biols = biols, 
               SRs = SRs,
@@ -519,7 +591,7 @@ runs <- foreach(i = sc_list, .export = ls(.GlobalEnv)) %dopar% {
               covars = NULL,
               main.ctrl = main.ctrl,
               biols.ctrl = biols.ctrl,
-              fleets.ctrl = fleets.ctrl.list[[i]] , 
+              fleets.ctrl = fleets.ctrl.list , #[[i]]
               covars.ctrl = NULL,
               obs.ctrl = obs.ctrl,
               assess.ctrl = assess.ctrl,
