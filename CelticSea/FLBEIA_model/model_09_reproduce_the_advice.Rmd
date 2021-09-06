@@ -41,8 +41,8 @@ source(file.path("bootstrap", "software", "functions", "FLStock_to_FLFleet.R"))
 biols <- make_FLBiols(stock_path)
 fleets   <- make_simple_FLFleet(stock_path) 
 ## Remove the stocks not in model
-stock.list <- c("cod.27.7e-k",  "had.27.7b-k","whg.27.7b-ce-k", "hke.27.3a46-8abd", "meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg",  "nep.fu.16","nep.fu.17", "nep.fu.19", "nep.fu.2021",
- 		 "nep.fu.22", "nep.out.7" )
+stock.list <- c("cod.27.7e-k",  "had.27.7b-k","whg.27.7b-ce-k", "hke.27.3a46-8abd", "meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg")
+#,  "nep.fu.16","nep.fu.17", "nep.fu.19", "nep.fu.2021", 		 "nep.fu.22", "nep.out.7" )
 
 biols <- biols[names(biols) %in% stock.list]
 fleets <- fleets[names(fleets) %in% stock.list]
@@ -208,11 +208,30 @@ MEG.sr@params[] <- 223393
 SOL.sr <- FLSRsim(rec = biols[["sol.27.7fg"]]@n[1,], ssb = ssb(biols[["sol.27.7fg"]]),
                   uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "sol.27.7fg")
  SOL.sr@params[] <- 5187
+      
 
-range(SOL.sr)[4] <- 1980 
-range(SOL.sr)[5] <- 2022
-
-SRs <- list(`cod.27.7e-k` = COD.sr, `had.27.7b-k` = HAD.sr, `whg.27.7b-ce-k` = WHG.sr,`hke.27.3a46-8abd` = HKE.sr  , `meg.27.7b-k8abd` = MEG.sr, `mon.27.78abd` = MON.sr, `sol.27.7fg` = SOL.sr  ) #  
+# NEP.16.sr <- FLSRsim(rec = biols[["nep.fu.16" ]]@n[1,], ssb = ssb(biols[["nep.fu.16" ]]),     uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "nep.fu.16" )
+# NEP.16.sr@params[] <- 1000000
+# 
+# NEP.17.sr <- FLSRsim(rec = biols[["nep.fu.17" ]]@n[1,], ssb = ssb(biols[["nep.fu.17" ]]),     uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "nep.fu.17" )
+# NEP.17.sr@params[] <- 1000000
+# 
+# NEP.19.sr <- FLSRsim(rec = biols[["nep.fu.19" ]]@n[1,], ssb = ssb(biols[["nep.fu.19" ]]),     uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "nep.fu.19" )
+# NEP.19.sr@params[] <- 1000000
+# 
+# NEP.2021.sr <- FLSRsim(rec = biols[["nep.fu.2021"  ]]@n[1,], ssb = ssb(biols[["nep.fu.2021"  ]]),     uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "nep.fu.2021"  )
+# NEP.2021.sr@params[] <- 1000000
+# 
+# NEP.22.sr <- FLSRsim(rec = biols[["nep.fu.22"  ]]@n[1,], ssb = ssb(biols[["nep.fu.22" ]]),     uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "nep.fu.22"  )
+# NEP.22.sr@params[] <- 1000000
+# 
+# NEP.OUT.7.sr <- FLSRsim(rec = biols[["nep.out.7" ]]@n[1,], ssb = ssb(biols[["nep.out.7" ]]),     uncertainty = flq_dims, proportion = flq_dims, model = 'geomean', name = "nep.out.7" )
+# NEP.OUT.7.sr@params[] <- 1000000
+# 
+SRs <- list(`cod.27.7e-k` = COD.sr, `had.27.7b-k` = HAD.sr, `whg.27.7b-ce-k` = WHG.sr,`hke.27.3a46-8abd` = HKE.sr  , `meg.27.7b-k8abd` = MEG.sr, `mon.27.78abd` = MON.sr, `sol.27.7fg` = SOL.sr )
+            
+            #, `nep.fu.16` = NEP.16.sr, `nep.fu.17` = NEP.17.sr,  `nep.fu.19`= NEP.19.sr, `nep.fu.19`= NEP.19.sr, `nep.fu.2021`= NEP.2021.sr, `nep.fu.22`= NEP.22.sr, `nep.out.7`= NEP.OUT.7.sr)
+#  
 range(SRs[[1]])[4] <- 1980
 range(SRs[[1]])[5] <- 2022
 ```
@@ -225,11 +244,12 @@ Here we fix the type of growth model for each stock. Normally this would be ASPG
 ```{r biols_ctrl}
 Baranov          <- rep(FALSE,length(stock.list) )
 
-growth.model     <- ifelse(!Baranov, c(`cod.27.7e-k`='ASPG', `had.27.7b-k`='ASPG', `whg.27.7b-ce-k`='ASPG', `hke.27.3a46-8abd` ='ASPG', `meg.27.7b-k8abd`='ASPG', `mon.27.78abd`='ASPG', `sol.27.7fg`='ASPG'), 
-                           
-                           c(`cod.27.7e-k` = "ASPG_Baranov", `had.27.7b-k` = "ASPG_Baranov", `whg.27.7b-ce-k` = "ASPG_Baranov", `hke.27.3a46-8abd` = "ASPG_Baranov",`meg.27.7b-k8abd` = "ASPG_Baranov",  `meg.27.7b-k8abd` = "ASPG_Baranov", `mon.27.78abd` = "ASPG_Baranov", `sol.27.7fg` = "ASPG_Baranov")) ; names(growth.model) <- 
-  
+growth.model     <- ifelse(!Baranov, c(`cod.27.7e-k`='ASPG', `had.27.7b-k`='ASPG', `whg.27.7b-ce-k`='ASPG', `hke.27.3a46-8abd` ='ASPG', `meg.27.7b-k8abd`='ASPG', `mon.27.78abd`='ASPG', `sol.27.7fg`='ASPG'),   c(`cod.27.7e-k` = "ASPG_Baranov", `had.27.7b-k` = "ASPG_Baranov", `whg.27.7b-ce-k` = "ASPG_Baranov", `hke.27.3a46-8abd` = "ASPG_Baranov",`meg.27.7b-k8abd` = "ASPG_Baranov",  `meg.27.7b-k8abd` = "ASPG_Baranov", `mon.27.78abd` = "ASPG_Baranov", `sol.27.7fg` = "ASPG_Baranov")) ; names(growth.model) <- 
   c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k", "hke.27.3a46-8abd", "meg.27.7b-k8abd", "mon.27.78abd", "sol.27.7fg")
+
+#, `nep.fu.16` = "fixedPopulation" , `nep.fu.17` = "fixedPopulation" , `nep.fu.19` = "fixedPopulation" , `nep.fu.2021` = "fixedPopulation" , `nep.fu.22` = "fixedPopulation" , `nep.out.7` =  "fixedPopulation"
+#, `nep.fu.16` = "fixedPopulation" , `nep.fu.17` = "fixedPopulation" , `nep.fu.19` = "fixedPopulation" , `nep.fu.2021` = "fixedPopulation" , `nep.fu.22` = "fixedPopulation" , `nep.out.7` =  "fixedPopulation"
+#, "nep.fu.16" , "nep.fu.17", "nep.fu.19" , "nep.fu.2021" ,"nep.fu.22" , "nep.out.7" 
 
 growth.model <- growth.model[sort(names(growth.model))]
 biols.ctrl   <- create.biols.ctrl(stksnames=stks,growth.models=growth.model)
@@ -269,7 +289,6 @@ for (i in stock.list){
   advice.ctrl[[i]]$AdvCatch<- TRUE 
   }
   
-# advice.ctrl$`meg.27.7b-k8abd`$AdvCatch<- TRUE 
 ```
 
 ## ~ TAC advice
@@ -293,6 +312,13 @@ advice$TAC['hke.27.3a46-8abd', ac(2020:2022)] <- c(112903, rep(98657, 2))
 advice$TAC['meg.27.7b-k8abd', ac(2020:2022)] <- c(20526, rep(19184, 2))
 advice$TAC['mon.27.78abd', ac(2020:2022)] <- c(44307, rep(34579, 2))
 advice$TAC['sol.27.7fg', ac(2020:2022)] <- c(1652, rep(1413, 2))
+
+# advice$TAC['nep.fu.16', ac(2020:2022)] <- c(2637, rep(3290, 2))
+# advice$TAC['nep.fu.17', ac(2020:2022)] <- c(800, rep(508, 2))
+# advice$TAC['nep.fu.19', ac(2020:2022)] <- c(839, rep(595, 2))
+# advice$TAC['nep.fu.2021', ac(2020:2022)] <- c(1150, rep(1710, 2))
+# advice$TAC['nep.fu.22', ac(2020:2022)] <- c(2820, rep(1560, 2))
+# advice$TAC['nep.out.7', ac(2020:2022)] <- c(188, rep(150, 2)) # NEP values taken from predicted catch 
 
 kable(reshape2::dcast(as.data.frame(advice$TAC[,ac(2020:2022)]), stocks ~ year, value.var = "data"), caption = "TAC advice in intermediate and TAC year")
 
@@ -350,7 +376,7 @@ restriction  <- rep("catch",n.fls) ; names(restriction) <-fls
 ## Can change for each fleet/stock
 c.mod<-stack(lapply(fleets,catchNames))
 c.mod$catch.mod<-sapply(c.mod$values,function(x) {
-  if(x %in% c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k","hke.27.3a46-8abd", "meg.27.7b-k8abd", "mon.27.78abd",  "sol.27.7fg" )) return("CobbDouglasAge") else
+  if(x %in% c("cod.27.7e-k", "had.27.7b-k", "whg.27.7b-ce-k","hke.27.3a46-8abd", "meg.27.7b-k8abd", "mon.27.78abd",  "sol.27.7fg", "nep.fu.16" , "nep.fu.17","nep.fu.19" , "nep.fu.2021" , "nep.fu.22","nep.out.7")) return("CobbDouglasAge") else
   return("CobbDouglasBio")
 })
 catch.models     <- c.mod$catch.mod ; names(catch.models)<-paste(c.mod$ind,c.mod$values,sep=".")
@@ -468,6 +494,12 @@ fleets.ctrl.hke <- fleets.ctrl
 fleets.ctrl.meg <- fleets.ctrl
 fleets.ctrl.mon <- fleets.ctrl
 fleets.ctrl.sol <- fleets.ctrl
+# fleets.ctrl.nep16 <- fleets.ctrl
+# fleets.ctrl.nep17<- fleets.ctrl
+# fleets.ctrl.nep19 <- fleets.ctrl
+# fleets.ctrl.nep2021 <- fleets.ctrl
+# fleets.ctrl.nep22 <- fleets.ctrl
+# fleets.ctrl.nepout7 <- fleets.ctrl
 
 for (fl in names(fleets)) {
     fleets.ctrl.cod[[fl]][["effort.restr"]] <- "cod.27.7e-k"
@@ -492,19 +524,38 @@ for (fl in names(fleets)) {
 for (fl in names(fleets)) {
     fleets.ctrl.sol[[fl]][["effort.restr"]] <- "sol.27.7fg"
 }
+# for (fl in names(fleets)) {
+#     fleets.ctrl.nep16[[fl]][["effort.restr"]] <- "nep.fu.16"
+# }
+# 
+# for (fl in names(fleets)) {
+#     fleets.ctrl.nep17[[fl]][["effort.restr"]] <- "nep.fu.17" 
+# }
+# 
+# for (fl in names(fleets)) {
+#     fleets.ctrl.nep19[[fl]][["effort.restr"]] <- "nep.fu.19" 
+# }
+# 
+# for (fl in names(fleets)) {
+#     fleets.ctrl.nep2021[[fl]][["effort.restr"]] <- "nep.fu.2021"
+# }
+# 
+# for (fl in names(fleets)) {
+#     fleets.ctrl.nep22[[fl]][["effort.restr"]] <- "nep.fu.22" 
+# }
+# 
+# for (fl in names(fleets)) {
+#     fleets.ctrl.nepout7[[fl]][["effort.restr"]] <- "nep.out.7"   
+# }
 
 for(fl in names(fleets)) { fleets[[fl]]@capacity[] <- 1e12} # ensure not cap limited
+
+# Fix to resolve some missing NA's
 fleets$`had.27.7b-k`@metiers$`had.27.7b-k`@catches$`had.27.7b-k`@catch.q[1] <- 1e-12
 
-# fleets$`meg.27.7b-k8abd`@metiers$`meg.27.7b-k8abd`@catches$`meg.27.7b-k8abd`@discards.sel[9:10] <- 1e-12
-#fleets$`had.27.7b-k`@metiers$`had.27.7b-k`@catches$`had.27.7b-k`@catch.q[8,4] <- 1e-12
-# fleets$`meg.27.7b-k8abd`@metiers$`meg.27.7b-k8abd`@catches$`meg.27.7b-k8abd`@catch.q[,1:4] <- mean(fleets$`meg.27.7b-k8abd`@metiers$`meg.27.7b-k8abd`@catches$`meg.27.7b-k8abd`@catch.q[,5])
-# fleets$`meg.27.7b-k8abd`@effort[,1:4] <- 1
-# fleets$`meg.27.7b-k8abd`@metiers$`meg.27.7b-k8abd`@effshare[,1:4] <- 1
 ```
 
 ## Reproduce the advice 
-
 ## ~ COD
 ```{r}
   runs  <- FLBEIA(biols = biols, 
@@ -827,7 +878,7 @@ round(fb_mon / ss_mon, 3) %>%
 ```
 
 ## ~ NEP FU16
-```{r}
+```{r, include = FALSE}
 ## We do a forecast with the catch from the single stock advice
 #advice.cod <- advice
 
@@ -880,7 +931,7 @@ round(fb_sol / ss_sol, 3) %>%
 ```
 
 ## ~ NEP FU17
-```{r}
+```{r, include = FALSE}
 ## We do a forecast with the catch from the single stock advice
 #advice.cod <- advice
 
@@ -933,7 +984,7 @@ round(fb_sol / ss_sol, 3) %>%
 ```
 
 ## ~ NEP FU19
-```{r}
+```{r,include = FALSE}
 ## We do a forecast with the catch from the single stock advice
 #advice.cod <- advice
 
@@ -986,7 +1037,7 @@ round(fb_sol / ss_sol, 3) %>%
 ```
 
 ## ~ NEP FU2021
-```{r}
+```{r, include = FALSE}
 ## We do a forecast with the catch from the single stock advice
 #advice.cod <- advice
 
@@ -1039,7 +1090,7 @@ round(fb_sol / ss_sol, 3) %>%
 ```
 
 ## ~ NEP FU22
-```{r}
+```{r, include = FALSE}
 ## We do a forecast with the catch from the single stock advice
 #advice.cod <- advice
 
@@ -1092,7 +1143,7 @@ round(fb_sol / ss_sol, 3) %>%
 ```
 
 ## ~ NEP 7 OUTFU
-```{r}
+```{r, include = FALSE}
 ## We do a forecast with the catch from the single stock advice
 #advice.cod <- advice
 
