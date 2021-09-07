@@ -500,10 +500,10 @@ ef_mod$Metier <- stringi::stri_replace(ef_mod$Metier,regex = "7.b|7.c",replaceme
 ef_mod$Metier <- stringi::stri_replace(ef_mod$Metier,regex = "7.h|7.j|7.k",replacement = "7.hjk")
 unique(ef_mod$Metier)
 
-fleet_data_model$Metier <- stringi::stri_replace(fleet_data_model$Metier,regex = "7.g|7.f",replacement = "7.fg")
-fleet_data_model$Metier <- stringi::stri_replace(fleet_data_model$Metier,regex = "7.b|7.c",replacement = "7.bc")
-fleet_data_model$Metier <- stringi::stri_replace(fleet_data_model$Metier,regex = "7.h|7.j|7.k",replacement = "7.hjk")
-unique(fleet_data_model$Metier)
+ca_mod$Metier <- stringi::stri_replace(ca_mod$Metier,regex = "7.g|7.f",replacement = "7.fg")
+ca_mod$Metier <- stringi::stri_replace(ca_mod$Metier,regex = "7.b|7.c",replacement = "7.bc")
+ca_mod$Metier <- stringi::stri_replace(ca_mod$Metier,regex = "7.h|7.j|7.k",replacement = "7.hjk")
+unique(ca_mod$Metier)
 
 ## Effort
 ef_mod <- ef_mod %>% group_by(Fleet, Metier, Year, .drop = FALSE) %>% summarise(kw_days = sum(kw_days)) %>%
