@@ -60,9 +60,9 @@ ggsave(file.path("figures", "Intermediate_year_diag.png"), width = 8, height = 6
 #### Run the scenarios to produce the advice.   ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 #main.ctrl$sim.years[] <- c(2021,2022) 
-main.ctrl$sim.years <- 2020:2022 
+main.ctrl$sim.years <- 2021:2022 
 ## why this??
-#for(st in names(biols)) biols[[st]]@n[1, '2022'] <-  biols[[st]]@n[1, '2021'] 
+for(st in names(biols)) biols[[st]]@n[1, '2022'] <-  biols[[st]]@n[1, '2021'] 
 
 ##########################
 ## Define scenarios
