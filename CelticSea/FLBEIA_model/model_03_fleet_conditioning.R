@@ -176,35 +176,6 @@ fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets
 }
 
 
-fleets[[1]][[1]][[1]]@discards.wt
-wg.stocks[["cod.27.7e-k"]]@discards.wt
-
-Fl <- "BE_Beam_10<24m"
-Mt <- "Other_Metier"
-st <- "had.27.7b-k"
-fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
-
-st <- "cod.27.7e-k"
-fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
-
-apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
-
-lapply(fleets[[Fl]]@metiers[["TBB_DEF_27.7.e"]]@catches, function(x) x@catch.q)
-lapply(fleets[["IE_Otter_10<24m"]]@metiers[["OTB_DEF_27.7.g"]]@catches, function(x) x@catch.q)
-
-lapply(fleets[["UKE_Other_<10m"]]@metiers[[2]]@catches, function(x) x@catch.q)
-
-
-Fl <- "IE_Otter_10<24m"
-Mt <- "OTB_DEF_27.7.g"
-
-fleets[[Fl]]@metiers[[Mt]]@catches[[st]]@beta
-apply(biols[[st]]@n * biols[[st]]@wt,2,sum)
-
-
-fleets[["BE_Beam_24<40m"]]@metiers[[2]]@catches[["nep.out.7"]]@discards.wt
-
-
 sapply(fleets, checkFleets)
 validObject(fleets)
 
