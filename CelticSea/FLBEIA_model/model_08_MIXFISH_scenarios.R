@@ -45,22 +45,12 @@ advice <- hist$advice
 for(st in names(SRs)) SRs[[st]]@ssb[,ac(2019:2021)] <- ssb(biols[[st]])[,ac(2019:2021)]
 
 
-out <- bioSum(hist)
-
-theme_set(theme_bw())
-ggplot(filter(out, year <2021),aes(x=year, y = f)) + 
-  geom_point(colour = rep(c(rep("grey",8), rep("black",3), "red"), each = length(biols))) + geom_line() + 
-  facet_wrap(~stock, scale = "free_y") + expand_limits(y = 0) + 
-  geom_vline(xintercept =  2017, colour = "grey") +  geom_vline(xintercept =  2019, colour = "grey")
-ggsave(file.path("figures", "Intermediate_year_diag.png"), width = 8, height = 6)
-
-
 
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
 #### Run the scenarios to produce the advice.   ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
-#main.ctrl$sim.years[] <- c(2021,2022) 
-main.ctrl$sim.years <- 2021:2022 
+main.ctrl$sim.years[] <- c(2021,2022) 
+
 ## why this??
 for(st in names(biols)) biols[[st]]@n[1, '2022'] <-  biols[[st]]@n[1, '2021'] 
 
@@ -144,19 +134,6 @@ runs <- foreach(i = sc_list, .export = ls(.GlobalEnv)) %dopar% {
 stopImplicitCluster()
 
 names(runs) <- sc_list
-
-## Summarise the results
-
-
-out <- bioSum(res)
-
-theme_set(theme_bw())
-ggplot(out,aes(x=year, y = f)) + 
-  geom_point() + geom_line() + 
-  facet_wrap(~stock, scale = "free_y") + expand_limits(y = 0) + 
-  geom_vline(xintercept =  2017, colour = "grey") +  geom_vline(xintercept =  2019, colour = "grey")
-
-filter(out, year == 2020, stock == "cod.27.7e-k")
 
 
 ## Save the outputs
