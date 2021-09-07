@@ -106,8 +106,6 @@ for(f in flt_list) {
   fleets.ctrl.list[["min"]][[f]]$restriction  <- "catch"
 }
 
-advice$TAC["cod.27.7e-k","2020"] <- 1055 ## catch advice
-
 ##########################################
 ## 
 ## Run scenarios in parallel
