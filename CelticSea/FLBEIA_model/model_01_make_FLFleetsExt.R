@@ -489,6 +489,8 @@ ef_mod$Metier <- ifelse(paste0(ef_mod$Fleet, ef_mod$Metier) %in% paste0(mt_keep$
 
 fleet_data_model$Metier <- ifelse(paste0(fleet_data_model$Fleet, fleet_data_model$Metier) %in% paste0(mt_keep$Fleet, mt_keep$Metier), fleet_data_model$Metier, "Other_Metier")
 
+ca_mod <- fleet_data_model
+
 ## Now aggregate the data
 ## So i think we can triage the metiers here
 ## too many metiers aint nobody got time for that 
@@ -508,7 +510,7 @@ ef_mod <- ef_mod %>% group_by(Fleet, Metier, Year, .drop = FALSE) %>% summarise(
 	arrange(Fleet, Metier, Year)
 
 ## Catch
-ca_mod <- fleet_data_model %>% group_by(Fleet, Metier, Year, Stock, Age, .drop = FALSE) %>%
+ca_mod <- ca_mod %>% group_by(Fleet, Metier, Year, Stock, Age, .drop = FALSE) %>%
 	summarise(landingsN = sum(landings.n, na.rm = TRUE), landings.wt = weighted.mean(x = landings.wt, w = landings.n,na.rm = TRUE), discardsN = sum(discards.n, na.rm = TRUE), discards.wt = weighted.mean(x = discards.wt, w = discards.n, na.rm = TRUE),  price = weighted.mean(x = price, w = landings.n, na.rm = TRUE))
 
 
