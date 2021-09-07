@@ -507,7 +507,7 @@ for (fl in names(fleets)) {
 }
 
 for (fl in names(fleets)) {
-    fleets.ctrl.cod[[fl]][["effort.restr"]] <- "fixedEffort"
+    fleets.ctrl.cod.int[[fl]][["effort.model"]] <- "fixedEffort"
 }
 
 for (fl in names(fleets)) {
