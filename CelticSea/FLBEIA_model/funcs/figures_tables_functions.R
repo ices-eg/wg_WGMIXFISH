@@ -112,7 +112,7 @@ underOverPlot <- function(inclYear  = NULL,
   ## calculate catch matrix
   sa_catch <- sa %>%
     select(stock, scenario, value) %>%
-    spread(scenario, value) %>%
+    tidyr::spread(scenario, value) %>%
     arrange(stock) %>%
     column_to_rownames("stock") %>%
     as.matrix()
@@ -120,7 +120,7 @@ underOverPlot <- function(inclYear  = NULL,
   ## calculate overshoot matrix
   sa_overshoot <- sa %>% 
     select(stock, scenario, overshoot) %>%
-    spread(scenario, overshoot) %>%
+    tidyr::spread(scenario, overshoot) %>%
     arrange(stock) %>%
     column_to_rownames("stock") %>%
     as.matrix()
@@ -128,7 +128,7 @@ underOverPlot <- function(inclYear  = NULL,
   ## calculate undershoot matrix
   sa_undershoot <- sa %>%
     select(stock, scenario, undershoot) %>%
-    spread(scenario, undershoot) %>%
+    tidyr::spread(scenario, undershoot) %>%
     arrange(stock) %>%
     column_to_rownames("stock") %>%
     as.matrix()
@@ -279,7 +279,7 @@ ggunderOverPlot <- function(inclYear  = NULL,
     group_by(stock, tac) %>%
     summarise() %>%
     ungroup() %>%
-    mutate(stockLab = 1:n())
+    mutate(stockLab = 1:dplyr::n())
   
   ## duplicate for each facet
   lineLabels <- bind_rows(lapply(1:length(inclScen), function(x){
@@ -739,7 +739,7 @@ tableSSB <- function(ay,
                stock    %in% inclStock,
                scenario %in% inclScen) %>%
         select(scenario, stock, ssb) %>%
-        spread(scenario, ssb) %>%
+        tidyr::spread(scenario, ssb) %>%
     left_join(ssaObjBaseline, by = "stock")
   
   ## Re-order sequence of columns
@@ -812,7 +812,7 @@ tableCatch <- function(ay,
              stock    %in% inclStock,
              scenario %in% inclScen) %>%
       select(scenario, stock, catch) %>%
-      spread(scenario, catch) %>%
+      tidyr::spread(scenario, catch) %>%
     left_join(ssaObjBaseline, by = "stock")
   
   ## Re-order sequence of columns
@@ -884,7 +884,7 @@ tableFbar <- function(ay,
              stock    %in% inclStock,
              scenario %in% inclScen) %>%
       select(scenario, stock, f) %>%
-      spread(scenario, f) %>%
+      tidyr::spread(scenario, f) %>%
     left_join(ssaObjBaseline, by = "stock")
   
   ## Re-order sequence of columns
@@ -965,7 +965,7 @@ tableRelCatch <- function(ay,
     left_join(ssaObjBaseline, by = "stock") %>%
       mutate(catchRel = catch/catchSSA) %>%
       select(scenario, stock, catchRel) %>%
-      spread(scenario, catchRel)
+      tidyr::spread(scenario, catchRel)
   
   ## Re-order sequence of columns
   resObjTable <- resObjTable[,c("stock",

@@ -59,10 +59,10 @@ ggsave(file.path("figures", "Intermediate_year_diag.png"), width = 8, height = 6
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
 #### Run the scenarios to produce the advice.   ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
-main.ctrl$sim.years[] <- c(2021,2022) 
-
+#main.ctrl$sim.years[] <- c(2021,2022) 
+main.ctrl$sim.years <- 2020:2022 
 ## why this??
-for(st in names(biols)) biols[[st]]@n[1, '2022'] <-  biols[[st]]@n[1, '2021'] 
+#for(st in names(biols)) biols[[st]]@n[1, '2022'] <-  biols[[st]]@n[1, '2021'] 
 
 ##########################
 ## Define scenarios
@@ -99,6 +99,14 @@ fleets.ctrl.list[["had.27.7b-k"]] <- fleets.ctrl.list[["min"]]
 for(f in flt_list) {
   fleets.ctrl.list[["had.27.7b-k"]][[f]]$effort.restr <- "had.27.7b-k"
 }
+
+fleets.ctrl.list[["cod.27.7e-k"]] <- fleets.ctrl.list[["min"]]
+for(f in flt_list) {
+  fleets.ctrl.list[["cod.27.7e-k"]][[f]]$effort.restr <- "cod.27.7e-k"
+  fleets.ctrl.list[["min"]][[f]]$restriction  <- "catch"
+}
+
+advice$TAC["cod.27.7e-k","2020"] <- 1055 ## catch advice
 
 ##########################################
 ## 
@@ -140,6 +148,17 @@ stopImplicitCluster()
 names(runs) <- sc_list
 
 ## Summarise the results
+
+
+out <- bioSum(res)
+
+theme_set(theme_bw())
+ggplot(out,aes(x=year, y = f)) + 
+  geom_point() + geom_line() + 
+  facet_wrap(~stock, scale = "free_y") + expand_limits(y = 0) + 
+  geom_vline(xintercept =  2017, colour = "grey") +  geom_vline(xintercept =  2019, colour = "grey")
+
+filter(out, year == 2020, stock == "cod.27.7e-k")
 
 
 ## Save the outputs
