@@ -75,12 +75,12 @@ TACs <- matrix(NA, nrow = length(biols) - length(nep7) + 1,
 			       sim_yrs)
 	       )
 
-TACs["cod.27.7e-k",]     <- c(805, rep(0,2))
-TACs["had.27.7b-k",]     <- c(10859,  rep(18382,2))
-TACs["whg.27.7b-ce-k",]  <- c(10863-3101, rep(5261,2))
-TACs["mon.27.78abd",]    <- c(35299*0.78 + 9008*0.45, rep(34579,2))
-TACs["meg.27.7b-k8abd",] <- c(18732 * 0.948 + 1794 * 0.948, rep(19184,2)) 
-TACs["sol.27.7fg",]      <- c(1652,rep(1308,2))
+TACs['cod.27.7e-k', ac(2020:2022)] <- c(1055, rep(0, 2)) #advice, and not TAC!
+TACs['had.27.7b-k', ac(2020:2022)] <- c(20274, rep(18382, 2))
+TACs['whg.27.7b-ce-k', ac(2020:2022)] <- c(8772, rep(5261, 2))
+TACs['meg.27.7b-k8abd', ac(2020:2022)] <- c(20350, rep(19184, 2))
+TACs['mon.27.78abd', ac(2020:2022)] <- c(24343, rep(34579, 2))
+TACs['sol.27.7fg', ac(2020:2022)] <- c(1652, rep(1413, 2))
 TACs["nep7",]            <- c(16815 * 0.48, rep(20557,2) * 0.48)
 
 ###################

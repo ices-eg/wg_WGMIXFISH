@@ -303,14 +303,14 @@ advice <- list(TAC = FLQuant(NA, dimnames = list(stocks = stks, year = data.yrs[
                          dimnames = list(fleets = names(fleets), year = data.yrs[1]:last.yr.sim))
                }))
 
-## TACs for intermediate and ICES advice for advice year 
+## Catch from Table 2 in for intermediate and ICES headline advice for advice year 
  
 advice$TAC['cod.27.7e-k', ac(2020:2022)] <- c(1055, rep(0, 2)) #lan 805 + 250
-advice$TAC['had.27.7b-k', ac(2020:2022)] <- c(10859, rep(18382, 2))
-advice$TAC['whg.27.7b-ce-k', ac(2020:2022)] <- c(10863, rep(5261, 2))
-advice$TAC['hke.27.3a46-8abd', ac(2020:2022)] <- c(112903, rep(98657, 2))
-advice$TAC['meg.27.7b-k8abd', ac(2020:2022)] <- c(20526, rep(19184, 2))
-advice$TAC['mon.27.78abd', ac(2020:2022)] <- c(44307, rep(34579, 2))
+advice$TAC['had.27.7b-k', ac(2020:2022)] <- c(20274, rep(18382, 2))
+advice$TAC['whg.27.7b-ce-k', ac(2020:2022)] <- c(8772, rep(5261, 2))
+advice$TAC['hke.27.3a46-8abd', ac(2020:2022)] <- c(103027, rep(98657, 2))
+advice$TAC['meg.27.7b-k8abd', ac(2020:2022)] <- c(20350, rep(19184, 2))
+advice$TAC['mon.27.78abd', ac(2020:2022)] <- c(24343, rep(34579, 2))
 advice$TAC['sol.27.7fg', ac(2020:2022)] <- c(1652, rep(1413, 2))
 
 # advice$TAC['nep.fu.16', ac(2020:2022)] <- c(2637, rep(3290, 2))
@@ -488,6 +488,7 @@ fleets <- FLFleetsExt(fleets)
 ## All others are already set to SMFB effort.model, so we just need to modify the
 ## option
 fleets.ctrl.cod <- fleets.ctrl
+fleets.ctrl.cod.int <- fleets.ctrl
 fleets.ctrl.had <- fleets.ctrl
 fleets.ctrl.whg <- fleets.ctrl
 fleets.ctrl.hke <- fleets.ctrl
@@ -504,6 +505,11 @@ fleets.ctrl.sol <- fleets.ctrl
 for (fl in names(fleets)) {
     fleets.ctrl.cod[[fl]][["effort.restr"]] <- "cod.27.7e-k"
 }
+
+for (fl in names(fleets)) {
+    fleets.ctrl.cod.int[[fl]][["effort.model"]] <- "fixedEffort"
+}
+
 for (fl in names(fleets)) {
     fleets.ctrl.had[[fl]][["effort.restr"]] <- "had.27.7b-k"
 }
@@ -574,7 +580,60 @@ fleets$`had.27.7b-k`@metiers$`had.27.7b-k`@catches$`had.27.7b-k`@catch.q[1] <- 1
               advice.ctrl = advice.ctrl)
 
 ## Compare to the single stock advice
-ss_cod <- fb_cod <- matrix(NA, ncol = 4, nrow = 5, 
+ss_cod <- matrix(NA, ncol = 4, nrow = 5, 
+                 dimnames = list(metric = c("F", "SSB", "catches", "landings", "discards"), 
+                                 year = c(2019:2022)))
+ss_cod["F",] <- c(1.13, 0.477, 0,NA)
+ss_cod["SSB",] <- c(1181, 1587, 2943,6078)
+ss_cod["catches",] <- c(1351,1055, NA,NA)
+ss_cod["landings",] <- c(1051, 0, NA,NA)
+ss_cod["discards",] <- c(300, 0, NA,NA)
+
+cod.flbeia <- bioSum(runs , long = TRUE,years = ac(2019:2022))
+
+## cod top up
+cod.fb <- cod.flbeia %>% filter(stock == "cod.27.7e-k")
+fb_cod <- data.frame("F" = cod.fb$value[cod.fb$indicator == "f"],"SSB" = cod.fb$value[cod.fb$indicator == "ssb"], "catches" = cod.fb$value[cod.fb$indicator == "catch"], "landings" = cod.fb$value[cod.fb$indicator == "landings"], "discards"= cod.fb$value[cod.fb$indicator == "discards"]) %>% t() 
+colnames(fb_cod) <- c(first.yr.sim-1, first.yr.sim:last.yr.sim)
+
+kable(round(ss_cod,3), caption = "Single stock forecast for COD")
+kable(round(fb_cod,3), caption = "FLBEIA STF for COD")
+
+## relative difference, flbeia/ single-stock
+## We use a huxtable to automatically highlight big differences
+
+round(fb_cod / ss_cod, 3) %>%
+  as_huxtable(add_colnames = TRUE, add_rownames = "Metric") %>%
+  set_bold(1, everywhere, TRUE) %>%
+  set_bold(everywhere, 1, TRUE) %>%
+  set_bottom_border(1, everywhere, 2) %>%
+  map_text_color(2:nrow(ss_cod), 2:ncol(ss_cod), by_ranges(c(0.9, 1.1), c("red", "black", "red"))) %>%
+  set_caption("Relative difference between single stock and FLBEIA forecasts")
+
+# THe actual fbar average is 0.4153275 0.4153275/0.477 = 0.8707075
+# Notes 
+
+```
+
+## ~ COD - intermediate year
+```{r}
+  runs  <- FLBEIA(biols = biols, 
+              SRs = SRs,
+              BDs = NULL,
+              fleets = fleets,
+              indices = NULL,
+              advice = advice,
+              covars = NULL,
+              main.ctrl = main.ctrl,
+              biols.ctrl = biols.ctrl,
+              fleets.ctrl = fleets.ctrl.cod.int,
+              covars.ctrl = NULL,
+              obs.ctrl = obs.ctrl,
+              assess.ctrl = assess.ctrl,
+              advice.ctrl = advice.ctrl)
+
+## Compare to the single stock advice
+ss_cod <- matrix(NA, ncol = 4, nrow = 5, 
                  dimnames = list(metric = c("F", "SSB", "catches", "landings", "discards"), 
                                  year = c(2019:2022)))
 ss_cod["F",] <- c(1.13, 0.477, 0,NA)
@@ -874,6 +933,59 @@ round(fb_mon / ss_mon, 3) %>%
   set_bold(everywhere, 1, TRUE) %>%
   set_bottom_border(1, everywhere, 2) %>%
   map_text_color(2:nrow(ss_mon), 2:ncol(ss_mon), by_ranges(c(0.9, 1.1), c("red", "black", "red"))) %>%
+  set_caption("Relative difference between single stock and FLBEIA forecasts")
+```
+
+## ~ SOL
+```{r}
+## We do a forecast with the catch from the single stock advice
+#advice.cod <- advice
+
+runs  <- FLBEIA(biols = biols, 
+              SRs = SRs,
+              BDs = NULL,
+              fleets = fleets,
+              indices = NULL,
+              advice = advice,
+              covars = NULL,
+              main.ctrl = main.ctrl,
+              biols.ctrl = biols.ctrl,
+              fleets.ctrl = fleets.ctrl.sol,
+              covars.ctrl = NULL,
+              obs.ctrl = obs.ctrl,
+              assess.ctrl = assess.ctrl,
+              advice.ctrl = advice.ctrl)
+
+## Compare to the single stock advice
+ss_sol <- matrix(NA, ncol = 4, nrow = 5, 
+                 dimnames = list(metric = c("F", "SSB", "catches", "landings", "discards"), 
+                                 year = c(2019:2022)))
+ss_sol["F",] <- c(0.24, 0.296, 0.251,NA)
+ss_sol["SSB",] <- c(5546, 6293, 6197,6009)
+ss_sol["catches",] <- c(1213,1652, 1413,NA)
+ss_sol["landings",] <- c(1068, 1529, 1308,NA)
+ss_sol["discards",] <- c(145, 123, 105,NA)
+
+
+sol.flbeia <- bioSum(runs , long = TRUE,years = ac(2019:2022))
+
+## cod top up
+sol.fb <- sol.flbeia %>% filter(stock == "sol.27.7fg")
+fb_sol <- data.frame("F" = sol.fb$value[sol.fb$indicator == "f"],"SSB" = sol.fb$value[sol.fb$indicator == "ssb"], "catches" = sol.fb$value[sol.fb$indicator == "catch"], "landings" = sol.fb$value[sol.fb$indicator == "landings"], "discards"= sol.fb$value[sol.fb$indicator == "discards"]) %>% t() 
+colnames(fb_sol) <- c(first.yr.sim-1, first.yr.sim:last.yr.sim)
+
+kable(round(ss_sol,3), caption = "Single stock forecast for SOL")
+kable(round(fb_sol,3), caption = "FLBEIA STF for SOL")
+
+## relative difference, flbeia/ single-stock
+## We use a huxtable to automatically highlight big differences
+
+round(fb_sol / ss_sol, 3) %>%
+  as_huxtable(add_colnames = TRUE, add_rownames = "Metric") %>%
+  set_bold(1, everywhere, TRUE) %>%
+  set_bold(everywhere, 1, TRUE) %>%
+  set_bottom_border(1, everywhere, 2) %>%
+  map_text_color(2:nrow(ss_sol), 2:ncol(ss_sol), by_ranges(c(0.9, 1.1), c("red", "black", "red"))) %>%
   set_caption("Relative difference between single stock and FLBEIA forecasts")
 ```
 
