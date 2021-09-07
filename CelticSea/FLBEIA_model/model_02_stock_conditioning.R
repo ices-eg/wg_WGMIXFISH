@@ -99,13 +99,21 @@ flq_dims <- FLQuant(1, dim = c(1, length(data_yrs[1]:sim_yrs[length(sim_yrs)])),
 # ICES recr forecast (set recruitment numbers - in thousands)
 Recr <- FLPar(NA, dimnames=list(params=aspg, year=sim_yrs,iter=1))
 
-     Recr["cod.27.7e-k",] <- rep(median(rec(biols_rec[["cod.27.7e-k"]])[,ac(2005:c(data_yrs[2]-1))]),length(sim_yrs))
-     Recr["had.27.7b-k",] <- rep(median(rec(biols_rec[["had.27.7b-k"]])[,ac(1993:c(data_yrs[2]-1))]),length(sim_yrs))
-     Recr["whg.27.7b-ce-k",] <- rep(median(rec(biols_rec[["whg.27.7b-ce-k"]])[,ac(2010:c(data_yrs[2]-1))]),length(sim_yrs))
-     Recr["mon.27.78abd",] <- rep(gm_mean(rec(biols_rec[["mon.27.78abd"]])[,ac(1986:c(data_yrs[2]-3))]),length(sim_yrs))
-     Recr["sol.27.7fg",] <- rep(median(rec(biols_rec[["sol.27.7fg"]])[,ac(1972:c(data_yrs[2]-3))]),length(sim_yrs))
-     Recr["meg.27.7b-k8abd",] <- rep(gm_mean(rec(biols_rec[["meg.27.7b-k8abd"]])[,ac(1985:c(data_yrs[2]-3))]),length(sim_yrs))
-
+     # Recr["cod.27.7e-k",] <- rep(median(rec(biols_rec[["cod.27.7e-k"]])[,ac(2005:c(data_yrs[2]-1))]),length(sim_yrs))
+     # Recr["had.27.7b-k",] <- rep(median(rec(biols_rec[["had.27.7b-k"]])[,ac(1993:c(data_yrs[2]-1))]),length(sim_yrs))
+     # Recr["whg.27.7b-ce-k",] <- rep(median(rec(biols_rec[["whg.27.7b-ce-k"]])[,ac(2010:c(data_yrs[2]-1))]),length(sim_yrs))
+     # Recr["mon.27.78abd",] <- rep(gm_mean(rec(biols_rec[["mon.27.78abd"]])[,ac(1986:c(data_yrs[2]-3))]),length(sim_yrs))
+     # Recr["sol.27.7fg",] <- rep(median(rec(biols_rec[["sol.27.7fg"]])[,ac(1972:c(data_yrs[2]-3))]),length(sim_yrs))
+     # Recr["meg.27.7b-k8abd",] <- rep(gm_mean(rec(biols_rec[["meg.27.7b-k8abd"]])[,ac(1985:c(data_yrs[2]-3))]),length(sim_yrs))
+     
+     #Taken from the adice and should be consistant with model 09 reproduce the advice 
+     Recr["cod.27.7e-k",] <- rep(1640)
+     Recr["had.27.7b-k",] <- rep(351066)
+     Recr["whg.27.7b-ce-k",] <- rep(568878)
+     Recr["mon.27.78abd",] <- rep(32000)
+     Recr["sol.27.7fg",] <- rep(5187)
+     Recr["meg.27.7b-k8abd",] <- rep(223393)
+     
      
 SRs <- lapply(aspg, function(x) {
   print(x)
