@@ -111,6 +111,27 @@ advice$TAC[,ac(2020:2022)]
 ## Setting the quota shares
 ##############################
 
+## Redefine function to better handle NAs!!
+landWStock.f <- function (obj, stock) 
+{
+  aux <- 0
+  res <- FLQuant()
+  for (m in obj@metiers) {
+    if (!(stock %in% catchNames(m))) 
+      next
+    if (aux == 0) {
+      aux <- 1
+      res <- m@catches[[stock]]@landings.n * m@catches[[stock]]@landings.wt
+      res[is.na(res)] <- 0
+      next
+    }
+    resf <- m@catches[[stock]]@landings.n * m@catches[[stock]]@landings.wt
+    resf[is.na(resf)] <- 0
+    res <- res + resf
+  }
+  return(res)
+}
+
 ## Based on observed landings split
 
 ## Years over which to average the quota shares.
@@ -132,6 +153,9 @@ for(st in stks){
       
     }
   }
+
+apply(advice$quota.share$`had.27.7b-k`,2,sum)
+
 
 #########################
 ## Save for model input
