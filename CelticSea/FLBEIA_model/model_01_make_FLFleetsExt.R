@@ -417,7 +417,18 @@ fleetSOP  %>%
 	       ylab("Landings (tonnes)")
 ggsave(file = file.path("Figures", "Data_workup_fleets_landings.png"), width = 10, height = 7)
 
-       ## The differences are entirely down to the accessions and intercatch
+##Table for report
+dim(fleetSOP)
+stock_land2 <- stock_land
+names(stock_land2)[names(stock_land2)=="landings"] <- "Stock_landings"
+Comptable <- left_join(fleetSOP,stock_land2)
+dim(Comptable)
+
+Comptable <- Comptable %>% select(Stock,Year,match_level_land,landings,Stock_landings)
+       
+write.taf(Comptable,"tables/Comptable.csv")
+
+## The differences are entirely down to the accessions and intercatch
        ## differences. 
 
 ## Discards
