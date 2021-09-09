@@ -166,7 +166,7 @@ pre code {
 
 <h1 class="title toc-ignore">Celtic Sea FLBEIA short-term forecast model</h1>
 <h4 class="author">Paul J. Dolder and Claire Moore</h4>
-<h4 class="date">07 September, 2021</h4>
+<h4 class="date">09 September, 2021</h4>
 
 </div>
 
@@ -881,7 +881,7 @@ for (fl in names(fleets)) {
 }
 
 for (fl in names(fleets)) {
-    fleets.ctrl.cod[[fl]][[&quot;effort.restr&quot;]] &lt;- &quot;fixedEffort&quot;
+    fleets.ctrl.cod.int[[fl]][[&quot;effort.model&quot;]] &lt;- &quot;fixedEffort&quot;
 }
 
 for (fl in names(fleets)) {
@@ -1292,6 +1292,7 @@ round(fb_cod/ss_cod, 3) %&gt;%
 #&gt; [1] &quot;sol.27.7fg&quot;
 #&gt; [1] &quot;whg.27.7b-ce-k&quot;
 #&gt; [1] &quot;~~~~~~ UPDATE CATCH ~~~~~~&quot;
+#&gt; Ba*cth &lt; Ca, for some &quot;a&quot; in stock cod.27.7e-k , and iteration  1 
 #&gt; [1] &quot;~~~~~~~~~~ PRICE ~~~~~~~~~~&quot;
 #&gt; [1] &quot;cod.27.7e-k&quot;
 #&gt; [1] &quot;had.27.7b-k&quot;
@@ -1366,6 +1367,7 @@ round(fb_cod/ss_cod, 3) %&gt;%
 #&gt; [1] &quot;sol.27.7fg&quot;
 #&gt; [1] &quot;whg.27.7b-ce-k&quot;
 #&gt; [1] &quot;~~~~~~ UPDATE CATCH ~~~~~~&quot;
+#&gt; Ba*cth &lt; Ca, for some &quot;a&quot; in stock cod.27.7e-k , and iteration  1 
 #&gt; [1] &quot;~~~~~~~~~~ PRICE ~~~~~~~~~~&quot;
 #&gt; [1] &quot;cod.27.7e-k&quot;
 #&gt; [1] &quot;had.27.7b-k&quot;
@@ -1440,6 +1442,7 @@ round(fb_cod/ss_cod, 3) %&gt;%
 #&gt; [1] &quot;sol.27.7fg&quot;
 #&gt; [1] &quot;whg.27.7b-ce-k&quot;
 #&gt; [1] &quot;~~~~~~ UPDATE CATCH ~~~~~~&quot;
+#&gt; Ba*cth &lt; Ca, for some &quot;a&quot; in stock cod.27.7e-k , and iteration  1 
 #&gt; [1] &quot;~~~~~~~~~~ PRICE ~~~~~~~~~~&quot;
 #&gt; [1] &quot;cod.27.7e-k&quot;
 #&gt; [1] &quot;had.27.7b-k&quot;
@@ -1543,37 +1546,37 @@ kable(round(ss_cod, 3), caption = &quot;Single stock forecast for COD&quot;)</co
 <tr class="odd">
 <td align="left">F</td>
 <td align="right">1.090</td>
-<td align="right">0.409</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
+<td align="right">1.546</td>
+<td align="right">1.552</td>
+<td align="right">1.552</td>
 </tr>
 <tr class="even">
 <td align="left">SSB</td>
 <td align="right">1180.836</td>
 <td align="right">1854.504</td>
-<td align="right">3244.104</td>
-<td align="right">6182.878</td>
+<td align="right">871.209</td>
+<td align="right">597.130</td>
 </tr>
 <tr class="odd">
 <td align="left">catches</td>
 <td align="right">1367.943</td>
-<td align="right">1055.000</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
+<td align="right">1434.521</td>
+<td align="right">631.216</td>
+<td align="right">550.639</td>
 </tr>
 <tr class="even">
 <td align="left">landings</td>
 <td align="right">1068.683</td>
-<td align="right">869.244</td>
+<td align="right">502.119</td>
 <td align="right">0.000</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">discards</td>
 <td align="right">299.260</td>
-<td align="right">185.756</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
+<td align="right">932.402</td>
+<td align="right">631.216</td>
+<td align="right">550.639</td>
 </tr>
 </tbody>
 </table>
@@ -1592,15 +1595,15 @@ round(fb_cod/ss_cod, 3) %&gt;%
 <caption style="caption-side: top; text-align: center;">Relative difference between single stock and FLBEIA forecasts</caption><col><col><col><col><col><tr>
 <th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 2pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Metric</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 2pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">2019</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 2pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">2020</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 2pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">2021</th><th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 2pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">2022</th></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">F</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">0.965</span></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">0.857</span></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">NaN&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">F</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">0.965</span></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">3.24</span></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Inf&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 2pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">SSB</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">1.17&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">1.1</span></td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">1.02</td></tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">SSB</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">1.17</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">0.296</span></td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.098</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">catches</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1.01&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">catches</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1.01&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(255, 0, 0);">1.36</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">landings</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1.02&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Inf&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">landings</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(0, 0, 0);">1.02&nbsp;</span></td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Inf&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">discards</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.998</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Inf&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: bold;">discards</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.998</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Inf&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td></tr>
 </table>
 
 <pre class="r"><code># THe actual fbar average is 0.4153275 0.4153275/0.477 = 0.8707075 Notes</code></pre>
