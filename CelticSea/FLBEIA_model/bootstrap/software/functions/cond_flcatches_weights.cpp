@@ -71,17 +71,19 @@ List condition_flcatches(List fl,
         for(int i=0; i<L_dat.size(); i++) {
           if(R_IsNA(L_dat[i])) L_dat[i] = 0;
           if(R_IsNA(D_dat[i])) D_dat[i] = 0;
-        }
+          if(R_IsNA(Lwt_dat[i])) Lwt_dat[i] = 0;
+          if(R_IsNA(Dwt_dat[i])) Dwt_dat[i] = 0;
+          }
         
-        NumericVector Cf = L_dat + D_dat;       // catch fleet
+        NumericVector Cf = (L_dat*Lwt_dat) + (D_dat*Dwt_dat);            // catch fleet in weight
                              
-        NumericVector q(Cf.size());     // a container for catchability
+        NumericVector q(Cf.size());                                      // a container for catchability
         
         for(int i=0; i<Cf.size(); i++) {
-        q[i] = Cf[i]/(pow(E[i],alpha_dat[i])*pow(B[i],beta_dat[i]));    // catchability
+        q[i] = Cf[i]/(pow(E[i],alpha_dat[i])*pow(B[i],beta_dat[i]));    // catchability in weight
                         }
         
-        NumericVector Lsel = L_dat/(L_dat+D_dat);                       // landings selection in numbers
+        NumericVector Lsel = L_dat/(L_dat+D_dat);   // landings selection in numbers
         
         // Now to condition the simulation years: 
         // catch.q, landings.sel, discards.sel, landings.wt, discards.wt

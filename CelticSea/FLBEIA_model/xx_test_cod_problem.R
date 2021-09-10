@@ -39,17 +39,85 @@ for(f in names(fleets)) {
 
 ### FIX COD POPULATION
 
-biols.ctrl$'cod.27.7e-k'$growth.model <- "fixedPopulation"
+#biols.ctrl$'cod.27.7e-k'$growth.model <- "fixedPopulation"
 
-biols[["cod.27.7e-k"]]@n[,ac(2020:2022)] <- biols[["cod.27.7e-k"]]@n[,ac(2019)]
+#biols[["cod.27.7e-k"]]@n[,ac(2020:2022)] <- biols[["cod.27.7e-k"]]@n[,ac(2019)]
+
+## Artificially inflate the cod quota
+#advice$TAC["cod.27.7e-k","2020"] <- 10000
+
+## Make the catch weights equal to the stock weights
+
+#for(f in names(fleets)) {
+
+#	mts <- fleets[[f]]@metiers@names
+
+#	for(mt in mts) {
+
+#	if(!"cod.27.7e-k" %in% catchNames(fleets[[f]]@metiers[[mt]])) next 
+
+#	fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@landings.wt[,ac(2009:2022)] <- biols[["cod.27.7e-k"]]@wt[,ac(2009:2022)]
+#	fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2009:2022)] <- biols[["cod.27.7e-k"]]@wt[,ac(2009:2022)]
+#
+#	}
+
+#}
+
+
+## recalulate catchability
+
+## Load in the stock objects
+#stock.list <- c("cod.27.7e-k", "had.27.7b-k","whg.27.7b-ce-k",
+#                "meg.27.7b-k8abd", 
+#                "mon.27.78abd", "sol.27.7fg",
+#                "nep.fu.16","nep.fu.17", "nep.fu.19", "nep.fu.2021",
+#                "nep.fu.22", "nep.out.7")
+
+#wg.stocks <- FLStocks(lapply(stock.list, function(s) {
+#  print(s)
+#  load(file.path(stock_path, paste0(s,".RData")))
+#  res <- get("stock")
+#  name(res) <- s
+#  res
+#}))
+
+#source(file.path("bootstrap", "software", "functions", "calculate.q.sel.flrObjs.cpp.R"))
+#fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = 2017:2019, sim.yrs = 2020:2022)
 
 
 hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = covars,
                indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
                covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
 
-
 out <- bioSum(hist)
 
-filter(out, stock == "cod.27.7e-k", year == 2020)
+for(i in grep("nep",unique(out$stock), invert = TRUE, value = TRUE)){
+   filter(out, stock == i, year %in% 2017:2020) %>% as.data.frame() %>% print()
+   }
+
+
+## Compare the catch weight to the stock weight
+for(i in grep("nep",unique(names(hist$biols)), invert=TRUE, value = TRUE)) {
+  print(i)
+  print(window(catchWStock(hist$fleets, i)/catchStock(hist$fleets, i),start=2009, end=2020)/
+          window(hist$biols[[i]]@wt,start=2009, end=2020))
+}
+
+
+
+
+flt <- fltStkSum(hist)
+filter(flt, stock == "cod.27.7e-k", year %in% 2017:2020, catch > 100) %>% as.data.frame()
+
+fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@landings.sel[,ac(2017:2020)]
+fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@landings.wt[,ac(2017:2020)]
+fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2017:2020)]
+fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@catch.q[,ac(2017:2020)]
+
+hist$fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@landings.sel[,ac(2017:2020)]
+hist$fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@discards.sel[,ac(2017:2020)]
+hist$fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@discards.n[,ac(2017:2020)]
+
+
+
 
