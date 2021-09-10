@@ -65,7 +65,7 @@ nep_data <- read.csv(file.path(BootstrapPath,"data/submitted_stock_objects/WGCSE
 # Moniter for differences -------------------------------------------------
 ## so we get the IC file and the AC file and comapre for differances between the two
 names(InterCatch)
-check_IC <- InterCatch %>% select(Year,Stock,Country,Landings,Discards) %>% group_by(Year,Stock,Country) %>% summarise(Landing_IC=sum(Landings),Discard_IC=sum(Discards,na.rm = T),IC_Discards=sum(Discards,na.rm = T)) %>% ungroup()
+check_IC <- InterCatch %>% select(Year,Stock,Country,Landings,Discards) %>% group_by(Year,Stock,Country) %>% summarise(Landing_IC=sum(Landings),Discard_IC=sum(Discards,na.rm = T)) %>% ungroup()
 names(catch_start)
 check_AC <- catch_start %>% select(Year,Stock,Country,Landings) %>% group_by(Year,Stock,Country)%>% summarise(Landing_AC=sum(Landings)) %>% ungroup()
 
@@ -73,6 +73,9 @@ CHECK_IC_AC <- full_join(check_AC,check_IC)
 
 #No stock no play
 CHECK_IC_AC <- CHECK_IC_AC %>% filter(is.na(Stock)==F)
+CHECK_IC_AC2 <- CHECK_IC_AC %>% select(-Country) %>% group_by_at(vars(-Landing_AC,-Landing_IC,-Discard_IC)) %>% summarise(Landing_AC=sum(Landing_AC,na.rm=T),Landing_IC=sum(Landing_IC,na.rm=T),Discard_IC=sum(Discard_IC,na.rm = T)) %>% ungroup()
+
+write.taf(CHECK_IC_AC2,"tables/Check_IC_AC.csv")
 
 #now we need to get the stock objects which represemt what was actually in the single
 #species advice
