@@ -289,3 +289,27 @@ png("output/catch.n_compare.png", width = 8, height = 6, units = "in", res = 400
   print(p)
 dev.off()
 
+
+## Aggregate catch SSA and FLBEIA
+tmp <- subset(dfsub, slot == "catch")
+tmp2 <- tmp[,which(colnames(tmp) %in% c("data", "stock", "scenario"))]
+table_catch_comp <- as.data.frame(tidyr::pivot_wider(tmp2, names_from=scenario, values_from = data))
+table_catch_comp <- table_catch_comp[order(table_catch_comp$stock),]
+table_catch_comp <- cbind(table_catch_comp, "Diff"=table_catch_comp$WGMIXFISH/table_catch_comp$WGNSSK-1)
+
+## Fbar SSA and FLBEIA
+tmp <- subset(dfsub, slot == "harvest")
+name_sp <- unique(dfsub$stock)[order(unique(dfsub$stock))]
+fbar_range <- matrix(ncol=2, nrow=length(biols))
+for (k in 1:length(biols)){
+  fbar_range[k,] <- range(biols[[k]])[which(names(range(biols[[k]])) %in% c("minfbar", "maxfbar"))]
+}
+rownames(fbar_range) <- attr(biols,"names")
+rownames(fbar_range) <- sub("_dash_", replacement = "-", rownames(fbar_range))
+table_fbar <- table_catch_comp
+for (i in 1:nrow(table_fbar)){
+  tmp2 <- subset(tmp, stock==table_fbar$stock[i])
+  table_fbar$WGNSSK[i] <- mean(subset(tmp2, scenario=="WGNSSK" & age %in% fbar_range[table_fbar$stock[i],1]:fbar_range[table_fbar$stock[i],2])$data)
+  table_fbar$WGMIXFISH[i] <- mean(subset(tmp2, scenario=="WGMIXFISH" & age %in% fbar_range[table_fbar$stock[i],1]:fbar_range[table_fbar$stock[i],2])$data)
+}
+table_fbar$Diff <- table_fbar$WGMIXFISH/table_fbar$WGNSSK-1
