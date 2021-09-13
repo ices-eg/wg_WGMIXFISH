@@ -176,6 +176,10 @@ fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets
 }
 
 
+## Original function
+#fleets <- calculate.q.sel.flrObjs(biols, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+
+
 sapply(fleets, checkFleets)
 validObject(fleets)
 

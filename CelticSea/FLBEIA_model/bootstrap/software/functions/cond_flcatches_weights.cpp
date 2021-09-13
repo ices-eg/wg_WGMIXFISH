@@ -83,8 +83,9 @@ List condition_flcatches(List fl,
         q[i] = Cf[i]/(pow(E[i],alpha_dat[i])*pow(B[i],beta_dat[i]));    // catchability in weight
                         }
         
-        NumericVector Lsel = L_dat/(L_dat+D_dat);   // landings selection in numbers
-        
+        //NumericVector Lsel = L_dat/(L_dat+D_dat);   // landings selection in numbers
+        NumericVector Lsel = (L_dat*Lwt_dat)/((L_dat*Lwt_dat)+(D_dat*Dwt_dat));   // landings selection in weight 
+
         // Now to condition the simulation years: 
         // catch.q, landings.sel, discards.sel, landings.wt, discards.wt
         // price, alpha, beta

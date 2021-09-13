@@ -1,6 +1,6 @@
 
-Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches.cpp"))
-#Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches_weights.cpp"))
+#Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches.cpp"))
+Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches_weights.cpp"))
 
 
 calculate.q.sel.flrObjs.cpp <- function(biols, stocks, fleets, BDs, fleets.ctrl, mean.yrs, sim.yrs){
