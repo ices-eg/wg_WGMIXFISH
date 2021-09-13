@@ -11,6 +11,7 @@
 ## Packages
 library(tidyverse)
 library(FLBEIA)
+library(icesTAF)
 
 ## Paths
 data_path  <- file.path("results", "clean_data")
@@ -884,6 +885,59 @@ names(fleets2) <- c(names(fleets), residual_fleets)
 
 fleets <- FLFleetsExt(fleets2)
 
-  
+## Final numbers and weight at age in catch (including residual fleets)
+## compared to the stock object...
+
+land_numbers <- lapply(catchNames(fleets), function(s) {
+flt <- cbind(data.frame(stock = s, source = "fleet_object"), as.data.frame(landStock(fleets, s)))
+stk <- cbind(data.frame(stock = s, source = "stock_object"),as.data.frame(wg.stocks[[s]]@landings.n))
+return(rbind(flt, stk))
+       })
+land_numbers <- bind_rows(land_numbers)
+
+disc_numbers <- lapply(catchNames(fleets), function(s) {
+flt <- cbind(data.frame(stock = s, source = "fleet_object"), as.data.frame(discStock(fleets, s)))
+stk <- cbind(data.frame(stock = s, source = "stock_object"),as.data.frame(wg.stocks[[s]]@discards.n))
+return(rbind(flt, stk))
+       })
+disc_numbers <- bind_rows(disc_numbers)
+
+nep <- unique(grep("nep", land_numbers$stock, value = TRUE))
+
+ggplot(filter(land_numbers, !stock %in% nep), aes(x = age, y = data)) + 
+	geom_line(aes(colour = source)) + 
+	facet_grid(stock ~ year, scale = "free")
+
+ggplot(filter(disc_numbers, !stock %in% nep), aes(x = age, y = data)) + 
+	geom_line(aes(colour = source)) + 
+	facet_grid(stock ~ year, scale = "free")
+
+
+## Now the weights
+
+land_weights <- lapply(catchNames(fleets), function(s) {
+flt <- cbind(data.frame(stock = s, source = "fleet_object"), as.data.frame(landWStock(fleets, s)))
+stk <- cbind(data.frame(stock = s, source = "stock_object"),as.data.frame(wg.stocks[[s]]@landings.n * wg.stocks[[s]]@landings.wt))
+return(rbind(flt, stk))
+       })
+land_weights <- bind_rows(land_weights)
+
+disc_weights <- lapply(catchNames(fleets), function(s) {
+flt <- cbind(data.frame(stock = s, source = "fleet_object"), as.data.frame(discWStock(fleets, s)))
+stk <- cbind(data.frame(stock = s, source = "stock_object"),as.data.frame(wg.stocks[[s]]@discards.n * wg.stocks[[s]]@discards.wt))
+return(rbind(flt, stk))
+       })
+disc_weights <- bind_rows(disc_weights)
+
+
+ggplot(filter(land_weights, !stock %in% nep), aes(x = age, y = data)) + 
+	geom_line(aes(colour = source)) + 
+	facet_grid(stock ~ year, scale = "free")
+
+ggplot(filter(disc_weights, !stock %in% nep), aes(x = age, y = data)) + 
+	geom_line(aes(colour = source)) + 
+	facet_grid(stock ~ year, scale = "free")
+
+
 save(fleets, file = file.path("results", "FLBEIA_inputs", "preconditioned", "FLFleets.RData"))
  
