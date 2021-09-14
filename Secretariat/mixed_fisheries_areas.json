@@ -12,7 +12,7 @@
     "Description": "Bay of Biscay",
     "Related": {
     "Ecoregion": [{ "Code": "BI", "Description": "Bay of Biscay and the Iberian Coast" }],
-    "ICES_Area": ["27.8.a", "27.8.b", "27.8.d"]
+    "ICES_Area": ["27.8.c", "27.9.a", "27.9.b"]
     }
   },
   {
