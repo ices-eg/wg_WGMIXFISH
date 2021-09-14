@@ -19,7 +19,9 @@ stock_path <- file.path("results", "clean_data", "clean_stock_objects")
 
 data_yr <- 2019
 
-workup_data <- FALSE ## will load if FALSE
+workup_data  <- FALSE ## will load if FALSE
+UseStockWt   <- FALSE ## use the stock level weights at age (for cod only)
+UseStockDist <- FALSE  ## use the stock level landings and discard numbers distribution (for cod only) 
 
 ##############################################################################
 ## Load in data
@@ -634,15 +636,42 @@ yrs <- unique(caa$Year)
 
 ## Landings numbers
 la.age[,ac(yrs)] <- caa$landingsN
+
+if(S=="cod.27.7e-k" & UseStockDist) {
+	age_share <- wg.stocks[[S]]@landings.n * wg.stocks[[S]]@landings.wt	
+	age_share[is.na(age_share)] <- 0
+	age_share <- age_share %/% apply(age_share,2,sum)
+	caa$landings.wt[is.na(caa$landings.wt)] <- 0
+	land_year <- caa %>% group_by(Year) %>% summarise(val = sum(landingsN * landings.wt))
+	la.age[,ac(yrs)] <- sapply(1:length(yrs), function(x) {
+					c((age_share/wg.stocks[[S]]@landings.wt)[,x]) * land_year$val[x]}) 
+}
+
 la.age[is.na(la.age)] <- 0
 # landings weights
 la.wt[,ac(yrs)]  <- caa$landings.wt
+
+if(S=="cod.27.7e-k" & UseStockWt) {la.wt[,ac(yr.range)] <- wg.stocks[[S]]@stock.wt[,ac(yr.range)]}
 #la.wt[is.na(la.wt)] <- 0  // Want to keep NAs for averages
 ## Discards numbers
 di.age[,ac(yrs)] <- caa$discardsN
+
+if(S=="cod.27.7e-k" & UseStockDist) {
+ 	age_share <- wg.stocks[[S]]@discards.n * wg.stocks[[S]]@discards.wt
+	age_share[is.na(age_share)] <- 0
+	age_share <- age_share %/% apply(age_share,2,sum)
+	caa$discards.wt[is.na(caa$discards.wt)] <- 0
+	disc_year <- caa %>% group_by(Year) %>% summarise(val = sum(discardsN * discards.wt))
+	di.age[,ac(yrs)] <- sapply(1:length(yrs), function(x) {
+					c((age_share/wg.stocks[[S]]@discards.wt)[,x]) * disc_year$val[x]}) 
+}
+
 di.age[is.na(di.age)] <- 0  
 # discards weights
 di.wt[,ac(yrs)]  <- caa$discards.wt
+
+if(S=="cod.27.7e-k" & UseStockWt) {di.wt[,ac(yr.range)] <- wg.stocks[[S]]@stock.wt[,ac(yr.range)]}
+
 #di.wt[is.na(di.wt)] <- 0  // Want to keep NAs for averages
 # price (per kg)
 pr.[,ac(yrs)] <- caa$price/1e3
@@ -872,7 +901,7 @@ assign(paste0(S, "_fleet"),
 ## Combine fleets
 ###################
 
-residual_fleets <- ls(pattern="_fleet")
+residual_fleets <- ls(pattern="_fleet")[ls(pattern="_fleet")!="residual_fleets"]
 
 fleets2 <- fleets
 
@@ -940,4 +969,42 @@ ggplot(filter(disc_weights, !stock %in% nep), aes(x = age, y = data)) +
 
 
 save(fleets, file = file.path("results", "FLBEIA_inputs", "preconditioned", "FLFleets.RData"))
- 
+
+
+## Apply a correction multiplier to ensure that the fleets numbers 
+
+land_cor <- 1/(landStock(fleets, "cod.27.7e-k")/wg.stocks[["cod.27.7e-k"]]@landings.n)
+disc_cor <- 1/(discStock(fleets, "cod.27.7e-k")/wg.stocks[["cod.27.7e-k"]]@discards.n)
+
+land_cor[is.na(land_cor)] <- 0
+disc_cor[is.na(disc_cor)] <- 0
+
+s <- "cod.27.7e-k"
+
+for(f in names(fleets)) {
+
+	if(!s %in% catchNames(fleets[[f]])) next
+
+	for(mt in fleets[[f]]@metiers@names) {
+	
+	if(!s %in% catchNames(fleets[[f]]@metiers[[mt]])) next
+
+	fleets[[f]]@metiers[[mt]]@catches[[s]]@landings.n <- fleets[[f]]@metiers[[mt]]@catches[[s]]@landings.n * land_cor 
+	fleets[[f]]@metiers[[mt]]@catches[[s]]@discards.n <- fleets[[f]]@metiers[[mt]]@catches[[s]]@discards.n * disc_cor 
+
+
+
+
+	}
+
+
+}
+
+
+catchStock(fleets, "cod.27.7e-k")/wg.stocks[["cod.27.7e-k"]]@catch.n
+catchWStock(fleets, "cod.27.7e-k")/(wg.stocks[["cod.27.7e-k"]]@catch.n*wg.stocks[["cod.27.7e-k"]]@catch.wt)
+
+
+save(fleets, file = file.path("results", "FLBEIA_inputs", "preconditioned", "FLFleets.RData"))
+
+

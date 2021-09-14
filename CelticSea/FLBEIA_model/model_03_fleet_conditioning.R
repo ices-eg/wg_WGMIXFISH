@@ -171,7 +171,7 @@ for(n in nep) {
 
 if(Cond) {
 
-fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs)
+fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs, LO = FALSE, UseLWt = FALSE)
 
 }
 

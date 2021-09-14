@@ -8,7 +8,9 @@ List condition_flcatches(List fl,
                             NumericVector B, 
                             CharacterVector st, 
                             IntegerVector mean_yrs, 
-                            IntegerVector sim_yrs)
+                            IntegerVector sim_yrs,
+			    bool LO,
+			    bool UseLWt)
 {
   // Loop over fleets
   for(int f=0; f<fl.length();f++){
@@ -82,6 +84,7 @@ List condition_flcatches(List fl,
                         }
         
         NumericVector Lsel = L_dat/(L_dat+D_dat);                       // landings selection in numbers
+
         
         // Now to condition the simulation years: 
         // catch.q, landings.sel, discards.sel, landings.wt, discards.wt
@@ -142,7 +145,16 @@ List condition_flcatches(List fl,
               if(R_IsNaN(meanval_a)) meanval_a = 1; 
               if(R_IsNA(meanval_b)) meanval_b = 1; 
               if(R_IsNaN(meanval_b)) meanval_b = 1;
-              
+ 
+	      // Under LO, the landings weight becomes the catch weight
+	      // and the landings selection becomes 1
+	      if(LO) {meanval_lw = (meanval_s * meanval_lw) + ((1-meanval_s) * meanval_dw);}
+	      if(LO) {meanval_s = 1;} // If under LO, fill landings selection with 1
+
+              if(UseLWt) {meanval_lw = meanval_lw;} // use the landed weight in projections
+	       
+
+
               
               for(int y=sim_yrs[0]; y<=sim_yrs[sim_yrs.size()-1]; y++) { // loop over the years
               q[(na*y) + a] = meanval_q;    // sim year values

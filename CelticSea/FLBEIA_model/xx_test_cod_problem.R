@@ -34,7 +34,7 @@ main.ctrl$SimultaneousMngt <- FALSE
 for(f in names(fleets)) {
   fleets.ctrl[[f]]$effort.model <- "fixedEffort"
   fleets.ctrl[[f]]$restriction  <- "catch"
- }
+}
 
 
 ### FIX COD POPULATION
@@ -85,6 +85,10 @@ for(f in names(fleets)) {
 #fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = 2017:2019, sim.yrs = 2020:2022)
 
 
+## Artificially inflate TACs so not limiting
+
+advice$TAC[,"2020"] <- advice$TAC[,"2020"] * 10
+
 hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = covars,
                indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
                covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
@@ -104,10 +108,15 @@ for(i in grep("nep",unique(names(hist$biols)), invert=TRUE, value = TRUE)) {
 }
 
 
+## Plot the intermediate year
+theme_set(theme_bw())
+ggplot(filter(out, year < 2021), aes(x = year, y = f)) + geom_point(colour = rep(c(rep("black", 8),rep("blue", 3), "red"), each= length(unique(out$stock)))) +facet_wrap(~stock, scale = "free_y") + theme(legend.position = "none") + 
+	expand_limits(y = 0)
+
 
 
 flt <- fltStkSum(hist)
-filter(flt, stock == "cod.27.7e-k", year %in% 2017:2020, catch > 100) %>% as.data.frame()
+filter(flt, stock == "cod.27.7e-k", year %in% 2017:2020, discRat > 0.5) %>% as.data.frame()
 
 fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@landings.sel[,ac(2017:2020)]
 fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@landings.wt[,ac(2017:2020)]
@@ -119,5 +128,20 @@ hist$fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.
 hist$fleets[["FRA_Otter_10<40m"]]@metiers[["OTB_DEF_27.7.fg"]]@catches[["cod.27.7e-k"]]@discards.n[,ac(2017:2020)]
 
 
+## Try with effort at 0.5
+
+for(f in names(fleets)) {
+fleets[[f]]@effort[,ac(2020:2022)] <- fleets[[f]]@effort[,ac(2020:2022)]  * 0.5
+}
+
+hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = covars,
+               indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
+               covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
+
+out <- bioSum(hist)
+
+for(i in grep("nep",unique(out$stock), invert = TRUE, value = TRUE)){
+   filter(out, stock == i, year %in% 2017:2020) %>% as.data.frame() %>% print()
+   }
 
 

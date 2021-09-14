@@ -617,6 +617,12 @@ round(fb_cod / ss_cod, 3) %>%
 
 ## ~ COD - intermediate year
 ```{r}
+
+
+## Inflate the cod TAC
+
+advice$TAC["cod.27.7e-k", "2020"] <- 3000
+
   runs  <- FLBEIA(biols = biols, 
               SRs = SRs,
               BDs = NULL,

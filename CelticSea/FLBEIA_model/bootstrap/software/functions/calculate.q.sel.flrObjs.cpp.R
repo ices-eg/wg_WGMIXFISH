@@ -1,9 +1,9 @@
 
-#Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches.cpp"))
-Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches_weights.cpp"))
+Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches.cpp"))
+#Rcpp::sourceCpp(file.path("bootstrap", "software", "functions","cond_flcatches_weights.cpp"))
 
 
-calculate.q.sel.flrObjs.cpp <- function(biols, stocks, fleets, BDs, fleets.ctrl, mean.yrs, sim.yrs){
+calculate.q.sel.flrObjs.cpp <- function(biols, stocks, fleets, BDs, fleets.ctrl, mean.yrs, sim.yrs, LO = FALSE, UseLWt = FALSE){
   
   for(st in names(biols)){
   
@@ -35,7 +35,9 @@ calculate.q.sel.flrObjs.cpp <- function(biols, stocks, fleets, BDs, fleets.ctrl,
                         B = as.vector(B), 
                         st = st, 
                         mean_yrs = first_avg_yr:last_avg_yr, 
-                        sim_yrs = first_yr_sim:last_yr_sim)
+                        sim_yrs = first_yr_sim:last_yr_sim,
+			LO = LO,
+			UseLWt = UseLWt)
     
   }
       
