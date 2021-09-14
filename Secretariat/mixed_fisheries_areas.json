@@ -1,0 +1,58 @@
+[
+  {
+    "Code": "NrS",
+    "Description": "North Sea",
+    "Related": {
+      "Ecoregion": [{ "Code": "NrS", "Description": "Greater North Sea" }],
+      "ICES_Area": ["27.4.a", "27.4.b", "27.4.c"]
+    }
+  },
+  {
+    "Code": "BoB",
+    "Description": "Bay of Biscay",
+    "Related": {
+    "Ecoregion": [{ "Code": "BI", "Description": "Bay of Biscay and the Iberian Coast" }],
+    "ICES_Area": ["27.9.a", "27.9.b"]
+    }
+  },
+  {
+    "Code": "IC",
+    "Description": "Iberian Coast",
+    "Related": {
+      "Ecoregion": [{ "Code": "BI", "Description": "Bay of Biscay and the Iberian Coast" }],
+      "ICES_Area": ["27.8.a", "27.8.b", "27.8.c", "27.8.8"]
+    }
+  },
+  {
+    "Code": "CS",
+    "Description": "Celtic Seas",
+    "Related": {
+      "Ecoregion": [{ "Code": "CS", "Description": "Celtic Seas" }],
+      "ICES_Area": ["27.7.b", "27.7.c", "27.7.g", "27.7.h", "27.7.j", "27.7.k"]
+    }
+  },
+  {
+    "Code": "IrS",
+    "Description": "Irish Sea",
+    "Related": {
+      "Ecoregion": [{ "Code": "CS", "Description": "Celtic Seas" }],
+      "ICES_Area": ["27.7.a"]
+    }
+  },
+  {
+    "Code": "WoS",
+    "Description": "West of Scotland",
+    "Related": {
+      "Ecoregion": [{ "Code": "CS", "Description": "Celtic Seas" }],
+      "ICES_Area": ["27.6.a"]
+    }
+  },
+  {
+    "Code": "BtS",
+    "Description": "Baltic Sea",
+    "Related": {
+      "Ecoregion": [{ "Code": "BtS", "Description": "Baltic Sea" }],
+      "ICES_Area": ["27.3.c.22", "27.3.c.23", "27.3.c.24", "27.3.c.25", "27.3.c.26", "27.3.c.27", "27.3.c.28", "27.3.c.29", "27.3.c.30", "27.3.c.31", "27.3.c.32"]
+    }
+  }
+]
