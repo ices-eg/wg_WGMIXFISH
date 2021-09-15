@@ -145,3 +145,31 @@ for(i in grep("nep",unique(out$stock), invert = TRUE, value = TRUE)){
    }
 
 
+### Dorleta's test
+
+cod_flmt <- str_split(names(which(FLBEIA:::stock.fleetInfo(fleets)[1,]==1)), "&&")
+
+fleetsw <- fleets
+for(s in cod_flmt){ 
+   #  if(s[1] != "FRA_Otter_10<40m") next
+   (print(s))
+   cc <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]
+   
+   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.wt <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.wt <- biols[["cod.27.7e-k"]]@wt
+   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q <- (cc@landings.n+ cc@discards.n)/sweep(biols[["cod.27.7e-k"]]@n, 1, fleetsw[[s[1]]]@metiers[[s[2]]]@effshare*fleetsw[[s[1]]]@effort,"*")
+   
+   if((s[1] %in% c("FRA_Otter_10<40m","IE_Otter_10<24m","IE_Otter_24<40m"))){fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- yearMeans(fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2017:2019)], na.rm = TRUE)}
+   else {fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- 0}
+   
+}
+histw <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleetsw, covars = covars,
+                indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
+                covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
+outw <- bioSum(histw)
+outfw <- fltSum(histw)
+outfsw <- fltStkSum(histw)
+outmsw <- mtStkSum(histw)
+
+filter(outw, stock == "cod.27.7e-k", year == 2020)
+
+

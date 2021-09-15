@@ -17,13 +17,13 @@ CelticSea/FLBEIA_model/.Rhistory
 *.docx
 
 # dirs produced by sourceAll
-/NorthSea/bootstrap/data/
-/NorthSea/bootstrap/library/
-/NorthSea/bootstrap/software/
-/NorthSea/data/
-/NorthSea/model/
-/NorthSea/output/
-/NorthSea/report/
+#/NorthSea/bootstrap/data/
+#/NorthSea/bootstrap/library/
+#/NorthSea/bootstrap/software/
+#/NorthSea/data/
+#/NorthSea/model/
+#/NorthSea/output/
+#/NorthSea/report/
 
 # In case of temporary directory
 /NorthSea/tmp/
