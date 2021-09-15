@@ -25,10 +25,10 @@
   },
   {
     "Code": "CS",
-    "Description": "Celtic Seas",
+    "Description": "Celtic Sea",
     "Related": {
       "Ecoregion": [{ "Code": "CS", "Description": "Celtic Seas" }],
-      "ICES_Area": ["27.7.b", "27.7.c", "27.7.g", "27.7.h", "27.7.j", "27.7.k"]
+      "ICES_Area": ["27.7.b", "27.7.c", "27.7.e", "27.7.f", "27.7.g", "27.7.h", "27.7.j", "27.7.k"]
     }
   },
   {
