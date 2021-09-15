@@ -156,12 +156,40 @@ for(s in cod_flmt){
    cc <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]
    
    fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.wt <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.wt <- biols[["cod.27.7e-k"]]@wt
-   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q <- (cc@landings.n+ cc@discards.n)/sweep(biols[["cod.27.7e-k"]]@n, 1, fleetsw[[s[1]]]@metiers[[s[2]]]@effshare*fleetsw[[s[1]]]@effort,"*")
+#   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q <- (cc@landings.n+ cc@discards.n)/sweep(biols[["cod.27.7e-k"]]@n * exp(-biols[["cod.27.7e-k"]]@m/2), 1, fleetsw[[s[1]]]@metiers[[s[2]]]@effshare*fleetsw[[s[1]]]@effort,"*")
    
-   if((s[1] %in% c("FRA_Otter_10<40m","IE_Otter_10<24m","IE_Otter_24<40m"))){fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- yearMeans(fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2017:2019)], na.rm = TRUE)}
-   else {fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- 0}
+   if(!(s[1] %in% c("FRA_Otter_10<40m","IE_Otter_10<24m","IE_Otter_24<40m"))){
+	   
+#	   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- yearMeans(fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2017:2019)], na.rm = TRUE)}
+   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- 0}
    
 }
+
+## compare the catchabilities 
+fleets[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@catch.q
+fleetsw[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@catch.q
+
+fleetsw[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@catch.q-
+fleets[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@catch.q
+
+## Check same year/age -- really simple!!
+
+a <- 5
+y <- 2016
+
+Caa <- fleets[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@landings.n[ac(a), ac(y)] +
+fleets[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@discards.n[ac(a), ac(y)] 
+
+B <- biols[["cod.27.7e-k"]]@n[ac(a),ac(y)] * exp(-biols[["cod.27.7e-k"]]@m[ac(a),ac(y)]/2)
+
+E <- fleets[["FRA_Otter_10<40m"]]@effort[,ac(y)] * fleets[["FRA_Otter_10<40m"]]@metiers[[2]]@effshare[,ac(y)]
+
+Caa/(E*B)
+
+fleets[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@catch.q[ac(a),ac(y)]
+fleetsw[["FRA_Otter_10<40m"]]@metiers[[2]]@catches[["cod.27.7e-k"]]@catch.q[ac(a),ac(y)]
+
+
 histw <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleetsw, covars = covars,
                 indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
                 covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
