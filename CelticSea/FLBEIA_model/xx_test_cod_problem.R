@@ -86,7 +86,6 @@ for(f in names(fleets)) {
 
 
 ## Artificially inflate TACs so not limiting
-
 advice$TAC[,"2020"] <- advice$TAC[,"2020"] * 10
 
 hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = covars,
@@ -201,3 +200,57 @@ outmsw <- mtStkSum(histw)
 filter(outw, stock == "cod.27.7e-k", year == 2020)
 
 
+## Some runs looking at fractions of effort
+
+eff_frac <- seq(0.1,1.5,0.2)
+
+library(doParallel)
+
+registerDoParallel(cores = parallel::detectCores()-1)
+
+runs <- foreach(i = eff_frac, .export = ls(.GlobalEnv)) %dopar% {
+
+  library(FLBEIA)
+
+ for(f in names(fleets)) {
+ fleets[[f]]@effort[,ac(2020:2022)] <- fleets[[f]]@effort[,ac(2020:2022)]  * i
+ }
+
+hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = covars,
+               indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
+               covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
+
+out <- bioSum(hist)
+
+
+return(out)
+ 
+}
+
+
+stopImplicitCluster()
+
+
+## Plot the cod F
+
+results <- expand.grid(effort_mult = eff_frac, stock = unique(runs[[1]]$stock, value = NA)
+
+for(i in 1:length(eff_frac)) {
+	for(s in unique(results$stock)) {
+results$value[results$stock==s & results$effort_mult== eff_frac[i]] <- c(filter(runs[[i]], stock == s, year == 2020)$f)
+	}
+}
+
+mean_f <- data.frame(stock = unique(runs[[1]]$stock), value = NA)
+
+for(s in unique(runs[[1]]$stock)) {
+mean_f$value[mean_f$stock == s] <- mean(c(filter(runs[[1]], stock == s, year %in% 2017:2019)$f))
+
+}
+
+theme_set(theme_bw())
+ggplot(results, aes(x = effort_mult, y = value)) + 
+	geom_point() + geom_line() + 
+	geom_point(data = mean_f, aes(x = 1, y = value), colour = "red") + 
+	facet_wrap(~stock, scale = "free_y")
+ggsave(file.path("figures", "effort_f_relationships.png"))
