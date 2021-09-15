@@ -1,0 +1,1147 @@
+
+---
+title: 'Celtic Sea Program 4: FCube Forecasts'
+author: "Paul J. Dolder, Marieke Desender, Claire Moore, Lionel Pawlowski"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+geometry: margin=1in
+---  
+
+```{r version control, message = FALSE, echo = FALSE, include = FALSE}
+
+gc()
+rm(list = ls())
+ver <- "04_FCube_Forecasts_Celtic_Sea_2020"
+ver.datetime   <- date();
+cat(paste("\n",ver,"\n",sep=""));cat(paste(ver.datetime,"\n\n",sep=""))
+start.time <- proc.time()[3]
+
+
+```
+
+Version:   *`r ver`*
+
+Runtime: *`r format(Sys.time(), '%d %B %Y %H:%M')`*
+
+
+**Overview**
+
+This document details the procedure used to run the FCube mixed fishery anaylsis forecasts.
+
+
+```{r User setup, message=FALSE, warning=FALSE, tidy = TRUE}
+
+options(stringsAsFactors = FALSE, scipen=100)
+
+library(FLCore); library(FLash)
+library(FLAssess); library(FLFleet)
+library(pander); library(tables);
+library(knitr); library(ggplot2)
+library(dplyr); library(stockassessment)
+
+ # additional functions
+source("bootstrap/software/functions/FLFcube_FLCore_R31.R")
+source("bootstrap/software/functions/remove_validity_FLFleet.R")
+source("bootstrap/software/functions/funcs.R")
+
+
+##-----------------------------------------------------------------------------
+## I. GET INPUTS
+##-----------------------------------------------------------------------------
+
+
+# Nephrops setting.... T for including Nephrops, else F
+  nep        <- TRUE 
+  nep_latest <- TRUE
+
+# Tiered demersal spp
+  tier_1 <- TRUE  # cod, haddock, whiting
+  tier_2 <- TRUE  # monkfish, sole 7fg
+  tier_3 <- FALSE # hake, sole 7e, megrim
+
+  # Landings obligation settings!! - do we want to forecast catch, no discards?
+  LO     <- TRUE
+  nep_LO <- FALSE 
+
+# As for the cod advice, raise the landings with average discard rate of past 3 year = 10.2779 %
+  AddDis <- FALSE
+  #DR <- c("COD-CS" = 0.0718, "SOL-7E" = 0.027, "SOL-7FG"= 0.051)
+  DR <- c("sol.27.7e" = 0.0061)
+ # change as needed, ,
+
+  UseSAM   <- TRUE
+  UseFwdF3 <- FALSE
+
+  ## For file names
+options_dem <- ifelse(tier_1 & !tier_2 & !tier_3, "tier1",
+               ifelse(!tier_1 & tier_2 & tier_3, "tier2",
+	       ifelse(!tier_1 & !tier_2 & tier_3, "tier3",
+	       ifelse(tier_1 & tier_2 & tier_3, "tier123",
+	       ifelse(tier_1 & tier_2 & !tier_3, "tier12",
+	       ifelse(tier_1 & !tier_2 & tier_3, "tier13",
+	       ifelse(!tier_1 & tier_2 & tier_3, "tier23",
+		      "")))))))
+
+options_nep <- ifelse(nep & nep_latest, "nepnew",
+	       ifelse(nep & !nep_latest, "nepold",
+		      ""))
+
+options_lo  <- ifelse(LO, "LO", "")
+
+options_SAM <- ifelse(UseSAM, "UsingSAM", ifelse(UseFwdF3, "UsingFwdF3", ""))
+
+
+options <- paste0(options_dem, options_nep, options_lo, options_SAM)
+
+save(ver, options, file = "tmp.RData")
+
+load(file.path(paste0("results/01_Reproduce_the_advice_Celtic_Sea_2020", options,".Rdata")))
+load(file.path(paste0("results/03_Conditioning_Celtic_Sea_2020", options,".RData")))
+
+ver <- "04_FCube_Forecasts_Celtic_Sea_2020"
+
+##-------
+
+```
+
+**2. User defined settings for forecasts**
+
+```{r User defined settings, message=FALSE, warning=FALSE, tidy = TRUE}
+
+#----------------------------------------------------------------------
+## II. CHOICE OF THE RUN AND INPUT DATA
+##-----------------------------------------------------------------------------
+
+Run.nameFC <- ver
+
+SkipIntermedYr  <- TRUE # If we want to skip the intermediate year due to different F assumption
+                         # From single-stock
+
+## Add this to options for saving outputs
+options <- paste0(options, ifelse(SkipIntermedYr,"SkipIntYr","SQ_E"))
+
+LastProjectionYear <- now+1 #number of projection years
+
+#! choice of scenarios
+scenarios <- c("min","max","sq_E","val", "had.27.7b-k","whg.27.7b-ce-k", "cod_fmsy")
+#scenarios <- c("cod_fmsy")
+
+```
+
+**3. Run setup**
+
+```{r run setup, message=FALSE, warning=FALSE, tidy = TRUE}
+
+
+# results dataframe
+
+  fleets<-FLFleets(fleets)
+  res.effort <- data.frame()
+
+# output historical effort
+  ef.mt <- slot.fleet(fleets,"effshare")
+  ef.mt <- ef.mt[ef.mt$year==yr.assess,]
+  ef.fl <- data.frame(scenario="baseline",year=yr.assess,fleet=fleet.names,effort=sapply(fleets,function(x) effort(x)[,yr.assess]))
+  ef.mt <- merge(ef.mt,ef.fl)
+  ef.mt$effort <- as.numeric(ef.mt$effort)
+  ef.mt$efmet <- ef.mt$effort*ef.mt$effshare
+  res.effort.met <- ef.mt[, c("year","scenario","fleet","metier","effshare","effort","efmet")]
+
+#output historic relative stability
+  rs <- slot.fleet(fleets,"landings")
+  rs <- rs[rs$year==yr.assess,]
+  rs$country <- substr(rs$fleet,1,2)
+  names(rs) <- gsub("qname","stock",names(rs))
+  rs1 <- aggregate(rs$landings,list(stock=rs$stock,country=rs$country),sum,na.rm=T)
+  names(rs1)[which(names(rs1)=="x")] <- "landings"
+  rs2 <- aggregate(rs1$landings,list(stock=rs1$stock),FUN="sum",na.rm=T)
+  names(rs2)[which(names(rs2)=="x")] <- "land.tot"
+  rs <- merge(rs1,rs2)
+  rs$share <- rs$landings / rs$land.tot
+  rs$year <- as.numeric(yr.assess)
+  rs$scenario <- "baseline"
+  rs <- rs[,c("year","stock","country","scenario","share")]
+  rm(rs1,rs2)
+
+# a new data.frame for storing all catch info, distinguishing between legal landings (<=TAC),
+# over TAC landings, unallocated and discards (from histrorical discards ratio)
+
+  TAC.now<-TAC.now[st.names]
+  TACnow <- TAC.now[sort(names(TAC.now))]
+  TACnow <- TACnow[!duplicated(TACnow)]
+   if(nep) {
+		    All.landings <-  c(sapply(dem.st.fwd,function(x) landings(x)[,yr.now]), sapply(nep.st.fwd,function(x) landings(x)[,yr.now]))
+	    }
+	    if(!nep) {
+		    All.landings <- c(sapply(dem.st.fwd,function(x) landings(x)[,yr.now]))
+	    }
+
+  All.landings <-All.landings[sort(names(All.landings))]
+
+  Legal.landings <-pmin(All.landings,TACnow)
+  OverTAC.landings <- All.landings-TACnow
+  OverTAC.landings[OverTAC.landings<0] <- 0
+
+  if(nep) {
+  disc <-  c(sapply(dem.st.fwd, function(x) discards(x)[,yr.now]), sapply(nep.st.fwd, function(x) discards(x) [,yr.now]))
+  }
+
+  if(!nep) {
+  disc <- c(sapply(dem.st.fwd,function(x) discards(x)[,yr.now]))
+  }
+
+  disc <- disc[sort(names(disc))]
+
+  tonnes <- round(c(TACnow,Legal.landings,disc,OverTAC.landings),2)
+  allcatch.dataframe <- data.frame(year=yr.now,sc="baseline",stock=rep(st.names,4),
+                                   catch=rep(c("TAC","legal landings","discards","overTAC landings"),each=length(st.names)),
+                                   tonnes =as.numeric(tonnes))
+
+  effort.stock <- list()
+  if(nep) {
+  tot.nep.f3.landings <- matrix(nrow=length(nep.lst), ncol = length(now:yr.TAC), dimnames = list(nep.names, now:yr.TAC))
+  }
+  Fc.silent=FALSE # if T no full diagnostic
+
+```
+
+**4. TAC rules**
+
+```{r TACrules, message=FALSE, warning=FALSE, tidy = TRUE, results = 'asis'}
+
+# Management Plans for yrTAC  
+## We now just use the ones loaded from reproduce the advice directly
+
+## Commission request for a cod Fmsy run
+# not in 2019 Mixfish Advice group  ? 
+     ctrl.MP.CodMSY <- list()
+
+slidingslope["cod.27.7e-k"] <-if(SSB_TACyr["cod.27.7e-k"]< BRPs["cod.27.7e-k","Bmsytrigger"]) { BRPs["cod.27.7e-k","Fmsy"]*(SSB_TACyr["cod.27.7e-k"]/BRPs["cod.27.7e-k","Bmsytrigger"])}   
+       
+  ## additional scenario
+  ctrl.MP.CodMSY[["cod.27.7e-k"]] <- fwdControl(data.frame(year=c(yr.now,yr.TAC),val=c(1055,slidingslope[["cod.27.7e-k"]]),quantity=c("catch","f"),rel.year=c(NA,NA)))
+
+  ## Output Control rules
+  print(lapply(ctrl.MP, function(x) kable(x@target[c("year","quantity","min","val","max","rel.year")])))
+ 
+
+  ## Output additional scenario
+  print(kable(ctrl.MP.CodMSY[["cod.27.7e-k"]]@target[c("year","quantity","min","val","max","rel.year")], 
+              caption = "Additional Cod Fmsy scenario"))
+ 
+
+```
+
+** 5. Running FCube **  
+
+```{r FCube runs, message=FALSE, warning=FALSE, tidy = TRUE}
+
+##-----------------------------------------------------------------------------
+## III. RUNNING SCENARIOS
+##-----------------------------------------------------------------------------
+
+if(nep) {
+	f3.ctrl@target.F <-  FLPar(c(Ftarg.dem.now, Ftarg.nep.now), params = c(dem.names,nep.names))
+}
+if(!nep) {
+f3.ctrl@target.F   <-  FLPar(Ftarg.dem.now,params=dem.names) # this just makes the params objects
+}
+
+for (sc in scenarios) {
+  
+  sc_bis <- sc ## non standard scenarios
+
+  print(paste("scenario:",sc))
+  t1<-Sys.time()
+
+
+    #initialising the projection objects from the original objects
+    fl.f3 <- fl.pred #FLfleet objects
+    dem.st.f3 <- dem.stock # FLStock objects
+    if(nep) {
+    nep.st.f3 <- nep.stock  #nep.stock<- NaN
+    }
+    f3.ctrl.YY <- f3.ctrl  #there are Nans in here, why?
+
+    for (YY in now:LastProjectionYear) { # YY = 2019
+        YY <- ac(YY)
+
+############################################################
+        
+  # Under Fmsy scenario, modify F target for cod
+    if(sc == "cod_fmsy" & YY == ac(now)) {
+      f3.ctrl@target.F@.Data[1] <- slidingslope[["cod.27.7e-k"]] 
+      sc <- "cod.27.7e-k"  # change back for FCube to recognise
+      }
+        
+    if(sc == "cod_fmsy" & YY != ac(now)) {
+        sc <- "cod.27.7e-k"  # change back for FCube to recognise
+        }
+        
+
+##################################################
+
+        ##-----------------------------------------------------------------------------
+        ## 1). INTERMEDIATE YEAR
+        ##-----------------------------------------------------------------------------
+
+        if (!SkipIntermedYr | an(YY) !=now) {   # Can choose to skip intermediate year
+            cat("----FCUBE YR", YY, "----", "\n")
+
+            #status quo in Intermediate year for all scenarios
+            if (as.numeric(YY)==now) {
+                print("SQ in Int Yr")
+                fl.f3 <- FLFleets(lapply(fl.f3, function(x) {
+                            effort(x)[,YY]<-yearMeans(effort(x)[,yr.rge[length(yr.rge)]])
+                            return(x)}))
+            } else {  # Fcube scenarios for TAC Yr
+                #scenario status quo compared to last data year
+                if (sc=="sq_E") {
+                    fl.f3 <- FLFleets(lapply(fl.f3, function(x) {
+                                effort(x)[,YY]<-yearMeans(effort(x)[,yr.rge[length(yr.rge)]])
+                                return(x)}))
+                } else if (sc=="Ef_Mgt") {
+                          # Scenario mostly North Sea related, although there is a flatfish plan in VIIe, not accounted for here
+                          yr.ref <- as.character(as.numeric(YY)-1) # last data year
+
+                          fl.f3 <- FLFleets(lapply(fl.f3, function(x) {  # issue here with eff.redYrAssesstoNow
+                            # set for testing x <- fl.f3[[1]]
+                                      eff <- effort(x)[,yr.ref]   #effort function works on FLstock/FLQuant
+                                      if (as.numeric(YY)==now) eff.red <- eff.redYrAssesstoNow else # These lines refere to the North Sea.
+                                         if(as.numeric(YY)==(now+1)) eff.red <- eff.redNowtoTACYr else # but where are these set????
+                                            eff.red <- 0
+                                                m.lst <- names(metiers(x))[!is.na(match(names(metiers(x)),names(eff.red)))]
+                                                # function was previously metiers
+                                                for (m in names(metiers(x))) {
+                                                    if (m %in% m.lst) {
+                                                        effshare(x@metiers[[m]])[,YY] <- eff*effshare(x@metiers[[m]])[,yr.ref]*(1-eff.red[m]/100)
+                                                    } else effshare(x@metiers[[m]])[,YY] <- eff*effshare(x@metiers[[m]])[,yr.ref]
+                                                }
+                                                effort(x)[,YY] <- as.numeric(Sums(lapply(x@metiers,function(x1) effshare(x1)[,YY])))
+                                                # recalculating new effshare then
+                                                for (m in names(metiers(x))) {
+                                                    effshare(x@metiers[[m]])[,YY] <- effshare(x@metiers[[m]])[,YY]/eff
+                                                }
+                                      return(x)}))
+                       } else {
+
+                          # 1. run Fcube
+                          f3.ctrl.YY@mgmt.year <- as.numeric(YY)
+                          f3.ctrl.YY@effort.rule <- array(sc)
+                          res <- FLFcube(fleets=fl.f3, stocks=wg.stock, control=f3.ctrl.YY,silent=Fc.silent)
+                          if (Fc.silent) fl.f3<-res else {
+                            fl.f3<- res[[1]]
+                                  if(sc_bis != "cod_fmsy") {
+                                  effort.stock[[sc]][[YY]] <- res[[2]]
+                                  }
+                                  if(sc_bis == "cod_fmsy") {
+                                  effort.stock[[sc_bis]][[YY]] <- res[[2]]
+                                  }
+                            }
+                      }
+            } # end of if on TAC Yr
+	
+          if(sc_bis != "cod_fmsy") {
+            ef.fl <- data.frame(scenario=sc,year=YY,fleet=fleet.names,effort=sapply(fl.f3,function(x) effort(x)[,YY]))
+           }
+          if(sc_bis == "cod_fmsy") {
+            ef.fl <- data.frame(scenario=sc_bis,year=YY,fleet=fleet.names,effort=sapply(fl.f3,function(x) effort(x)[,YY]))
+           }
+          
+            res.effort <- rbind(res.effort,ef.fl)
+
+            # effort.by.metier
+            ef.mt <- slot.fleet(fl.f3,"effshare")
+            ef.mt <- ef.mt[ef.mt$year==YY,]
+            ef.mt <- merge(ef.mt,ef.fl)
+            ef.mt$effort <- as.numeric(ef.mt$effort)
+            ef.mt$efmet <- ef.mt$effort*ef.mt$effshare
+            res.effort.met <- rbind(res.effort.met, ef.mt[, c("year","scenario","fleet","metier","effshare","effort","efmet")])
+
+
+            # 2. calculate resulting F from new effort
+
+            # 2019 fix!!!
+            # st.lst - at this point is a nested S4 object, if we turn to a list, then the code works
+            st.lst <- names(wg.stock)
+            #table of partial landings F
+            # partial landings F by stock and fleet - a list of list of vectors
+            partF.land <- lapply(st.lst,function(st) { #there is a list here that I think should be just 1 dimension
+              # to test use st = "cod.27.7e-k"
+                                        fl. <-lapply(fl.f3, function(x) {
+                                          # to test use x = fl.f3[[1]]
+                                     if (st %in% unique(unlist(lapply(x@metiers, function(x1) names(x1@catches))))) {
+                                       #to test use x1 = x[[1]]
+                                        e.<-effort(x)[,YY]
+                                        mt. <- sapply(x@metiers,function(x1) {
+                                        if (st %in% names(x1@catches)) {
+                                            eff <- e. * effshare(x1)[,YY]
+                                            Q   <- catch.q(x1)[[st]][,YY]
+                                            sel <- landings.sel(x1)[[st]][,YY]
+                                            harv <- sweep(sweep(sel,2:6,eff,FUN="*"),2:6,Q,FUN="*")
+                                        } else  harv<-0
+                                        harv[is.na(harv)] <- 0
+                                        return(harv)})
+                                     } else mt. <- 0
+                                     })
+                            })
+            names(partF.land) <- st.lst #2019 add
+            #predicted landings F by stock
+            F.land.pred <- sapply(partF.land,function(x) sum(sapply(x,sum)))
+
+            # 3. include this new fcube F into fwd for calculating TAC
+
+            #demersal stocks
+            dem.st.f3 <- lapply(dem.st.f3, function(x) {   
+                            n. <- name(x)
+                            r. <- as.character(range[n., "minfbar"]:range[n., "maxfbar"])
+
+                            #in dem.stock, which is a stf stock, landings.n is only a proportion[0-1] of landings.n vs. catch.n
+                            fmult.land <- F.land.pred[n.]/apply(harvest(x)[r.,YY]*landings.n(x)[r.,YY],2:6,mean,na.rm=T)
+                            fmult.land[is.na(fmult.land)] <- 0 ## catch where stock is zero catch
+                            ctrl <- fwdControl(data.frame(year=YY,val=c(fmult.land),quantity="f", rel.year=YY))
+                            srPar<-FLPar(c(Recr[n.,YY]),dimnames=list(params="a",iter=1))
+                            x <- fwd(x,ctrl=ctrl,sr=list(model="mean",params=srPar))
+                            name(x) <- n.
+                            return(x)
+                            })
+
+	    if(UseSAM) {
+
+		   ## Get the intermediate and TAC year targets in fbar to go to SAM forecast
+		 if(YY == now) {
+		Ftarg_int <- sapply(dem.st.f3, function(x) fbar(x)[,YY]) } else {
+			
+			if(SkipIntermedYr) {
+			Ftarg_int <- sapply(sam_stks, function(x) sam_settings[[x]][["fval"]][2])
+			}
+			Ftarg_tac <- sapply(dem.st.f3, function(x) fbar(x)[,YY])
+			Ftarg_tac[Ftarg_tac == 0] <- 1e-09 ## fix for sam zero f issue
+		 	}
+	 
+	    ## Adjust the target F in the SAM forecast
+	    for(i in sam_stks) {
+		    if(YY ==now) { ## wouldn't be here if skipping intermediate year
+		
+		    sam_settings[[i]][["fval"]][2] <- Ftarg_int[[i]]
+				    
+	            if(!is.null(sam_settings[[i]][["fscale"]])) {
+		    sam_settings[[i]][["fscale"]][[2]] <- NA
+		    }
+		    if(!is.null(sam_settings[[i]][["catchval.exact"]])) {
+		    sam_settings[[i]][["catchval.exact"]][[2]] <- NA
+		    }
+		    if(!is.null(sam_settings[[i]][["catchval"]])) {
+		    sam_settings[[i]][["catchval"]][[2]] <- NA
+		    }
+		    } else { 
+	            
+	            sam_settings[[i]][["fval"]][2] <- Ftarg_int[[i]]
+		    sam_settings[[i]][["fval"]][3] <- Ftarg_tac[[i]]
+		    
+		    if(!is.null(sam_settings[[i]][["fscale"]])) {
+		    sam_settings[[i]][["fscale"]][[2]] <- NA
+		    sam_settings[[i]][["fscale"]][[3]] <- NA
+		    }
+		    if(!is.null(sam_settings[[i]][["catchval.exact"]]) & !SkipIntermedYr) {
+		    sam_settings[[i]][["catchval.exact"]][[2]] <- NA
+		    sam_settings[[i]][["catchval.exact"]][[3]] <- NA
+		    }
+		    if(!is.null(sam_settings[[i]][["catchval"]]) & !SkipIntermedYr) {
+		    am_settings[[i]][["catchval"]][[2]] <- NA
+		    sam_settings[[i]][["catchval"]][[3]] <- NA
+		    }
+		    }
+	    }
+	    
+	    ## cod sam forecast
+	    set.seed(sam_settings[["cod.27.7e-k"]][["seed"]])
+	    cod_sam_forecast <- forecast(SAM_fits[["cod.27.7e-k_sam"]], 
+	    			     fval = sam_settings[["cod.27.7e-k"]][["fval"]],
+	    			     ave.years = sam_settings[["cod.27.7e-k"]][["ave.years"]],
+	    			     rec.years = sam_settings[["cod.27.7e-k"]][["rec.years"]],
+	    			     splitLD = sam_settings[["cod.27.7e-k"]][["splitLD"]],
+	    			     nosim = sam_settings[["cod.27.7e-k"]][["nosim"]]
+	    )
+	    
+	    ## had sam forecast
+	    set.seed(sam_settings[["had.27.7b-k"]][["seed"]])
+	    had_sam_forecast <- forecast(SAM_fits[["had.27.7b-k_sam"]], 
+	    			     fval = sam_settings[["had.27.7b-k"]][["fval"]],
+	    			     ave.years = sam_settings[["had.27.7b-k"]][["ave.years"]],
+	    			     rec.years = sam_settings[["had.27.7b-k"]][["rec.years"]],
+	    			     splitLD = sam_settings[["had.27.7b-k"]][["splitLD"]],
+	    			     nosim = sam_settings[["had.27.7b-k"]][["nosim"]]
+	    )
+	    
+	    ## whg sam forecast
+	    set.seed(sam_settings[["whg.27.7b-ce-k"]][["seed"]])
+	    whg_sam_forecast <- forecast(SAM_fits[["whg.27.7b-ce-k_sam"]], 
+	    			     fval = sam_settings[["whg.27.7b-ce-k"]][["fval"]],
+	    			     ave.years = sam_settings[["whg.27.7b-ce-k"]][["ave.years"]],
+	    			     rec.years = sam_settings[["whg.27.7b-ce-k"]][["rec.years"]],
+	    			     splitLD = sam_settings[["whg.27.7b-ce-k"]][["splitLD"]],
+	    			     nosim = sam_settings[["whg.27.7b-ce-k"]][["nosim"]]
+	    )
+	    
+	    ## sole 7fg sam forecast
+	    
+	    set.seed(sam_settings[["sol.27.7fg"]][["seed"]])
+	    sol_sam_forecast <- forecast(SAM_fits[["sol.27.7fg_sam"]],
+	    			     catchval.exact = sam_settings[["sol.27.7fg"]][["catchval.exact"]],
+	    			     fscale = sam_settings[["sol.27.7fg"]][["fscale"]],
+	    			     year.base = sam_settings[["sol.27.7fg"]][["year.base"]],
+	    			     fval = sam_settings[["sol.27.7fg"]][["fval"]],
+	    			     ave.years = sam_settings[["sol.27.7fg"]][["ave.years"]],
+	    			     rec.years = sam_settings[["sol.27.7fg"]][["rec.years"]],
+	    			     splitLD = sam_settings[["sol.27.7fg"]][["splitLD"]],
+	    			     nosim = sam_settings[["sol.27.7fg"]][["nosim"]]
+	    )
+
+	    ## Extract the SAM results
+
+	    sam_results <- expand.grid(stock = sam_stks, year = c((now-1):(now+2)), fbar = NA, catch = NA, landings = NA, discards = NA,   ssb = NA)
+
+	    for(i in sam_stks) {
+		    	ii <- sapply(strsplit(i, ".", fixed = TRUE), "[[", 1)
+
+	    	tab <- attributes(get(paste(ii, "sam_forecast", sep = "_")))$shorttab
+
+			sam_results[sam_results$stock == i,"fbar"]     <- tab["fbar",]
+			sam_results[sam_results$stock == i,"catch"]    <- tab["catch",]
+			sam_results[sam_results$stock == i,"landings"] <- tab["Land",]
+			sam_results[sam_results$stock == i,"discards"] <- tab["Discard",]
+			sam_results[sam_results$stock == i,"ssb"]      <- tab["ssb",]
+	    }
+
+	    }
+
+if(nep) {
+
+nep.st.f3 <- lapply(nep.st.f3, function(x) {
+			   n. <- x@name
+			   x@stock.n[,YY] <- x@stock.n[,yr.now]
+
+			   # But we also need to fill the landings etc..
+			   ## The weights shoud already be there!!
+			 ##  x@landings.wt[,YY] <- x@landings.wt[,yr.assess]
+			 ##  x@discards.wt[,YY] <- x@discards.wt[,yr.assess]
+			   #x@landings.n[,YY]  <- x@landings.n[,yr.assess]
+			   #x@discards.n[,YY]  <- x@discards.n[,yr.assess]
+			##   x@catch.wt[,YY]  <- x@catch.wt[,yr.assess]
+
+			   # case of landing obligation
+			   if(LO) {
+			   x@landings.n[,YY] <- 1
+			   x@discards.n[,YY] <- 0
+			   x@landings.wt[,YY] <- x@catch.wt[,YY]
+			   x@discards.wt[,YY] <- 0
+			   }
+
+			   fmult.land <- F.land.pred[n.]/(x@harvest[,YY] * x@landings.n[,YY])
+
+			   x@harvest[,YY]    <- x@harvest[,YY] * fmult.land
+			   x@catch.n[,YY]    <- x@stock.n[,YY] * x@harvest[,YY]
+			   x@landings.n[,YY] <- x@catch.n[,YY] * x@landings.n[,YY]
+			   x@landings[,YY]   <- x@landings.n[,YY] * x@landings.wt[,YY]
+			   x@discards.n[,YY] <- x@catch.n[,YY] - x@landings.n[,YY]
+			   x@discards[,YY]   <- x@discards.n[,YY] * x@discards.wt[,YY]
+
+return(x)})
+
+# the estimated change in landings between FCube and the baseline for NEP stocks with UWTV is applied to the other stocks
+
+tot.nep.f3.landings[,YY] <- sapply(nep.lst, function(x) nep.st.f3[[x]]@landings[,YY])
+
+Ratio <- sum(tot.nep.f3.landings[nep.ass,YY]) /
+	sum(sapply(nep.lst, function(x) nep.st.fwd[[x]]@landings[,YY])[nep.ass])
+
+tot.nep.f3.landings[no.nep.ass,YY] <- sapply(nep.lst, function(x) nep.st.fwd[[x]]@landings[,YY])[no.nep.ass] * Ratio
+
+
+			    } # if nep = T
+
+
+
+   ## For any top up stocks, we need to raise the discards by DR
+             if(AddDis == T) {
+		     for(i in names(DR)) {
+    if(i %in% names(dem.st.f3)) {
+		       if(LO == T) {
+    dem.st.f3[[i]]@landings.n[,YY]  <- dem.st.f3[[i]]@landings.n[,YY]/(1-DR[i])
+    dem.st.f3[[i]]@catch.n[,YY]  <- dem.st.f3[[i]]@landings.n[,YY]
+    }
+
+    if(LO == F) {
+      ## Include a discard.wt
+      dem.st.f3[[i]]@discards.wt[,YY] <-   dem.st.f3[[i]]@catch.wt[,YY]
+
+      # Raise catch.n
+          dem.st.f3[[i]]@catch.n[,YY]  <-     
+          dem.st.f3[[i]]@landings.n[,YY]/(1-DR[i])
+
+      # fill discard.n  
+    dem.st.f3[[i]]@discards.n[,YY]  <- (dem.st.f3[[i]]@catch.n[,YY] -
+      dem.st.f3[[i]]@landings.n[,YY])
+
+    # calc the new landings, discards and catch
+    dem.st.f3[[i]]@landings[,YY]  <- computeLandings(dem.st.f3[[i]][,YY])
+    dem.st.f3[[i]]@discards[,YY]  <- computeDiscards(dem.st.f3[[i]][,YY])
+    dem.st.f3[[i]]@catch[,YY]     <- computeCatch(dem.st.f3[[i]][,YY])
+
+    }
+      }
+             }
+	     }    
+
+            #Relative stability by country
+            rel.share <- lapply(partF.land,function(x) {
+                            fl. <- sapply(x,sum)
+                            fl. <- data.frame(country=substr(names(fl.),1,2),F=fl.)
+                            fl. <-cbind(aggregate(fl.$F,list(country=fl.$country),sum,na.rm=T),tot=sum(aggregate(fl.$F,list(country=fl.$country),sum,na.rm=T)$x))
+                            fl.$share <- fl.$x / fl.$tot
+                            return(fl.) })
+
+           if(sc_bis != "cod_fmsy") { #Claire there is an issue here, it is with names(partF.land)
+            rel.share <- cbind(eval(parse(text=paste('rbind(rel.share[[', paste(seq(length(rel.share)),
+            			             collapse=']] ,rel.share[['), ']])', sep=''))),stock=rep(names(partF.land),each=length(unique(rs$country))), year=YY,scenario=sc)
+            }
+            
+            if(sc_bis == "cod_fmsy") {
+            rel.share <- cbind(eval(parse(text=paste('rbind(rel.share[[', paste(seq(length(rel.share)),
+            			             collapse=']] ,rel.share[['), ']])', sep=''))),stock=rep(names(partF.land),each=length(unique(rs$country))), year=YY,scenario=sc_bis)
+            }
+            
+            rs<- rbind(rs,rel.share[,names(rs)])
+
+            ## Feeding in the total catch data.frame for storing all catch info
+
+	    if(nep) {
+		    All.landings <-  c(sapply(dem.st.f3,function(x) landings(x)[,ac(YY)]), tot.nep.f3.landings[,ac(YY)])
+	    }
+	    if(!nep) {
+		    All.landings <- c(sapply(dem.st.f3,function(x) landings(x)[,ac(YY)]))
+	    }
+
+	    if(UseSAM) {
+	    for(i in sam_stks) {
+	    All.landings[[i]] <- sam_results[sam_results$stock == i & sam_results$year == YY,"landings"]
+	    }
+	    }
+
+	    All.landings <-All.landings[sort(names(All.landings))]
+
+            # added to make the allcatchdataframwork...
+            TACnow<-as.numeric(results$data[(results$sc == Run.name & results$year==YY & results$value=="landings")])
+            names(TACnow)<-results$stock[(results$sc == Run.name & results$year==YY & results$value=="landings")]
+            TACnow<-TACnow[sort(names(TACnow))]
+
+            Legal.landings <-pmin(All.landings,TACnow) ##TO CHANGE - why is this note here?
+            OverTAC.landings <- All.landings-TACnow
+            OverTAC.landings[OverTAC.landings<0] <- 0
+
+	    if(nep) {
+  	disc <-  c(sapply(dem.st.f3, function(x) discards(x)[,yr.now]), sapply(nep.st.fwd, function(x) discards(x) [,yr.now]))
+  	}
+
+  	if(!nep) {
+ 	 disc <- c(sapply(dem.st.f3,function(x) discards(x)[,yr.now]))
+  	}
+
+	if(UseSAM) {
+	    for(i in sam_stks) {
+	    disc[[i]] <- sam_results[sam_results$stock == i & sam_results$year == YY,"discards"]
+	    }
+	    }
+
+            disc <- disc[sort(names(disc))]
+
+            tonnes <- round(c(Legal.landings,disc,OverTAC.landings),2)
+
+            if(sc_bis != "cod_fmsy") {
+            allcatch.dataframe <- rbind(allcatch.dataframe,
+                                        data.frame(year=YY,sc=sc,stock=rep(st.names,3),
+                                                   catch=rep(c("legal landings","discards","overTAC landings"),each=length(st.names)),
+                                                   tonnes =as.numeric(tonnes)))
+            }
+            if(sc_bis == "cod_fmsy") {
+            allcatch.dataframe <- rbind(allcatch.dataframe,
+                                        data.frame(year=YY,sc=sc_bis,stock=rep(st.names,3),
+                                                   catch=rep(c("legal landings","discards","overTAC landings"),each=length(st.names)),
+                                                   tonnes =as.numeric(tonnes)))
+            }
+
+
+        #************
+        #! returning landings and discards into the fleets and metiers
+        #first we need to trick the no.nep.ass for calculating the basic new landings in yr.now before applying the
+        #fcube ratio, for the baseline
+
+	    if(!nep) {
+	fl.f3 <- FLFleets(lapply(fl.f3, function(x) {
+	                      # to test x <- fl.f3[[1]]
+                        n. <- name(x)
+                        x@metiers <- lapply(x@metiers, function(met) {
+                                      #to test met <- x@metiers[[1]]
+                                      m. <- name(met)
+                                      met@catches <- lapply(met@catches, function(st) {
+                                                      # to test st <-met@catches[[1]]
+                                                     s. <- name(st)#toupper(name(st))
+                                                     #there is a problem with this line -  F.land.pred[[s.]
+                                                     ratio.f.land <- partF.land[[s.]][[n.]][m.]/F.land.pred[[s.]]
+                                                     landings(st)[,YY] <-All.landings[[s.]]*ratio.f.land
+                                                     discards(st)[,YY] <- landings(st)[,YY]*discards.sel(st)[,YY]/landings.sel(st)[,YY]
+                                                     return(st)})
+                                      return(met) })
+                        return(x) }))
+
+	    }
+
+
+	    if(nep) {
+        BaselineNepNoAss <- sapply(nep.lst, function(x) landings(nep.st.fwd[[x]])[,yr.assess])[no.nep.ass]/sapply(nep.lst, function(x) landings(nep.st.fwd[[x]])[,YY])[no.nep.ass]
+
+            fl.f3 <- FLFleets(lapply(fl.f3, function(x) {
+                        n. <- name(x)
+                        x@metiers <- lapply(x@metiers, function(met) {
+                                      m. <- name(met)
+                                      met@catches <- lapply(met@catches, function(st) {
+                                                     s. <- name(st)
+                                                     if (!s. %in% no.nep.ass) {
+                                                     ratio.f.land <- partF.land[[s.]][[n.]][m.]/F.land.pred[[s.]]
+                                                     landings(st)[,YY] <-All.landings[[s.]]*ratio.f.land
+						     } else {
+						     baseline.land <- st@landings[,yr.assess] * BaselineNepNoAss[s.]
+						     st@landings[,YY] <- baseline.land * Ratio
+
+						     }
+                                                     discards(st)[,YY] <- landings(st)[,YY]*discards.sel(st)[,YY]/landings.sel(st)[,YY]
+                                                     return(st)})
+                                      return(met) })
+                        return(x) }))
+
+
+	    }
+
+
+
+            ##-----------------------------------------------------------------------------
+            ## 2). RECALCULATE MANAGEMENT PLANS
+            ##-----------------------------------------------------------------------------
+
+            YYp1 <- as.numeric(YY)+1
+            if (YYp1 <= LastProjectionYear) {
+                YYp1 <- ac(YYp1)
+                print("----MANAGEMENT PLAN----")
+                #FORWARD
+                dem.st.MP <- lapply(dem.st.f3, function(x) {
+                                n. <- name(x)
+                                  if(sc_bis == "cod_fmsy" & n. == "cod.27.7e-k") {
+                                ctrl. <- ctrl.MP.CodMSY[[n.]]
+                                } else {
+                                  ctrl. <- ctrl.MP[[n.]] 
+                                }
+                                srPar<-FLPar(c(Recr[n.,YYp1]),dimnames=list(params="a",iter=1))
+                                x <- fwd(x,ctrl=ctrl.,sr=list(model="mean",params=srPar))
+                                name(x) <- n.
+                                return(x)
+                                })
+
+		# For NEP the advice is unchanged as we don't know how the results influence biomass
+
+                #finding the landings target corresponding to this
+                Ftarg.dem.yrTAC <- sapply(dem.st.MP,function(x) {
+                                      n. <- x@name
+                                      r. <- range[n., "minfbar"]:range[n., "maxfbar"]
+                                      F.land <- harvest(x)[,YYp1]*landings.n(x)[,YYp1]/catch.n(x)[,YYp1]
+                                      F.land[is.na(F.land)] <- 0 ## catch where stock is zero catch
+                                      apply(F.land[as.character(r.)],2:6,mean,na.rm=T)})
+
+		if(nep) {
+		Ftarg.nep.yrTAC <- sapply(nep.st.fwd, function(x) {
+				      n. <- x@name
+				      r. <- range[n., "minfbar"]:range[n., "maxfbar"]
+				      F.land <- x@harvest[,YYp1] * x@landings.n[,YYp1] / (x@landings.n[,YYp1] + x@discards.n[,YYp1])
+				      })
+	if(nep) {
+		f3.ctrl.YY@target.F <-  FLPar(c(Ftarg.dem.yrTAC, Ftarg.nep.yrTAC), params = c(dem.names,nep.names))
+	}
+	if(!nep) {
+	f3.ctrl.YY@target.F <- FLPar(Ftarg.dem.yrTAC,params=dem.names)
+	}
+		
+		}
+	 	
+	    }
+	
+        } # end "!SkipIntermedYr | an(YY) !=now"
+
+        ## Only TAC year - I DON'T THINK THIS IS NECESSARY FOR NEPHROPS AS WE AREN'T PROJECTING FORWARD THE STOCK
+        if(SkipIntermedYr & an(YY) == now) {
+            print("Skipping Intermediate year, calculate stock F")
+            dem.st.f3 <- lapply(dem.st.f3, function(x) {  
+                            n. <- name(x)
+		              IntF <- ctrl.MP[[n.]]@target[,"val"][1]
+                            ctrl. <- fwdControl(data.frame(year=YY,val=IntF,quantity="f", rel.year=YY))
+                            srPar<-FLPar(c(Recr[n.,YY]),dimnames=list(params="a",iter=1))
+                            x <- fwd(x,ctrl=ctrl.,sr=list(model="mean",params=srPar))
+                            })
+
+            for (i in dem.names) {
+                 dem.st.f3[[i]]@name <-i
+                }
+
+            YYp1 <- as.numeric(YY)+1
+            if (YYp1 <= LastProjectionYear) {
+                YYp1 <- ac(YYp1)
+                print("----MANAGEMENT PLAN----")
+                  #FORWARD
+                dem.st.MP <- lapply(dem.st.f3, function(x) {
+                                n. <- name(x)
+                                if(sc_bis == "cod_fmsy" & n. == "cod.27.7e-k") {
+                                ctrl. <- ctrl.MP.CodMSY[[n.]]
+                                } else {
+                                  ctrl. <- ctrl.MP[[n.]] 
+                                }
+                                srPar<-FLPar(c(Recr[n.,YYp1]),dimnames=list(params="a",iter=1))
+                                x <- fwd(x,ctrl=ctrl.,sr=list(model="mean",params=srPar))
+                                name(x) <- n.
+                                return(x)
+                                })
+
+                #finding the landings target corresponding to this
+                Ftarg.dem.yrTAC <- sapply(dem.st.MP,function(x) {
+                                      n. <- x@name
+                                      r. <- range[n., "minfbar"]:range[n., "maxfbar"]
+                                      F.land <- harvest(x)[,YYp1]*landings.n(x)[,YYp1]/catch.n(x)[,YYp1]
+                                      F.land[is.na(F.land)] <- 0 ## catch where stock is zero catch
+                                      apply(F.land[as.character(r.)],2:6,mean,na.rm=T)})
+
+		if(nep) {
+		Ftarg.nep.yrTAC <- sapply(nep.st.fwd, function(x) {
+				      n. <- x@name
+				      r. <- range[n., "minfbar"]:range[n., "maxfbar"]
+				      F.land <- x@harvest[,YYp1] * x@landings.n[,YYp1] / (x@landings.n[,YYp1] + x@discards.n[,YYp1])
+				      })
+		}
+
+	if(nep) {
+		f3.ctrl.YY@target.F <-  FLPar(c(Ftarg.dem.yrTAC, Ftarg.nep.yrTAC), params = c(dem.names,nep.names))
+	}
+	if(!nep) {
+	f3.ctrl.YY@target.F <- FLPar(Ftarg.dem.yrTAC,params=dem.names)
+	}
+
+            }
+        } # end "SkipIntermedYr & an(YY) == now"
+
+  } #### end of year loop
+
+
+    #------------RESULTS--------------------
+    print("----WRITE RESULTS----")
+    years <- now:LastProjectionYear
+    
+    ## change the scenario name back for results
+    sc <- sc_bis
+
+    #landings
+    results<-rbind(results,cbind(sc=sc,year=rep(years,n.dem),
+                                 stock=rep(dem.names,each=length(years)),value="landings",
+                                 data=unlist(lapply(dem.st.f3, function(x) round(computeLandings(x)[,ac(years)])))
+    ))
+    if(nep) {
+    results <- rbind(results, cbind(sc = sc, year = rep(years, each = n.nep),
+				    stock = rep(nep.names, length(years)), value = "landings",
+				    data = c(tot.nep.f3.landings)
+				    ))
+    }
+
+    #discards
+    results<-rbind(results,cbind(sc=sc,year=rep(years,n.dem),
+                                 stock=rep(dem.names,each=length(years)),value="discards",
+                                 data=unlist(lapply(dem.st.f3, function(x) round(computeDiscards(x)[,ac(years)])))
+    ))
+
+
+    #TAC advice according to MP
+#    results<-rbind(results,cbind(sc=sc,year=rep(years[-1],n.dem),
+#                                 stock=rep(dem.names,each=length(years)-1),value="Ld_MgtPlan",
+#                                 data=unlist(lapply(dem.st.MP, function(x) round(computeLandings(x)[,ac(years[-1])])))
+ #   ))
+
+#    if(nep) {
+#    results <- rbind(results, cbind(sc = sc, year = rep(years[-1], n.nep),
+#				    stock = rep(nep.names, each = length(years)-1), value = "Ld_MgtPlan",
+#				    data = unlist(lapply(nep.st.fwd, function(x) round(x@landings[,ac(years[-1])])))
+#				    ))
+
+ #   }
+
+    # Fmult
+    results<-rbind(results,cbind(sc=sc,year=rep(years,n.dem),
+                                 stock=rep(dem.names,each=length(years)),value=paste("FmultVsF",substr(yr.assess,3,4),sep=""),
+                                 data=unlist(lapply(dem.st.f3, function(x) round(sweep(fbar(x)[,ac(years)],c(1,3:6),fbar(x)[,yr.assess],FUN="/"),2)))
+    ))
+
+    if(nep) {
+    results <- rbind(results, cbind(sc = sc, year = rep(years, n.nep),
+				    stock = rep(nep.names, each = length(years)), value = paste("FmultVsF", substr(yr.assess,3,4), sep=""),
+				    data = unlist(lapply(nep.st.f3, function(x) round(sweep(fbar(x)[,ac(years)],c(1,3:6), fbar(x)[,yr.assess],FUN="/"),2)))
+				    ))
+    }
+
+    ## Fbar
+    results <- rbind(results, cbind(sc = sc, year = rep(years, n.dem),
+				    stock = rep(dem.names, each = length(years)), value = "Fbar",
+				    data = unlist(lapply(dem.st.f3, function(x) fbar(x)[,ac(years)]))
+				    ))
+
+    if(nep) {
+     results <- rbind(results, cbind(sc = sc, year = rep(years, n.nep),
+				    stock = rep(nep.names, each = length(years)), value = "Fbar",
+				    data = unlist(lapply(nep.st.f3, function(x) fbar(x)[,ac(years)]))
+				    ))
+    }
+
+
+    #ssb
+    years_ssb <- c(years,YYp1)
+    results<-rbind(results,cbind(sc=sc,year=rep(years_ssb,n.dem),
+                                 stock=rep(dem.names,each=length(years_ssb)),value="ssb",
+                                 data=unlist(lapply(dem.st.f3, function(x) round(ssb(x)[,ac(years_ssb)])))
+    ))
+
+#    results<-rbind(results,cbind(sc=sc,year=rep(years_ssb,n.dem),
+ #                                stock=rep(dem.names,each=length(years_ssb)),value="ssb_MgtPlan",
+  #                               data=unlist(lapply(dem.st.MP, function(x) round(ssb(x)[,ac(years_ssb)])))
+   # ))
+
+    if(UseSAM) {
+    
+	    for(i in sam_stks) {
+	    # landings
+		    results[results$stock == i & results$value == "landings" & results$sc == sc & results$year %in% ac(years),"data"] <- sam_results[sam_results$stock == i & sam_results$year %in% ac(years), "landings"]
+	    # discards 
+		    results[results$stock == i & results$value == "discards" & results$sc == sc & results$year %in% ac(years),"data"] <- sam_results[sam_results$stock == i & sam_results$year %in% ac(years), "discards"]
+	  # catch 
+		    results[results$stock == i & results$value == "catch" & results$sc == sc & results$year %in% ac(years),"data"] <- sam_results[sam_results$stock == i & sam_results$year %in% ac(years), "catch"]
+	  # fbar 
+		    results[results$stock == i & results$value == "Fbar" & results$sc == sc & results$year %in% ac(years),"data"] <- sam_results[sam_results$stock == i & sam_results$year %in% ac(years), "fbar"]
+	  # Fmult 
+		    results[results$stock == i & results$value == paste0("FmultVsF",substr(now-1,3,4)) & results$sc == sc & results$year %in% ac(years),"data"] <- c(fbar(dem.stock[[i]])[,ac(now-1)]) *
+			    sam_results[sam_results$stock == i & sam_results$year %in% ac(years), "fbar"]
+
+	  # ssb 
+		    results[results$stock == i & results$value == "ssb" & results$sc == sc & results$year %in% ac(years_ssb),"data"] <- sam_results[sam_results$stock == i & sam_results$year %in% ac(years_ssb), "ssb"]
+	    }
+    
+    }
+
+
+
+    print(Sys.time()-t1)
+} #end of scenarios
+
+```
+
+**6. Writing out the results**
+
+```{r writingResults, message=FALSE, warning=FALSE, tidy = TRUE, results = 'asis'}
+
+##-----------------------------------------------------------------------------
+## III. OUTPUTS
+##-----------------------------------------------------------------------------
+results$year <- as.numeric(results$year)
+results$data <- as.numeric(results$data)
+
+res.effort$year <- as.numeric(res.effort$year)
+res.effort$effort <- as.numeric(res.effort$effort)
+
+# output table
+res <-ftable(tapply(results$data,list(results$value,results$year,results$sc,results$stock),mean,na.rm=T))
+
+print("--- RESULT TABLE ---")
+kable(reshape2::dcast(results, year + value + sc ~ stock, value.var = "data"), caption = "FCube Forecasts")
+
+write.table(res,file = paste(res.path, '/', Run.nameFC, '_ResultsTable.csv', sep = ""))
+# this doesn't write out well on csv - for now just copy the R console and paste to excel, make the paging by hand -- who wrote this blasphemy!! (pjd)
+
+#reset ver - 2019 fix
+save(results, res.effort, file = paste(res.path, '/', Run.nameFC, options,'_Catch_EffortByScenario.Rdata', sep = "") )
+save(allcatch.dataframe, file = paste(res.path, '/', Run.nameFC, options,'_AllCatches_Dataframe.Rdata', sep = "") )
+
+kable(allcatch.dataframe, caption = "All catch dataframe")
+```
+
+**7. Plots **
+```{r Plots, message=FALSE, warning=FALSE, tidy = TRUE}
+
+# relative stability plot
+for (st in dem.names) {
+  print(ggplot(filter(rs, stock == st), aes(x = scenario, y = share)) + geom_point(aes(shape = factor(year))) +
+   facet_wrap(~country)+ theme_bw() + theme(axis.text.x = element_text(angle = -90)) + ggtitle(st) )
+  }
+
+#changes in effort by metier
+res.effort.met$gear <- unlist(lapply(strsplit(res.effort.met$metier,split="\\."),function(x) x[1]))
+res.effort.met$gear <- unlist(lapply(strsplit(res.effort.met$gear, split = "_"), function(x) if(length(x) == 1) paste(x[1]) else paste(x[1], x[2], sep ="_")))
+res.effort.met[res.effort.met$gear %in% c("OTH","otter"),"gear"] <- "OTH"
+eff.gear <- aggregate(res.effort.met$efmet,list(year=res.effort.met$year, scenario=res.effort.met$scenario,
+                                                 gear=res.effort.met$gear),sum,na.rm=T)
+print("--- Effort by metier ---")
+res <- round(ftable(tapply(eff.gear$x,list(eff.gear$year,eff.gear$sc,eff.gear$gear),mean,na.rm=T)),0)
+
+kable(reshape2::dcast(eff.gear, gear + scenario ~ year, value.var = "x", fun.aggregate = sum), caption = "Effort by gear")
+
+write.table(res,file = paste(res.path, '/', Run.nameFC, '_EffortMetier.csv', sep = ""))
+
+#  plot with dem and NEP aggregated
+  res. <- subset(results,value=="landings" & year==yr.TAC)
+  res. <- tapply(res.$data,list(res.$sc,res.$stock),sum,na.rm=T)
+
+  if(nep) {
+  ## aggregate Nephrops
+  res. <- cbind(res.[,-grep("nep", colnames(res.))], matrix(rowSums(res.[,grep("nep",colnames(res.), value = T)]),ncol=1))
+  colnames(res.)[ncol(res.)] <- "nep.27.7bk"
+  }
+
+  baseline <- res.[1,]
+  res. <- res.[-1,]
+
+  pal <-rainbow(length(names(baseline)))
+
+    foo <- function(x) ceiling(max(x)/1000) * 1000
+    barplot(t(res.[c(scenarios),]), col=pal, beside = TRUE,legend = TRUE, ylim=c(0,foo(max(res.,baseline))),
+            ylab=paste("predicted catch",yr.TAC),xlab="Fcube scenarios",
+            cex.axis = 0.8, cex.lab = 0.6, cex.names = 0.6)
+    #main =paste(yr.now,"Fcube landings estimates, dem stocks"), )
+for(i in seq_len(ncol(res.))) {
+    abline(h=baseline[colnames(res.)[i]], col=pal[i])
+}
+
+  deff.pred <- subset(res.effort,year==yr.TAC)
+  deff.pred$sc <- as.factor(deff.pred$sc)
+  #
+
+print(ggplot(filter(deff.pred, fleet != "OTH_OTH"), aes(x = scenario, y = effort)) + geom_bar(stat = "identity", colour = "grey50") + facet_wrap(~fleet) + ylab("Effort ('000 kwdays)")  + theme_bw() +
+            theme(axis.text.x = element_text(angle = -90)) + ggtitle("Fleet effort by scenario"))
+
+# PLOT OF EFFORT CORRESPONDING TO THE VARIOUS SPECIES  - DONE ONLY IF FC.SILENT=FALSE
+if(!Fc.silent) {
+
+  chokespecies <- matrix(nrow=length(st.names),ncol=2,dimnames=list(st.names,ac(now:LastProjectionYear)))
+  unchokespecies <- matrix(nrow=length(st.names),ncol=2,dimnames=list(st.names,ac(now:LastProjectionYear)))
+
+  #for (YY in now:LastProjectionYear){
+   for (YY in LastProjectionYear){
+        print(YY)
+
+        eff.st <- effort.stock[["max"]][[ac(YY)]]
+
+        deff.st <- data.frame(matrix(nrow = length(fleets)*length(dem.names), ncol = 4,
+                                     dimnames = list(NULL, c('fleet', 'stock', 'effort','st.n'))))
+        i <- 1
+        for(f in names(fleets)){
+            for(s in dem.names){
+                deff.st[i,1] <- f
+                deff.st[i,2] <- s
+                deff.st[i,3] <- eff.st[s,f,1]
+                deff.st[i,4] <- which(dem.names==s)
+                i <- i+1
+            }
+        }
+
+        deff.st$stock <- as.factor(deff.st$stock)
+        deff.st$st.n <- as.factor(deff.st$st.n)
+
+          print(ggplot(filter(deff.st, fleet != "OTH_OTH"), aes(x = stock, y = effort)) +
+            geom_bar(stat = "identity", fill = "grey50") +
+              facet_wrap(~fleet, scale = "free") + expand_limits(y = 0)  + theme_bw()+ theme(axis.text.x = element_text(angle = -90)) + ggtitle("Effort corresponding to single-stock quota share, dem stocks"))
+
+#          ggsave(paste(plot.path, Run.nameFC, options, YY,'_StockEffortFleetsFreeScale_dem.png', sep = ""), 'png')
+
+	if(nep) {
+	nep.st <- data.frame(matrix(nrow = length(fleets)*length(nep.names), ncol = 4,
+                                     dimnames = list(NULL, c('fleet', 'stock', 'effort','st.n'))))
+        i <- 1
+        for(f in names(fleets)){
+            for(s in nep.names){
+                nep.st[i,1] <- f
+                nep.st[i,2] <- s
+                nep.st[i,3] <- eff.st[s,f,1]
+                nep.st[i,4] <- which(nep.names==s)
+                i <- i+1
+            }
+        }
+
+        nep.st$stock <- as.factor(nep.st$stock)
+        nep.st$st.n  <- as.factor(nep.st$st.n)
+
+          print(ggplot(filter(nep.st, fleet != "OTH_OTH"), aes(x = stock, y = effort)) +
+            geom_bar(stat = "identity", fill = "grey50") +
+              facet_wrap(~fleet, scale = "free") + expand_limits(y = 0)  + theme_bw()+ theme(axis.text.x = element_text(angle = -90)) + ggtitle("Effort corresponding to single-stock quota share, dem stocks"))
+
+ #         ggsave(paste(plot.path, Run.nameFC, options, YY,'_StockEffortFleetsFreeScale_nep.png', sep = ""), 'png')
+
+	}
+
+
+          stock.names <- sort(stock.names)
+
+        #calculating the choke species!
+        zz_min <- vector()
+        zz_max <- vector()
+        min_ <- apply(eff.st,2,min,na.rm=T)
+        max_ <- apply(eff.st,2,max,na.rm=T)
+
+        for (i in dimnames(eff.st)[[2]]) {
+            if(!i=="unalloc") {
+              x <- eff.st[,i,1]
+              zz_min <- c(zz_min,which(x==min_[i]))
+              zz_max <- c(zz_max,which(x==max_[i]))
+            }
+        }
+
+        effort_fl_yrassess <- sapply(fl.f3,function(x) effort(x)[,yr.assess])
+
+        chokespecies[,ac(YY)] <- sapply(dimnames(eff.st)[[1]],function(x) {sum(effort_fl_yrassess[which(names(zz_min)==x)],na.rm=T)})
+        unchokespecies[,ac(YY)] <- sapply(dimnames(eff.st)[[1]],function(x) {sum(effort_fl_yrassess[which(names(zz_max)==x)],na.rm=T)})
+
+        print(paste("#-- choke species - % of",yr.assess, "effort limited by each species in", YY))
+        print(round(chokespecies[,ac(YY)]/sum(chokespecies[,ac(YY)],na.rm=T),3))
+
+        print ("nbr of fleets")
+        nflchoke <- table(zz_min)
+        names(nflchoke) <- stock.names[as.numeric( names(nflchoke))]
+        print(nflchoke)
+
+        print(paste("#-- least limiting species - % of",yr.assess, "effort limited by each species in", YY))
+        print(round(unchokespecies[,ac(YY)]/sum(unchokespecies[,ac(YY)],na.rm=T),3))
+
+        print ("nbr of fleets")
+        nflunchoke <- table(zz_max)
+        names(nflunchoke) <- stock.names[as.numeric( names(nflunchoke))]
+        print(nflunchoke)
+
+        save(eff.st,file=file.path(res.path,paste(Run.nameFC, options,'_FleetEffortByStock.Rdata',sep="")))
+    }
+  }
+
+
+save.image(file=file.path(res.path,paste(Run.nameFC, options,'_FcubeAllObjects.Rdata',sep="")))
+write.csv(allcatch.dataframe,file=file.path(res.path,paste(Run.nameFC, options,'_AllCatchDataframe.csv',sep="")))
+
+```
+
+
+```{r rename_file}
+#load('tmp.RData')
+#file.rename(from = paste0(ver, ".html"), to = paste0(ver, options, ".html"))
+#file.remove('tmp.RData')
+```
