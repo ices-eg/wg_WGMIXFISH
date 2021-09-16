@@ -1,0 +1,170 @@
+
+---
+title: 'Celtic Sea Program 5: Make the big results table'
+author: "Paul J. Dolder, Claire Moore, Lionel Pawlowski"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    fig_width: 7
+    fig_height: 6
+    fig_caption: yes
+geometry: margin=0.4in
+---  
+
+```{r version control, message = FALSE, echo = FALSE, include = FALSE}
+rm(list = ls())
+gc()
+ver1 <- "05_Big_table_2020"
+ver.datetime   <- date();
+cat(paste("\n",ver1,"\n",sep=""));cat(paste(ver.datetime,"\n\n",sep=""))
+start.time <- proc.time()[3]
+
+
+```
+
+Version:   *`r ver1`*
+
+Runtime: *`r format(Sys.time(), '%d %B %Y %H:%M')`*
+
+
+**Overview**
+
+This document details the procedure used to produce the BIG table.
+
+In order to run this code (which is housed at the WGMIXFISH2 gitlab site [https://gitlab.com/WGMIXFISH/WGMIXFISH2]), you should have the following folder structure, which splits the data storage and code:
+
+
+
+If you maintain this folder structure, no working directories need to be changed (just open this code in place).
+
+```{r User setup, message=FALSE, warning=FALSE, tidy = TRUE}
+
+options(stringsAsFactors = FALSE, scipen=100)
+
+library(FLCore);
+library(FLAssess); library(FLFleet)
+library(pander); library(tables);
+library(knitr); library(ggplot2)
+library(dplyr); library(reshape2)
+library(FLash); library(kableExtra)
+library(tinytex)
+
+ # additional functions
+source("bootstrap/software/functions/FLFcube_FLCore_R31.R")
+source("bootstrap/software/functions/remove_validity_FLFleet.R")
+source("bootstrap/software/functions/funcs.R")
+
+
+
+```
+
+
+
+**2. Get Inputs**
+
+```{r get input, message=FALSE, warning=FALSE, tidy = TRUE, results = 'asis'}
+
+load(file.path('results',"01_Reproduce_the_advice_Celtic_Sea_2020tier12nepnewLOUsingSAM.Rdata"))
+
+
+res.path <- "results"
+
+# Load in stocks for Fbar
+assign(paste0("f",yr.assess), as.data.frame(lapply(wg.stock,function(x) fbar(x)[,ac(yr.assess)])))
+
+# Load in FCube results
+load(file.path('results',"04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSkipIntYr_Catch_EffortByScenario.Rdata"))
+x<-dcast(results,value + year + sc ~ stock,value.var="data")
+x$sc[(x$sc=="01_Reproduce_the_advice_Celtic_Sea_2020")]<-"baseline"
+
+# yr.now<-2016; yr.TAC<-yr.now+1; yr.TACp1<-yr.now+2
+
+# reorder
+x<-tbl_df(x)
+# Need to change Ef_Mgt to ef_Mgt due to sort working on capitals first...
+x$sc[(x$sc=="Ef_Mgt")]<-"ef_Mgt"
+x<-arrange(x,value,year,sc)
+
+# and calculate catch
+
+land<-filter(x,value=="landings")
+disc<-filter(x,value=="discards")
+
+disc[is.na(disc)]<-0
+cat<-land
+cat[,4:ncol(x)]<-land[,4:ncol(x)]+disc[,4:ncol(x)]
+cat$value<-"catches"
+
+# combine
+x<-rbind(x,cat)
+x<-arrange(x,value,year,sc)
+
+# reorder columns
+x<-x[c("value","year","sc",levels(get0(paste0("f",yr.assess))$qname))]
+
+# x[is.na(x)]<-"-"
+```
+
+
+**3. Now write it out**
+
+```{r write out, message=FALSE, warning=FALSE, tidy = TRUE, results = 'asis'}
+# Int yr landings
+write.table(filter(x,value=="landings" & sc=="baseline" & year==yr.now),file=file.path(res.path, "BigTable.csv"),sep=",",row.names=F)
+# Fbar baseline
+write.table(filter(x,value=="Fbar" & sc=="baseline" & year %in% c(yr.now:yr.TAC)),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# Fmult yr.now
+write.table(filter(x,value==x$value[grep("FmultVsF",x$value)][1] & year==yr.now & sc %in% c("baseline","sq_E")),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# Fmult yr.TAC
+write.table(filter(x,value==x$value[grep("FmultVsF",x$value)][1] & year==yr.TAC),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# Fbar scenarios - sq_E in yr.now
+write.table(filter(x,value=="Fbar" & sc=="sq_E" & year %in% c(yr.now)),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# Fbar scenario - yr.TAC
+write.table(filter(x,value=="Fbar" & sc!="baseline" & year %in% c(yr.TAC)),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+
+
+# landings Int yr
+write.table(filter(x,value=="landings" & sc=="sq_E" & year==yr.now),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# landings TAC yr
+write.table(filter(x,value=="landings" & year==yr.TAC),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+
+# LdMgtPlan
+write.table(filter(x,value=="Ld_MgtPlan" & sc=="sq_E"),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# catch Int Yr
+write.table(filter(x,value=="catches" & sc=="sq_E" & year==yr.now),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# catch TAC yr
+write.table(filter(x,value=="catches" & year==yr.TAC),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+# ssb baseline
+write.table(filter(x,value=="ssb" & sc=="baseline" & year %in% c(yr.now:yr.TAC)),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+## ssb scenarios
+write.table(filter(x,value=="ssb" & sc=="sq_E" & year==yr.TAC),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+write.table(filter(x,value=="ssb" & sc!="baseline" & year==yr.TACp1),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+## ssb mgtplan
+write.table(filter(x,value=="ssb_MgtPlan" & sc=="sq_E" & year==yr.TAC),file=file.path(res.path,"BigTable.csv"),sep=",",row.names=F,col.names=F,append=T)
+
+dat<-read.csv(file=file.path(res.path,"BigTable.csv") ,sep=",", header=T)
+
+dat<- dat[order(dat$value, dat$year, dat$sc),]
+
+
+# MR I don't have latex / don't work for m�e pdf cannot be updated and table produced ... sorry
+kable(dat[,c("value", "year", "sc", "cod.27.7e.k", "had.27.7b.k", "meg.27.7b.k8abd")], format = "latex", caption = "Big Table 1 of 3", row.names = F) %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  collapse_rows(columns = 1:3, valign = "top")
+
+kable(dat[,c("value", "year", "sc", "mon.27.78abd", "sol.27.7fg", "whg.27.7b.ce.k")], format = "latex", caption = "Big Table 2 of 3", row.names = F) %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  collapse_rows(columns = 1:3, valign = "top")
+
+kable(dat[,c("value", "year", "sc", "nep.fu.16", "nep.fu.17", "nep.fu.19", "nep.fu.2021", "nep.fu.22", "nep.out.7")], format = "latex", caption = "Big Table 3 of 3", row.names = F) %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  collapse_rows(columns = 1:3, valign = "top")
+
+## END
+##-------
+
+```

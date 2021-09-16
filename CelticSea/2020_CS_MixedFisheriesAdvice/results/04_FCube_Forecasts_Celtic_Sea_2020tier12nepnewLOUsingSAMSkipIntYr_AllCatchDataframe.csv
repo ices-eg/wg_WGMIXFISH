@@ -108,7 +108,7 @@
 "107","2021","max","sol.27.7fg","discards",0
 "108","2021","max","whg.27.7b-ce-k","discards",0
 "109","2021","max","cod.27.7e-k","overTAC landings",3614
-"110","2021","max","had.27.7b-k","overTAC landings",12391
+"110","2021","max","had.27.7b-k","overTAC landings",12482
 "111","2021","max","meg.27.7b-k8abd","overTAC landings",24884.72
 "112","2021","max","mon.27.78abd","overTAC landings",27885.32
 "113","2021","max","nep.fu.16","overTAC landings",11963.64
@@ -118,7 +118,7 @@
 "117","2021","max","nep.fu.22","overTAC landings",3281.08
 "118","2021","max","nep.out.7","overTAC landings",360.01
 "119","2021","max","sol.27.7fg","overTAC landings",1203
-"120","2021","max","whg.27.7b-ce-k","overTAC landings",8359
+"120","2021","max","whg.27.7b-ce-k","overTAC landings",8370
 "121","2021","sq_E","cod.27.7e-k","legal landings",0
 "122","2021","sq_E","had.27.7b-k","legal landings",18425
 "123","2021","sq_E","meg.27.7b-k8abd","legal landings",19030
@@ -144,7 +144,7 @@
 "143","2021","sq_E","sol.27.7fg","discards",0
 "144","2021","sq_E","whg.27.7b-ce-k","discards",0
 "145","2021","sq_E","cod.27.7e-k","overTAC landings",2787
-"146","2021","sq_E","had.27.7b-k","overTAC landings",2988
+"146","2021","sq_E","had.27.7b-k","overTAC landings",3087
 "147","2021","sq_E","meg.27.7b-k8abd","overTAC landings",2100.38
 "148","2021","sq_E","mon.27.78abd","overTAC landings",0
 "149","2021","sq_E","nep.fu.16","overTAC landings",0
@@ -154,7 +154,7 @@
 "153","2021","sq_E","nep.fu.22","overTAC landings",0
 "154","2021","sq_E","nep.out.7","overTAC landings",0
 "155","2021","sq_E","sol.27.7fg","overTAC landings",0
-"156","2021","sq_E","whg.27.7b-ce-k","overTAC landings",4485
+"156","2021","sq_E","whg.27.7b-ce-k","overTAC landings",4454
 "157","2021","val","cod.27.7e-k","legal landings",0
 "158","2021","val","had.27.7b-k","legal landings",18425
 "159","2021","val","meg.27.7b-k8abd","legal landings",19030
@@ -180,7 +180,7 @@
 "179","2021","val","sol.27.7fg","discards",0
 "180","2021","val","whg.27.7b-ce-k","discards",0
 "181","2021","val","cod.27.7e-k","overTAC landings",2631
-"182","2021","val","had.27.7b-k","overTAC landings",1362
+"182","2021","val","had.27.7b-k","overTAC landings",1389
 "183","2021","val","meg.27.7b-k8abd","overTAC landings",894.9
 "184","2021","val","mon.27.78abd","overTAC landings",0
 "185","2021","val","nep.fu.16","overTAC landings",252.98
@@ -190,9 +190,9 @@
 "189","2021","val","nep.fu.22","overTAC landings",0
 "190","2021","val","nep.out.7","overTAC landings",0
 "191","2021","val","sol.27.7fg","overTAC landings",0
-"192","2021","val","whg.27.7b-ce-k","overTAC landings",3651
+"192","2021","val","whg.27.7b-ce-k","overTAC landings",3683
 "193","2021","had.27.7b-k","cod.27.7e-k","legal landings",0
-"194","2021","had.27.7b-k","had.27.7b-k","legal landings",18425
+"194","2021","had.27.7b-k","had.27.7b-k","legal landings",18416
 "195","2021","had.27.7b-k","meg.27.7b-k8abd","legal landings",16951.68
 "196","2021","had.27.7b-k","mon.27.78abd","legal landings",28701.65
 "197","2021","had.27.7b-k","nep.fu.16","legal landings",3290
@@ -216,7 +216,7 @@
 "215","2021","had.27.7b-k","sol.27.7fg","discards",0
 "216","2021","had.27.7b-k","whg.27.7b-ce-k","discards",0
 "217","2021","had.27.7b-k","cod.27.7e-k","overTAC landings",2548
-"218","2021","had.27.7b-k","had.27.7b-k","overTAC landings",27
+"218","2021","had.27.7b-k","had.27.7b-k","overTAC landings",0
 "219","2021","had.27.7b-k","meg.27.7b-k8abd","overTAC landings",0
 "220","2021","had.27.7b-k","mon.27.78abd","overTAC landings",0
 "221","2021","had.27.7b-k","nep.fu.16","overTAC landings",652.3
@@ -226,9 +226,9 @@
 "225","2021","had.27.7b-k","nep.fu.22","overTAC landings",77.68
 "226","2021","had.27.7b-k","nep.out.7","overTAC landings",2.31
 "227","2021","had.27.7b-k","sol.27.7fg","overTAC landings",0
-"228","2021","had.27.7b-k","whg.27.7b-ce-k","overTAC landings",3428
+"228","2021","had.27.7b-k","whg.27.7b-ce-k","overTAC landings",3402
 "229","2021","whg.27.7b-ce-k","cod.27.7e-k","legal landings",0
-"230","2021","whg.27.7b-ce-k","had.27.7b-k","legal landings",10815
+"230","2021","whg.27.7b-ce-k","had.27.7b-k","legal landings",10717
 "231","2021","whg.27.7b-ce-k","meg.27.7b-k8abd","legal landings",10355.3
 "232","2021","whg.27.7b-ce-k","mon.27.78abd","legal landings",17808.32
 "233","2021","whg.27.7b-ce-k","nep.fu.16","legal landings",2180.7
@@ -238,7 +238,7 @@
 "237","2021","whg.27.7b-ce-k","nep.fu.22","legal landings",826.62
 "238","2021","whg.27.7b-ce-k","nep.out.7","legal landings",86.81
 "239","2021","whg.27.7b-ce-k","sol.27.7fg","legal landings",459
-"240","2021","whg.27.7b-ce-k","whg.27.7b-ce-k","legal landings",5263
+"240","2021","whg.27.7b-ce-k","whg.27.7b-ce-k","legal landings",5253
 "241","2021","whg.27.7b-ce-k","cod.27.7e-k","discards",0
 "242","2021","whg.27.7b-ce-k","had.27.7b-k","discards",0
 "243","2021","whg.27.7b-ce-k","meg.27.7b-k8abd","discards",0
@@ -264,7 +264,7 @@
 "263","2021","whg.27.7b-ce-k","sol.27.7fg","overTAC landings",0
 "264","2021","whg.27.7b-ce-k","whg.27.7b-ce-k","overTAC landings",0
 "265","2021","cod_fmsy","cod.27.7e-k","legal landings",0
-"266","2021","cod_fmsy","had.27.7b-k","legal landings",3314
+"266","2021","cod_fmsy","had.27.7b-k","legal landings",3297
 "267","2021","cod_fmsy","meg.27.7b-k8abd","legal landings",2561.88
 "268","2021","cod_fmsy","mon.27.78abd","legal landings",4640.58
 "269","2021","cod_fmsy","nep.fu.16","legal landings",484.6
@@ -274,7 +274,7 @@
 "273","2021","cod_fmsy","nep.fu.22","legal landings",183.11
 "274","2021","cod_fmsy","nep.out.7","legal landings",19.63
 "275","2021","cod_fmsy","sol.27.7fg","legal landings",183
-"276","2021","cod_fmsy","whg.27.7b-ce-k","legal landings",1564
+"276","2021","cod_fmsy","whg.27.7b-ce-k","legal landings",1563
 "277","2021","cod_fmsy","cod.27.7e-k","discards",0
 "278","2021","cod_fmsy","had.27.7b-k","discards",0
 "279","2021","cod_fmsy","meg.27.7b-k8abd","discards",0

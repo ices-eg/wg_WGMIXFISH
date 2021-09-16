@@ -1,0 +1,1305 @@
+
+---
+title: "Mixed Fisheries Overview"
+author: "Claire Moore and Colm Lordan, Marine Institute, Ireland"
+output:
+  pdf_document: default
+header-includes:
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+---
+
+
+```{r version control, echo = FALSE}
+ver.datetime   <- date() 
+t<-Sys.time()
+```
+
+
+This script was developed to summarises the technical interactions of metiers and the species they target in the Celtic Seas ecoregion (Subarea 6 and 7) for the the ICES *Fisheries Overview*. This analysis uses the 2018 WGMIXFISH submission and was run on an average of 2015, 2016 and 2017. Note that any métiers with an average annual demersal catch of less then 100 tonnes was put into the category of "OTHERS".
+
+The three main areas that I am looking at are: Irish Sea - 7.a ; West of Scotland( 6.a, 6.b); and Celtic Sea (7.b, 7.c, 7.j, 7.g, 7.k, 7.f, 7.h). As this data was submitted for the purpose of stock assessment, some aggregations are a tricky to split, such as 27.7 and  27.7.agj
+
+
+\newpage
+
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+gc()
+rm(list=ls())
+#library(tidyverse)
+library(ggplot2)
+library(gridExtra)
+library(igraph)
+library(reshape2)
+library(kableExtra)
+library(formatR)
+library(knitr)
+library(dplyr)
+```
+
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+#read in the data
+dat <- read.csv("results/clean_data/clean_accessions_landings.csv")
+
+
+dat$Year <- as.numeric(as.character(dat$Year)) # convert year to numeric
+dat$Area <- as.character(dat$Area)
+dat$Metier <- as.character(dat$Metier)
+dat$Species <- as.character(dat$Species)
+dat$Country <- as.character(dat$Country)
+dat$Vessel_length <- as.character(dat$Vessel_length)
+
+dat_new<- dat[dat$Year %in% c("2016", "2017", "2018"),]
+dat<- dat_new %>% select(Country, Metier, Vessel_length ,Area, Species, Landings, Value) %>% group_by(Country, Metier, Vessel_length ,Area  , Species) %>% dplyr::summarise( "Landings" = sum(Landings, na.rm=TRUE), "Value" = sum(Value, na.rm = TRUE))  %>% data.frame()   
+
+dat$Landings <- dat$Landings/3 ### To get three year average
+dat$Value <- dat$Value/3 ### To get three year average
+
+dat$Species <- substr(dat$Species, 1,3) # get rid of the FU's
+
+rm(dat_new)
+```
+\newpage
+</p>
+
+#Summary of the dataset
+Note: not all countries report pelagics to WGMIXFISH
+</p>
+```{r, echo = FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+plot_dat <- dat %>% select(Country,Area ,Species, Landings) %>% filter(!Species %in% c("OTHER", "OTH")) %>% group_by( Country,Area, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+
+plot_species <- ggplot(plot_dat,aes(Species,Landings)) +geom_bar(stat="identity") + theme_classic()+theme(axis.text.x=element_text(angle=90, hjust=1, size = 6))
+plot_species 
+```
+<p>
+Fig 1.1: Total landings per species in dataset
+</p>
+
+
+\newpage
+
+Note: the main difference in this plot between IE and UK is that IE report pelagics to WGMIXFISH, UK did not
+```{r, echo = FALSE, warning=FALSE, message=FALSE, tidy = TRUE}
+plot_country <- ggplot(plot_dat,aes(Country,Landings)) +geom_bar(stat="identity") + theme_classic()+theme(axis.text.x=element_text(angle=90, hjust=1))
+plot_country
+```
+<p>
+Fig 1.2: Total landings per country in dataset
+</p>
+
+\newpage
+
+
+```{r,echo = FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+plot_area <- ggplot(plot_dat,aes(Area,Landings)) +geom_bar(stat="identity") + theme_classic()+ theme(axis.text.x=element_text(angle=90, hjust=1))
+plot_area
+```
+
+<p>
+Fig 1.3: Total landings per area in dataset
+</p>
+
+
+\newpage
+```{r, include=FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+# subset for the main TAC species  
+cod <- "COD"
+megrims <-  c("LEZ", "MEG", "LDB")
+anglerfish <- c("MON", "ANF", "ANK", 'MNZ') 
+whiting <- "WHG"
+hake <- "HKE"
+blue_ling <-  "BLI"   #(Molva dypterygia) 
+ling <- "LIN"  #(Molva molva)
+haddock <- "HAD"
+nephropes <- "NEP"
+plaice <- "PLE"
+pollack <- "POL"
+saithe <- "POK"
+greenland_hailbut <- "GHL" #(Reinhardtius hippoglossoides)- sub area 4
+sole <- "SOL"
+
+dogfish <- c("DGS", "DGZ" , "DGH")     #Picked dogfish - Squalus acanthias  NB one of the grouping includs hounds
+forkbeards <- "GFB"
+rays_skates <- c("SKA", 'RJC' ,  "RJA",'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH")
+roundnose_grenadier <- "RNG"
+blackscabers <-  "BSF"
+tusk <- "USK"
+roughhead_grenadier <- c("RHG", "RNG")
+
+#Groupings
+pelagic <- NULL # currently no available data
+demersal <- c(cod, megrims, anglerfish, whiting, hake, haddock, nephropes, plaice, sole, pollack, saithe)
+# No longer any need for this as 
+rays_skates <-  rays_skates 
+deepwater <- c(forkbeards, roundnose_grenadier, blackscabers, tusk, roughhead_grenadier, blue_ling, ling)
+
+```
+
+
+```{r, include =FALSE, message=FALSE, tidy=TRUE}
+Irish_Sea_dat <- dat[dat$Area %in% c("27.7.a"),]
+West_of_Scotland_dat <- dat[dat$Area %in% c("27.6.a", "27.6.b", "27.6", "27.6.b.2"),]
+Celtic_Sea_dat <- dat[dat$Area %in% c("27.7.f","27.7.h","27.7", "27.7.fghj", "27.7.g","27.7.j",  "27.7.b","27.7.c" ,  
+"27.7.k", "27.7.ek", "27.7.bk", "27.7.agj",  "27.7.bcjk", "27.7.fg",   "27.7.bc", "27.7.gh","27.7.jk"),]
+```
+
+
+# Irish Sea
+</p>
+
+```{r, include=FALSE, message=FALSE, warning=FALSE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- Irish_Sea_dat[Irish_Sea_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use_new<- dat_use %>% select(Metier, Species, Landings) %>% group_by(Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+dat_use <- dat_use_new
+dat_use <- dat_use[dat_use$Landings>0,]
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_COD <- sum(dat_use$Landings[dat_use$Species=="COD"])
+sum_HAD <- sum(dat_use$Landings[dat_use$Species=="HAD"])
+sum_HKE <- sum(dat_use$Landings[dat_use$Species=="HKE"])
+sum_NEP <- sum(dat_use$Landings[dat_use$Species=="NEP"])
+sum_PLE <- sum(dat_use$Landings[dat_use$Species=="PLE"])
+sum_LIN <- sum(dat_use$Landings[dat_use$Species=="LIN"])
+sum_POK <- sum(dat_use$Landings[dat_use$Species=="POK"])
+sum_POL <- sum(dat_use$Landings[dat_use$Species=="POL"])
+sum_SOL <- sum(dat_use$Landings[dat_use$Species=="SOL"])
+sum_WHG <- sum(dat_use$Landings[dat_use$Species=="WHG"])
+sum_MEG <- sum(dat_use$Landings[dat_use$Species=="MEG"])
+sum_MON <- sum(dat_use$Landings[dat_use$Species=="MON"])
+sum_OTH <- sum(dat_use$Landings[dat_use$Species=="OTH"])
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Species=="COD"] <- dat_use$Landings[dat_use$Species=="COD"]/sum_COD
+dat_use$prop_per_spp[dat_use$Species=="HAD"] <- dat_use$Landings[dat_use$Species=="HAD"]/sum_HAD
+dat_use$prop_per_spp[dat_use$Species=="HKE"] <- dat_use$Landings[dat_use$Species=="HKE"]/sum_HKE
+dat_use$prop_per_spp[dat_use$Species=="NEP"] <- dat_use$Landings[dat_use$Species=="NEP"]/sum_NEP
+dat_use$prop_per_spp[dat_use$Species=="PLE"] <- dat_use$Landings[dat_use$Species=="PLE"]/sum_PLE
+dat_use$prop_per_spp[dat_use$Species=="POK"] <- dat_use$Landings[dat_use$Species=="POK"]/sum_POK
+dat_use$prop_per_spp[dat_use$Species=="POL"] <- dat_use$Landings[dat_use$Species=="POL"]/sum_POL
+dat_use$prop_per_spp[dat_use$Species=="SOL"] <- dat_use$Landings[dat_use$Species=="SOL"]/sum_SOL
+dat_use$prop_per_spp[dat_use$Species=="WHG"] <- dat_use$Landings[dat_use$Species=="WHG"]/sum_WHG
+dat_use$prop_per_spp[dat_use$Species=="MEG"] <- dat_use$Landings[dat_use$Species=="MEG"]/sum_MEG
+dat_use$prop_per_spp[dat_use$Species=="MON"] <- dat_use$Landings[dat_use$Species=="MON"]/sum_MON
+dat_use$prop_per_spp[dat_use$Species=="OTH"] <- dat_use$Landings[dat_use$Species=="OTH"]/sum_OTH
+dat_use$prop_per_spp[dat_use$Species=="LIN"] <- dat_use$Landings[dat_use$Species=="LIN"]/sum_LIN
+
+
+# here I need to identify métiers with low landings and aggregate them as others
+test_dat <- dat_use %>% select(Metier, Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+# any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+low_met <- unique(test_dat$Metier[test_dat$Landings<100])
+#rename the low landings into the "others" category 
+dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+#Saftey check - make sure tehere are no odd outliers
+x <-  ggplot(dat_use, aes(Species, Landings)) +geom_bar(stat="identity") # keep this plot!
+x
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(Metier,Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$Metier)
+dat_use$Metier <- factor(dat_use$Metier, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Species,Landings) %>% group_by(Species) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Species)
+dat_use$Species <- factor(dat_use$Species, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$Metier, dat_use$Species), ]
+
+```
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+el <- as.matrix(dat_use) 
+rownames(el) <- dat_use$Metier
+colnames(el) <- colnames(dat_use)
+
+g_Irish_Sea <- graph.data.frame(el, directed = T)
+ V(g_Irish_Sea)$type <- V(g_Irish_Sea)$name %in% el[,1] #the second column of edges is TRUE type
+ E(g_Irish_Sea)$weight <- as.numeric(el[,3])/10000
+ E(g_Irish_Sea)$color <- paste0('#000000',sprintf('%02X',round(255*(E(g_Irish_Sea)$weight / max(E(g_Irish_Sea)$weight)))))
+ V(g_Irish_Sea)$color <- "white"
+ V(g_Irish_Sea)$size <- 70
+ V(g_Irish_Sea)$weight <- 1
+ layout <- layout.bipartite(g_Irish_Sea)[, 2:1]
+ layout[1:6,2] <- 1:6 #filler to hold x and y  # you see the required structre by using layout.bipartite(g)[, 2:1]
+ layout[7:19,2] <- 1:13 - 4# shifts it up by 3
+# plot(layout) # this will show you wher eteh x and y points are
+
+ plot(g_Irish_Sea,layout=layout,edge.arrow.size = 0.3, vertex.label.cex=0.8 ,vertex.label.color= "black", vertex.shape= "vrectangle", asp=1, edge.color= E(g_Irish_Sea)$color,  vertex.color= V(g_Irish_Sea)$color)
+```
+
+```{r, fig.width=7,fig.height=7, fig.align="center", echo=FALSE, warning=FALSE, message=FALSE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- Irish_Sea_dat[Irish_Sea_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use_new <- dat_use %>% select(Country, Metier, Species, Landings) %>% group_by(Country,Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+dat_use <- dat_use_new[dat_use_new$Landings>0,]
+
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_COD <- sum(dat_use$Landings[dat_use$Species=="COD"])
+sum_HAD <- sum(dat_use$Landings[dat_use$Species=="HAD"])
+sum_HKE <- sum(dat_use$Landings[dat_use$Species=="HKE"])
+sum_NEP <- sum(dat_use$Landings[dat_use$Species=="NEP"])
+sum_PLE <- sum(dat_use$Landings[dat_use$Species=="PLE"])
+sum_LIN <- sum(dat_use$Landings[dat_use$Species=="LIN"])
+sum_POK <- sum(dat_use$Landings[dat_use$Species=="POK"])
+sum_POL <- sum(dat_use$Landings[dat_use$Species=="POL"])
+sum_SOL <- sum(dat_use$Landings[dat_use$Species=="SOL"])
+sum_WHG <- sum(dat_use$Landings[dat_use$Species=="WHG"])
+sum_MEG <- sum(dat_use$Landings[dat_use$Species=="MEG"])
+sum_MON <- sum(dat_use$Landings[dat_use$Species=="MON"])
+sum_OTH <- sum(dat_use$Landings[dat_use$Species=="OTH"])
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Species=="COD"] <- dat_use$Landings[dat_use$Species=="COD"]/sum_COD
+dat_use$prop_per_spp[dat_use$Species=="HAD"] <- dat_use$Landings[dat_use$Species=="HAD"]/sum_HAD
+dat_use$prop_per_spp[dat_use$Species=="HKE"] <- dat_use$Landings[dat_use$Species=="HKE"]/sum_HKE
+dat_use$prop_per_spp[dat_use$Species=="NEP"] <- dat_use$Landings[dat_use$Species=="NEP"]/sum_NEP
+dat_use$prop_per_spp[dat_use$Species=="PLE"] <- dat_use$Landings[dat_use$Species=="PLE"]/sum_PLE
+dat_use$prop_per_spp[dat_use$Species=="POK"] <- dat_use$Landings[dat_use$Species=="POK"]/sum_POK
+dat_use$prop_per_spp[dat_use$Species=="POL"] <- dat_use$Landings[dat_use$Species=="POL"]/sum_POL
+dat_use$prop_per_spp[dat_use$Species=="SOL"] <- dat_use$Landings[dat_use$Species=="SOL"]/sum_SOL
+dat_use$prop_per_spp[dat_use$Species=="WHG"] <- dat_use$Landings[dat_use$Species=="WHG"]/sum_WHG
+dat_use$prop_per_spp[dat_use$Species=="MEG"] <- dat_use$Landings[dat_use$Species=="MEG"]/sum_MEG
+dat_use$prop_per_spp[dat_use$Species=="MON"] <- dat_use$Landings[dat_use$Species=="MON"]/sum_MON
+dat_use$prop_per_spp[dat_use$Species=="OTH"] <- dat_use$Landings[dat_use$Species=="OTH"]/sum_OTH
+dat_use$prop_per_spp[dat_use$Species=="LIN"] <- dat_use$Landings[dat_use$Species=="LIN"]/sum_LIN
+
+
+# # here I need to identify métiers with low landings and aggregate them as others
+# test_dat <- dat_use %>% select(Country, Metier, Landings) %>% group_by(Country, Metier) %>% dplyr::summarise("Landings" = sum(Landings))
+# # any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+# low_met <- unique(test_dat$Metier[test_dat$Landings<10])
+# #rename the low landings into the "others" category 
+# dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+dat_use$tag <- paste0(dat_use$Country , "_", dat_use$Metier)
+
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(tag,Landings) %>% group_by(tag) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$tag)
+dat_use$tag <- factor(dat_use$tag, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Species,Landings) %>% group_by(Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm = T)) %>% data.frame() 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Species)
+dat_use$Species <- factor(dat_use$Species, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$tag, dat_use$Species), ]
+
+
+All_years_summary <-  dat_use %>% group_by(Country, tag, Species) %>% 
+dplyr::summarise(sum(Landings, na.rm=T)) %>% data.frame()
+names(All_years_summary) <- c('Country','tag', 'faocode','landings')
+## Landings catch profiles 
+All_years_spread_landings<- tidyr::spread(All_years_summary, key = faocode, value = landings) # Create table to species breakdown
+All_years_spread_landings$Total_tonnage<-rowSums(All_years_spread_landings[,3:15]) # sum all the rows 
+
+# Create the proportions for tonnage
+All_years_spread_landings$COD <- round(All_years_spread_landings$COD/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$HAD <- round(All_years_spread_landings$HAD/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$HKE <- round(All_years_spread_landings$HKE/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$MEG <- round(All_years_spread_landings$MEG/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$MON <- round(All_years_spread_landings$MON/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$NEP <- round(All_years_spread_landings$NEP/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$PLE <- round(All_years_spread_landings$PLE/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$POK <- round(All_years_spread_landings$POK/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$POL <- round(All_years_spread_landings$POL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$SOL <- round(All_years_spread_landings$SOL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$WHG <- round(All_years_spread_landings$WHG/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$LIN <- round(All_years_spread_landings$LIN/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTH <- round(All_years_spread_landings$OTH/All_years_spread_landings$Total_tonnage,3)
+
+All_years_spread_landings <- All_years_spread_landings[order(-All_years_spread_landings$Total_tonnage),] 
+
+All_years_spread_landings <- All_years_spread_landings[!All_years_spread_landings$Total_tonnage<100,]
+
+kable(All_years_spread_landings)%>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+```{r, include= FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+data_test <- tidyr::gather(data=as.data.frame(All_years_spread_landings), key = species, value = proportion, LIN:NEP)
+
+data_test$tag <- ifelse(data_test$tag=="UKN_MIS_MIS", "UK_OTB_DEF",  paste(data_test$tag))
+
+
+
+
+data_test$tag1 <- data_test$tag
+data_test <- tidyr::separate(data_test, col=tag1, c("Country", "Gear", "Target"))
+data_test %>% mutate(ord = as.numeric(as.factor(Gear))*100+
+                           as.numeric(as.factor(Target)) +
+                           as.numeric(as.factor(Country))/10) -> data_test
+
+
+data_test$tag_tonnage<- as.factor(with(data_test,paste(tag,round(Total_tonnage,2),"t",sep="   ")))
+
+#remove NA's
+data_test <- data_test[!is.na(data_test$proportion),]
+  
+
+irish_sea_1<- ggplot(data=data_test, aes(x=reorder(tag_tonnage, ord), y=proportion, fill=species)) +
+       geom_bar(stat="identity") + coord_flip() + scale_y_continuous(expand = c(0,0)) +
+       xlab("") + scale_fill_manual(values=c("Black","#A6CEE3","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F", "#FF7F00","#CAB2D6","#6A3D9A", "aquamarine", "#888888", "violet")) +
+       theme(panel.background = element_rect(fill = 'white'),axis.text.x = element_text(size = 6))
+irish_sea_1
+
+```
+
+```{r, fig.width=7,fig.height=7, fig.align="center", echo=FALSE, warning=FALSE, message=FALSE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- Irish_Sea_dat[Irish_Sea_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use$Metier <- ifelse(dat_use$Metier=="MIS_MIS", "OTB_DEF", paste0(dat_use$Metier))
+dat_use <- dat_use %>% select(Metier, Species, Landings) %>% group_by(Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE))%>% data.frame() 
+dat_use <- dat_use[dat_use$Landings>0,]
+
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_DRB_MOL <- sum(dat_use$Landings[dat_use$Metier=="DRB_MOL"])
+sum_FPO_CRU <- sum(dat_use$Landings[dat_use$Metier=="FPO_CRU"])
+sum_GNS_DEF <- sum(dat_use$Landings[dat_use$Metier=="GNS_DEF"])
+sum_LLS_FIF <- sum(dat_use$Landings[dat_use$Metier=="LLS_FIF"])
+sum_OTB_CRU <- sum(dat_use$Landings[dat_use$Metier=="OTB_CRU"])
+sum_OTB_DEF <- sum(dat_use$Landings[dat_use$Metier =="OTB_DEF"])
+sum_OTB_MCD <- sum(dat_use$Landings[dat_use$Metier=="OTB_MCD"])
+sum_OTT_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTT_DEF"])
+sum_SSC_DEF <- sum(dat_use$Landings[dat_use$Metier=="SSC_DEF"])
+sum_TBB_DEF <- sum(dat_use$Landings[dat_use$Metier=="TBB_DEF"])
+sum_GTR_DEF <- sum(dat_use$Landings[dat_use$Metier=="GTR_DEF"])
+sum_OTM_SPF <- sum(dat_use$Landings[dat_use$Metier=="OTM_SPF"])
+sum_OTT_CRU <- sum(dat_use$Landings[dat_use$Metier=="OTT_CRU"])
+
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Metier=="DRB_MOL"] <- dat_use$Landings[dat_use$Metier=="DRB_MOL"]/sum_DRB_MOL
+dat_use$prop_per_spp[dat_use$Metier=="FPO_CRU"] <- dat_use$Landings[dat_use$Metier=="FPO_CRU"]/sum_FPO_CRU
+dat_use$prop_per_spp[dat_use$Metier=="GNS_DEF"] <- dat_use$Landings[dat_use$Metier=="GNS_DEF"]/sum_GNS_DEF
+dat_use$prop_per_spp[dat_use$Metier=="LLS_FIF"] <- dat_use$Landings[dat_use$Metier=="LLS_FIF"]/sum_LLS_FIF
+dat_use$prop_per_spp[dat_use$Metier=="OTB_CRU"] <- dat_use$Landings[dat_use$Metier=="OTB_CRU"]/sum_OTB_CRU
+dat_use$prop_per_spp[dat_use$Metier=="OTB_DEF"] <- dat_use$Landings[dat_use$Metier=="OTB_DEF"]/sum_OTB_DEF
+dat_use$prop_per_spp[dat_use$Metier=="OTB_MCD"] <- dat_use$Landings[dat_use$Metier=="OTB_MCD"]/sum_OTB_MCD
+dat_use$prop_per_spp[dat_use$Metier=="OTT_DEF"] <- dat_use$Landings[dat_use$Metier=="OTT_DEF"]/sum_OTT_DEF
+dat_use$prop_per_spp[dat_use$Metier=="SSC_DEF"] <- dat_use$Landings[dat_use$Metier=="SSC_DEF"]/sum_SSC_DEF
+dat_use$prop_per_spp[dat_use$Metier=="TBB_DEF"] <- dat_use$Landings[dat_use$Metier=="TBB_DEF"]/sum_TBB_DEF
+dat_use$prop_per_spp[dat_use$Metier=="GTR_DEF"] <- dat_use$Landings[dat_use$Metier=="GTR_DEF"]/sum_GTR_DEF
+dat_use$prop_per_spp[dat_use$Metier=="OTM_SPF"] <- dat_use$Landings[dat_use$Metier=="OTM_SPF"]/sum_OTM_SPF
+dat_use$prop_per_spp[dat_use$Metier=="OTT_CRU"] <- dat_use$Landings[dat_use$Metier=="OTT_CRU"]/sum_OTT_CRU
+
+# # here I need to identify métiers with low landings and aggregate them as others
+# test_dat <- dat_use %>% select(Country, Metier, Landings) %>% group_by(Country, Metier) %>% summarise("Landings" = sum(Landings))
+# # any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+# low_met <- unique(test_dat$Metier[test_dat$Landings<10])
+# #rename the low landings into the "others" category 
+# dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+dat_use$tag <- dat_use$Metier
+
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(tag,Landings) %>% group_by(tag) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$tag)
+dat_use$tag <- factor(dat_use$tag, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Metier,Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Metier)
+dat_use$Metier <- factor(dat_use$Metier, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$tag, dat_use$Metier), ]
+
+
+All_years_summary <-  dat_use %>% group_by(tag, Species) %>% dplyr::summarise(sum(Landings, na.rm=T)) %>% data.frame()
+names(All_years_summary) <- c('tag', 'faocode','landings')
+## Landings catch profiles 
+All_years_spread_landings<- tidyr::spread(All_years_summary, # to id the number of columes
+                          fill = 0, tag, value = landings) # Create table to species breakdown
+
+All_years_spread_landings$Total_tonnage<-rowSums(All_years_spread_landings[,2:13]) # sum all the rows 
+
+# Create the proportions for tonnage
+All_years_spread_landings$LLS_FIF <- round(All_years_spread_landings$LLS_FIF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTM_SPF <- round(All_years_spread_landings$OTM_SPF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTT_DEF <- round(All_years_spread_landings$OTT_DEF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$DRB_MOL <- round(All_years_spread_landings$DRB_MOL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$FPO_CRU <- round(All_years_spread_landings$FPO_CRU/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$GNS_DEF <- round(All_years_spread_landings$GNS_DEF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$GTR_DEF <- round(All_years_spread_landings$GTR_DEF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$SSC_DEF <- round(All_years_spread_landings$SSC_DEF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTB_DEF <- round(All_years_spread_landings$OTB_DEF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$TBB_DEF <- round(All_years_spread_landings$TBB_DEF/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTB_CRU <- round(All_years_spread_landings$OTB_CRU/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTT_CRU <- round(All_years_spread_landings$OTT_CRU/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings <- All_years_spread_landings[order(-All_years_spread_landings$Total_tonnage),] 
+
+All_years_spread_landings <- All_years_spread_landings[!All_years_spread_landings$Total_tonnage<100,]
+
+All_years_spread_landings <- All_years_spread_landings[,c(-2,-3,-4)]
+
+kable(All_years_spread_landings)%>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+```{r, include= FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+data_test <- tidyr::gather(data=as.data.frame(All_years_spread_landings), key = Metier, value = proportion, OTM_SPF:OTB_CRU)
+
+data_test<- data_test[order(data_test$Total_tonnage),]
+data_test$tag_tonnage<- with(data_test,paste(faocode,round(Total_tonnage,2),"t",sep="  "))
+
+#data_test <- data_test[,c(-2,-3,-4)]
+irish_sea_2<- ggplot(data=data_test, aes(x=reorder(tag_tonnage, Total_tonnage), y=proportion, fill=Metier)) + geom_bar(stat="identity") + coord_flip() + scale_y_continuous(expand = c(0,0)) + xlab("") + scale_fill_manual(values=c("Black","#A6CEE3","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F", "#FF7F00","#CAB2D6")) + theme(panel.background = element_rect(fill = 'white'),axis.text.x = element_text(size = 6))
+                                                                                                                     
+irish_sea_2
+
+# #,"#6A3D9A", "aquamarine", "#888888")
+
+```
+\newpage
+\blandscape
+```{r, echo = FALSE, message=FALSE, warning=FALSE, tidy = TRUE, fig.width = 12, fig.height = 6}
+grid.arrange(irish_sea_1, irish_sea_2, nrow=1)
+```
+\elandscape
+
+
+\newpage
+
+# Celtic Sea
+</p>
+```{r, include=FALSE, message=FALSE, warning=FALSE, tidy=TRUE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use_new <- Celtic_Sea_dat[Celtic_Sea_dat$Species %in% include_spp,]
+
+dat_use_new$Species[dat_use_new$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use <- dat_use_new %>% select(Metier, Species, Landings) %>% group_by(Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+dat_use <- dat_use[dat_use$Landings>0,]
+
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_COD <- sum(dat_use$Landings[dat_use$Species=="COD"])
+sum_HAD <- sum(dat_use$Landings[dat_use$Species=="HAD"])
+sum_HKE <- sum(dat_use$Landings[dat_use$Species=="HKE"])
+sum_NEP <- sum(dat_use$Landings[dat_use$Species=="NEP"])
+sum_PLE <- sum(dat_use$Landings[dat_use$Species=="PLE"])
+sum_LIN <- sum(dat_use$Landings[dat_use$Species=="LIN"])
+sum_POK <- sum(dat_use$Landings[dat_use$Species=="POK"])
+sum_POL <- sum(dat_use$Landings[dat_use$Species=="POL"])
+sum_SOL <- sum(dat_use$Landings[dat_use$Species=="SOL"])
+sum_WHG <- sum(dat_use$Landings[dat_use$Species=="WHG"])
+sum_MEG <- sum(dat_use$Landings[dat_use$Species=="MEG"])
+sum_MON <- sum(dat_use$Landings[dat_use$Species=="MON"])
+sum_OTH <- sum(dat_use$Landings[dat_use$Species=="OTH"])
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Species=="COD"] <- dat_use$Landings[dat_use$Species=="COD"]/sum_COD
+dat_use$prop_per_spp[dat_use$Species=="HAD"] <- dat_use$Landings[dat_use$Species=="HAD"]/sum_HAD
+dat_use$prop_per_spp[dat_use$Species=="HKE"] <- dat_use$Landings[dat_use$Species=="HKE"]/sum_HKE
+dat_use$prop_per_spp[dat_use$Species=="NEP"] <- dat_use$Landings[dat_use$Species=="NEP"]/sum_NEP
+dat_use$prop_per_spp[dat_use$Species=="PLE"] <- dat_use$Landings[dat_use$Species=="PLE"]/sum_PLE
+dat_use$prop_per_spp[dat_use$Species=="POK"] <- dat_use$Landings[dat_use$Species=="POK"]/sum_POK
+dat_use$prop_per_spp[dat_use$Species=="POL"] <- dat_use$Landings[dat_use$Species=="POL"]/sum_POL
+dat_use$prop_per_spp[dat_use$Species=="SOL"] <- dat_use$Landings[dat_use$Species=="SOL"]/sum_SOL
+dat_use$prop_per_spp[dat_use$Species=="WHG"] <- dat_use$Landings[dat_use$Species=="WHG"]/sum_WHG
+dat_use$prop_per_spp[dat_use$Species=="MEG"] <- dat_use$Landings[dat_use$Species=="MEG"]/sum_MEG
+dat_use$prop_per_spp[dat_use$Species=="MON"] <- dat_use$Landings[dat_use$Species=="MON"]/sum_MON
+dat_use$prop_per_spp[dat_use$Species=="OTH"] <- dat_use$Landings[dat_use$Species=="OTH"]/sum_OTH
+dat_use$prop_per_spp[dat_use$Species=="LIN"] <- dat_use$Landings[dat_use$Species=="LIN"]/sum_LIN
+
+dat_use <- dat_use[dat_use$Landings>0,]
+
+# here I need to identify métiers with low landings and aggregate them as others
+test_dat <- dat_use %>% select(Metier, Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) %>% data.frame()
+# any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+low_met <- unique(test_dat$Metier[test_dat$Landings<100])
+#rename the low landings into the "others" category 
+dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+#Saftey check - make sure tehere are no odd outliers
+x <-  ggplot(dat_use, aes(Species, Landings)) +geom_bar(stat="identity") # keep this plot!
+x
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(Metier,Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$Metier)
+dat_use$Metier <- factor(dat_use$Metier, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Species,Landings) %>% group_by(Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) %>% data.frame() 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Species)
+dat_use$Species <- factor(dat_use$Species, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$Metier, dat_use$Species), ]
+```
+
+
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+el <- as.matrix(dat_use) 
+rownames(el) <- dat_use$Metier
+colnames(el) <- colnames(dat_use)
+
+g_Celtic_Sea <- graph.data.frame(el, directed = T) 
+V(g_Celtic_Sea)$type <- V(g_Celtic_Sea)$name %in% el[,1] #the second column of edges is TRUE type
+E(g_Celtic_Sea)$weight <- as.numeric(el[,3])/10000
+E(g_Celtic_Sea)$color <- paste0('#000000',sprintf('%02X',round(255*(E(g_Celtic_Sea)$weight / max(E(g_Celtic_Sea)$weight)))))
+V(g_Celtic_Sea)$color <- "white"
+V(g_Celtic_Sea)$size <- 70
+V(g_Celtic_Sea)$weight <- 1
+layout <- layout.bipartite(g_Celtic_Sea)[, 2:1]
+layout[1:14,2] <- 1:14 #filler to hold x and y  # you see the required structre by using layout.bipartite(g)[, 2:1]
+layout[15:27,2] <- 1:13 # shifts it up by 3 
+# plot(layout) # this will show you wher eteh x and y points are
+
+plot(g_Celtic_Sea,layout=layout,edge.arrow.size = 0.3, vertex.label.cex=0.8 ,vertex.label.color= "black", vertex.shape= "vrectangle", asp=1, edge.color= E(g_Celtic_Sea)$color,  vertex.color= V(g_Celtic_Sea)$color)
+```
+
+```{r, fig.width=7,fig.height=7, fig.align="center", echo=FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- Celtic_Sea_dat[Celtic_Sea_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use_new <- dat_use %>% select(Country, Metier, Species, Landings) %>% group_by(Country,Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE))%>% data.frame()
+dat_use <- dat_use_new[dat_use_new$Landings>0,] 
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_COD <- sum(dat_use$Landings[dat_use$Species=="COD"])
+sum_HAD <- sum(dat_use$Landings[dat_use$Species=="HAD"])
+sum_HKE <- sum(dat_use$Landings[dat_use$Species=="HKE"])
+sum_NEP <- sum(dat_use$Landings[dat_use$Species=="NEP"])
+sum_PLE <- sum(dat_use$Landings[dat_use$Species=="PLE"])
+sum_LIN <- sum(dat_use$Landings[dat_use$Species=="LIN"])
+sum_POK <- sum(dat_use$Landings[dat_use$Species=="POK"])
+sum_POL <- sum(dat_use$Landings[dat_use$Species=="POL"])
+sum_SOL <- sum(dat_use$Landings[dat_use$Species=="SOL"])
+sum_WHG <- sum(dat_use$Landings[dat_use$Species=="WHG"])
+sum_MEG <- sum(dat_use$Landings[dat_use$Species=="MEG"])
+sum_MON <- sum(dat_use$Landings[dat_use$Species=="MON"])
+sum_OTH <- sum(dat_use$Landings[dat_use$Species=="OTH"])
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Species=="COD"] <- dat_use$Landings[dat_use$Species=="COD"]/sum_COD
+dat_use$prop_per_spp[dat_use$Species=="HAD"] <- dat_use$Landings[dat_use$Species=="HAD"]/sum_HAD
+dat_use$prop_per_spp[dat_use$Species=="HKE"] <- dat_use$Landings[dat_use$Species=="HKE"]/sum_HKE
+dat_use$prop_per_spp[dat_use$Species=="NEP"] <- dat_use$Landings[dat_use$Species=="NEP"]/sum_NEP
+dat_use$prop_per_spp[dat_use$Species=="PLE"] <- dat_use$Landings[dat_use$Species=="PLE"]/sum_PLE
+dat_use$prop_per_spp[dat_use$Species=="POK"] <- dat_use$Landings[dat_use$Species=="POK"]/sum_POK
+dat_use$prop_per_spp[dat_use$Species=="POL"] <- dat_use$Landings[dat_use$Species=="POL"]/sum_POL
+dat_use$prop_per_spp[dat_use$Species=="SOL"] <- dat_use$Landings[dat_use$Species=="SOL"]/sum_SOL
+dat_use$prop_per_spp[dat_use$Species=="WHG"] <- dat_use$Landings[dat_use$Species=="WHG"]/sum_WHG
+dat_use$prop_per_spp[dat_use$Species=="MEG"] <- dat_use$Landings[dat_use$Species=="MEG"]/sum_MEG
+dat_use$prop_per_spp[dat_use$Species=="MON"] <- dat_use$Landings[dat_use$Species=="MON"]/sum_MON
+dat_use$prop_per_spp[dat_use$Species=="OTH"] <- dat_use$Landings[dat_use$Species=="OTH"]/sum_OTH
+dat_use$prop_per_spp[dat_use$Species=="LIN"] <- dat_use$Landings[dat_use$Species=="LIN"]/sum_LIN
+
+
+# # here I need to identify métiers with low landings and aggregate them as others
+# test_dat <- dat_use %>% select(Country, Metier, Landings) %>% group_by(Country, Metier) %>% summarise("Landings" = sum(Landings))
+# # any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+# low_met <- unique(test_dat$Metier[test_dat$Landings<10])
+# #rename the low landings into the "others" category 
+# dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+dat_use$tag <- paste0(dat_use$Country , "_", dat_use$Metier)
+
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(tag,Landings) %>% group_by(tag) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) %>% data.frame()
+
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$tag)
+dat_use$tag <- factor(dat_use$tag, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Species,Landings) %>% group_by(Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm = T)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Species)
+dat_use$Species <- factor(dat_use$Species, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$tag, dat_use$Species), ]
+
+
+All_years_summary <-  dat_use %>% group_by(Country, tag, Species) %>% dplyr::summarise(sum(Landings, na.rm=T)) %>% data.frame()
+names(All_years_summary) <- c('Country','tag', 'faocode','landings')
+## Landings catch profiles 
+All_years_spread_landings<- tidyr::spread(All_years_summary, # to id the number of columes
+                          fill = 0, faocode, value = landings) # Create table to species breakdown
+
+All_years_spread_landings$Total_tonnage<-rowSums(All_years_spread_landings[,3:15]) # sum all the rows 
+
+# Create the proportions for tonnage
+All_years_spread_landings$COD <- round(All_years_spread_landings$COD/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$HAD <- round(All_years_spread_landings$HAD/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$HKE <- round(All_years_spread_landings$HKE/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$MEG <- round(All_years_spread_landings$MEG/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$MON <- round(All_years_spread_landings$MON/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$NEP <- round(All_years_spread_landings$NEP/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$PLE <- round(All_years_spread_landings$PLE/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$POK <- round(All_years_spread_landings$POK/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$POL <- round(All_years_spread_landings$POL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$SOL <- round(All_years_spread_landings$SOL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$WHG <- round(All_years_spread_landings$WHG/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$LIN <- round(All_years_spread_landings$LIN/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTH <- round(All_years_spread_landings$OTH/All_years_spread_landings$Total_tonnage,3)
+
+All_years_spread_landings <- All_years_spread_landings[order(-All_years_spread_landings$Total_tonnage),] 
+
+All_years_spread_landings <- All_years_spread_landings[!All_years_spread_landings$Total_tonnage<100,]
+
+kable(All_years_spread_landings)%>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+```{r, include= FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+data_test <- tidyr::gather(data=as.data.frame(All_years_spread_landings), key = species, value = proportion, PLE:HKE)
+
+data_test<- data_test[order(data_test$Total_tonnage),] 
+
+data_test$tag1 <- data_test$tag
+data_test <- tidyr::separate(data_test, col=tag1, c("Country", "Gear", "Target"))
+data_test %>% mutate(ord = as.numeric(as.factor(Gear))*100+
+                           as.numeric(as.factor(Target)) +
+                           as.numeric(as.factor(Country))/10) -> data_test
+
+data_test$tag_tonnage<- with(data_test,paste(tag,round(Total_tonnage,2),"t",sep="  "))
+  
+celtic_sea_1<- ggplot(data=data_test, aes(x=reorder(tag_tonnage, ord), y=proportion, fill=species)) +
+       geom_bar(stat="identity") + coord_flip() + scale_y_continuous(expand = c(0,0)) +
+       xlab("") + scale_fill_manual(values=c("Black","#A6CEE3","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F", "#FF7F00","#CAB2D6","#6A3D9A", "aquamarine", "#888888", "violet")) +
+       theme(panel.background = element_rect(fill = 'white'),axis.text.x = element_text(size = 6))
+celtic_sea_1
+
+```
+
+```{r, fig.width=7,fig.height=7, fig.align="center", echo=FALSE, warning=FALSE, message=FALSE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- Celtic_Sea_dat[Celtic_Sea_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use_new <- dat_use %>% select(Metier, Species, Landings) %>% group_by(Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+dat_use <- dat_use_new[dat_use_new$Landings>0,]
+
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_DRB_MOL <- sum(dat_use$Landings[dat_use$Metier=="DRB_MOL"])
+sum_FPO_CRU <- sum(dat_use$Landings[dat_use$Metier=="FPO_CRU"])
+sum_GNS_CRU <- sum(dat_use$Landings[dat_use$Metier=="GNS_CRU"])
+sum_GNS_DEF <- sum(dat_use$Landings[dat_use$Metier=="GNS_DEF"])
+sum_GNS_SPF <- sum(dat_use$Landings[dat_use$Metier=="GNS_SPF"])
+sum_GTR_CRU <- sum(dat_use$Landings[dat_use$Metier=="GTR_CRU"])
+sum_GTR_DEF <- sum(dat_use$Landings[dat_use$Metier=="GTR_DEF"])
+sum_LHM_DEF <- sum(dat_use$Landings[dat_use$Metier=="LHM_DEF"])
+sum_LHP_DEF <- sum(dat_use$Landings[dat_use$Metier=="LHP_DEF"])
+sum_LLS_FIF <- sum(dat_use$Landings[dat_use$Metier=="LLS_FIF"])
+sum_LLS_DEF <- sum(dat_use$Landings[dat_use$Metier=="LLS_DEF"])
+sum_MIS_MIS <- sum(dat_use$Landings[dat_use$Metier=="MIS_MIS"])
+sum_OTB_CRU <- sum(dat_use$Landings[dat_use$Metier=="OTB_CRU"])
+sum_OTB_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTB_DEF"])
+sum_OTB_DWS <- sum(dat_use$Landings[dat_use$Metier=="OTB_DWS"])
+sum_OTB_MOL <- sum(dat_use$Landings[dat_use$Metier=="OTB_MOL"])
+sum_OTB_SPF <- sum(dat_use$Landings[dat_use$Metier=="OTB_SPF"])
+sum_OTM_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTM_DEF"])
+sum_OTM_SPF <- sum(dat_use$Landings[dat_use$Metier=="OTM_SPF"])
+sum_OTT_CEP <- sum(dat_use$Landings[dat_use$Metier=="OTT_CEP"])
+sum_OTT_CRU <- sum(dat_use$Landings[dat_use$Metier=="OTT_CRU"])
+sum_OTT_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTT_DEF"])
+sum_PTM_SPF <- sum(dat_use$Landings[dat_use$Metier=="PTM_SPF"])
+sum_SDN_DEF <- sum(dat_use$Landings[dat_use$Metier=="SDN_DEF"])
+sum_SSC_DEF <- sum(dat_use$Landings[dat_use$Metier=="SSC_DEF"])
+sum_TBB_CEP <- sum(dat_use$Landings[dat_use$Metier=="TBB_CEP"])
+sum_TBB_DEF <- sum(dat_use$Landings[dat_use$Metier=="TBB_DEF"])
+
+
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Metier=="DRB_MOL"] <- dat_use$Landings[dat_use$Metier=="DRB_MOL"]/sum_DRB_MOL#
+dat_use$prop_per_spp[dat_use$Metier=="FPO_CRU"] <- dat_use$Landings[dat_use$Metier=="FPO_CRU"]/sum_FPO_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="GNS_DEF"] <- dat_use$Landings[dat_use$Metier=="GNS_DEF"]/sum_GNS_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="LLS_FIF"] <- dat_use$Landings[dat_use$Metier=="LLS_FIF"]/sum_LLS_FIF#
+dat_use$prop_per_spp[dat_use$Metier=="MIS_MIS"] <- dat_use$Landings[dat_use$Metier=="MIS_MIS"]/sum_MIS_MIS#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_CRU"] <- dat_use$Landings[dat_use$Metier=="OTB_CRU"]/sum_OTB_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_DEF"] <- dat_use$Landings[dat_use$Metier=="OTB_DEF"]/sum_OTB_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="OTT_DEF"] <- dat_use$Landings[dat_use$Metier=="OTT_DEF"]/sum_OTT_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="SSC_DEF"] <- dat_use$Landings[dat_use$Metier=="SSC_DEF"]/sum_SSC_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="TBB_DEF"] <- dat_use$Landings[dat_use$Metier=="TBB_DEF"]/sum_TBB_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="GNS_CRU"] <- dat_use$Landings[dat_use$Metier=="GNS_CRU"]/sum_GNS_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="GNS_SPF"] <- dat_use$Landings[dat_use$Metier=="GNS_SPF"]/sum_GNS_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="GTR_DEF"] <- dat_use$Landings[dat_use$Metier=="GTR_DEF"]/sum_GTR_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="LHM_DEF"] <- dat_use$Landings[dat_use$Metier=="LHM_DEF"]/sum_LHM_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="LHP_DEF"] <- dat_use$Landings[dat_use$Metier=="LHP_DEF"]/sum_LHP_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_DWS"] <- dat_use$Landings[dat_use$Metier=="OTB_DWS"]/sum_OTB_DWS#
+dat_use$prop_per_spp[dat_use$Metier=="OTM_DEF"] <- dat_use$Landings[dat_use$Metier=="OTM_DEF"]/sum_OTM_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="OTM_SPF"] <- dat_use$Landings[dat_use$Metier=="OTM_SPF"]/sum_OTM_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="OTT_CEP"] <- dat_use$Landings[dat_use$Metier=="OTT_CEP"]/sum_OTT_CEP#
+dat_use$prop_per_spp[dat_use$Metier=="OTT_CRU"] <- dat_use$Landings[dat_use$Metier=="OTT_CRU"]/sum_OTT_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="PTM_SPF"] <- dat_use$Landings[dat_use$Metier=="PTM_SPF"]/sum_PTM_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="SDN_DEF"] <- dat_use$Landings[dat_use$Metier=="SDN_DEF"]/sum_SDN_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="TBB_CEP"] <- dat_use$Landings[dat_use$Metier=="TBB_CEP"]/sum_TBB_CEP#
+dat_use$prop_per_spp[dat_use$Metier=="GTR_CRU"] <- dat_use$Landings[dat_use$Metier=="GTR_CRU"]/sum_GTR_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="LLS_DEF"] <- dat_use$Landings[dat_use$Metier=="LLS_DEF"]/sum_LLS_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_MOL"] <- dat_use$Landings[dat_use$Metier=="OTB_MOL"]/sum_OTB_MOL#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_SPF"] <- dat_use$Landings[dat_use$Metier=="OTB_SPF"]/sum_OTB_SPF#
+
+# # here I need to identify métiers with low landings and aggregate them as others
+#test_dat <- dat_use %>% select(Metier, Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+# # any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+#low_met <- unique(test_dat$Metier[test_dat$Landings<10])
+# #rename the low landings into the "others" category 
+#dat_use <- dat_use$Metier[!dat_use$Metier %in% low_met,]
+
+dat_use$tag <- dat_use$Metier
+
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+# dat_order <- dat_use %>% select(tag,Landings) %>% group_by(tag) %>% dplyr::summarise("Landings" = sum(Landings, na.rm = T)) %>% data.frame()
+# dat_order <- dat_order[order(dat_order$Landings),] 
+# list_met_importance <- unique(dat_order$tag)
+# dat_use$tag <- factor(dat_use$tag, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Metier,Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings, na.rm = T)) %>% data.frame() 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Metier)
+dat_use$Metier <- factor(dat_use$Metier, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$tag, dat_use$Metier), ]
+
+
+All_years_summary <-  dat_use %>% group_by(tag, Species) %>% dplyr::summarise(sum(Landings, na.rm=T)) %>% data.frame()
+names(All_years_summary) <- c('tag', 'faocode','landings')
+## Landings catch profiles 
+All_years_spread_landings<- tidyr::spread(All_years_summary, # to id the number of columes
+                          fill = 0, tag, value = landings) # Create table to species breakdown
+
+All_years_spread_landings <- All_years_spread_landings[ c(-2, -3, -4, -6, -7, -9, -10,-13, -16, -17, -18,-21, -24, -27)] # get rid of zero catch
+
+
+All_years_spread_landings$Total_tonnage<-rowSums(All_years_spread_landings[,2:14]) # sum all the rows 
+
+# Create the proportions for tonnage
+All_years_spread_landings$LLS_FIF <- round(All_years_spread_landings$LLS_FIF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTT_DEF <- round(All_years_spread_landings$OTT_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$DRB_MOL <- round(All_years_spread_landings$DRB_MOL/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$FPO_CRU <- round(All_years_spread_landings$FPO_CRU/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$GNS_DEF <- round(All_years_spread_landings$GNS_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$SSC_DEF <- round(All_years_spread_landings$SSC_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_DEF <- round(All_years_spread_landings$OTB_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$TBB_DEF <- round(All_years_spread_landings$TBB_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$MIS_MIS <- round(All_years_spread_landings$MIS_MIS/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_CRU <- round(All_years_spread_landings$OTB_CRU/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$GNS_CRU <- round(All_years_spread_landings$GNS_CRU/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$GNS_SPF <- round(All_years_spread_landings$GNS_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$GTR_DEF <- round(All_years_spread_landings$GTR_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$LHM_DEF <- round(All_years_spread_landings$LHM_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$LHP_DEF <- round(All_years_spread_landings$LHP_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$OTB_DWS <- round(All_years_spread_landings$OTB_DWS/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTM_DEF <- round(All_years_spread_landings$OTM_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTM_SPF <- round(All_years_spread_landings$OTM_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTT_CRU <- round(All_years_spread_landings$OTT_CRU/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$PTM_SPF <- round(All_years_spread_landings$PTM_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$SDN_DEF <- round(All_years_spread_landings$SDN_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$TBB_CEP <- round(All_years_spread_landings$TBB_CEP/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$GTR_CRU <- round(All_years_spread_landings$GTR_CRU/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$LLS_DEF <- round(All_years_spread_landings$LLS_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$OTT_CEP <- round(All_years_spread_landings$OTT_CEP/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$OTB_MOL <- round(All_years_spread_landings$OTB_MOL/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$OTB_SPF <- round(All_years_spread_landings$OTB_SPF/All_years_spread_landings$Total_tonnage,3)#
+
+All_years_spread_landings <- All_years_spread_landings[order(-All_years_spread_landings$Total_tonnage),] 
+
+All_years_spread_landings <- All_years_spread_landings[!All_years_spread_landings$Total_tonnage<100,]
+
+#saftey check
+#All_years_spread_landings$check<-rowSums(All_years_spread_landings[,2:28]) # sum all the rows 
+
+
+#All_years_spread_landings <- All_years_spread_landings
+kable(All_years_spread_landings)%>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+```{r, include= FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+data_test <- tidyr::gather(data=as.data.frame(All_years_spread_landings), key = Metier, value = proportion, GNS_DEF:TBB_DEF)
+
+data_test<- data_test[order(data_test$Total_tonnage),]
+data_test$tag_tonnage<- with(data_test,paste(faocode,round(Total_tonnage,2),"t",sep="  "))
+
+celtic_sea_2<- ggplot(data=data_test, aes(x=reorder(tag_tonnage, Total_tonnage), y=proportion, fill=Metier)) +
+       geom_bar(stat="identity") + coord_flip() + scale_y_continuous(expand = c(0,0)) +
+       xlab("") + scale_fill_manual(values=c("Black","#A6CEE3","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F", "#FF7F00","#CAB2D6","#6A3D9A", "aquamarine", "#888888", "chartreuse", "b")) +
+       theme(panel.background = element_rect(fill = 'white'),axis.text.x = element_text(size = 6))
+celtic_sea_2
+
+```
+
+\newpage
+\blandscape
+```{r, echo = FALSE, message=FALSE, warning=FALSE, tidy = TRUE, fig.width = 12, fig.height = 6}
+grid.arrange(celtic_sea_1, celtic_sea_2, nrow=1)
+```
+\elandscape
+
+# West of Scotland
+</p>
+```{r, include=FALSE, message=FALSE, warning=FALSE, tidy=TRUE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- West_of_Scotland_dat[West_of_Scotland_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use <- dat_use %>% select(Metier, Species, Landings) %>% group_by(Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame() 
+dat_use <- dat_use[dat_use$Landings>0,]
+
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_COD <- sum(dat_use$Landings[dat_use$Species=="COD"])
+sum_HAD <- sum(dat_use$Landings[dat_use$Species=="HAD"])
+sum_HKE <- sum(dat_use$Landings[dat_use$Species=="HKE"])
+sum_NEP <- sum(dat_use$Landings[dat_use$Species=="NEP"])
+sum_PLE <- sum(dat_use$Landings[dat_use$Species=="PLE"])
+sum_LIN <- sum(dat_use$Landings[dat_use$Species=="LIN"])
+sum_POK <- sum(dat_use$Landings[dat_use$Species=="POK"])
+sum_POL <- sum(dat_use$Landings[dat_use$Species=="POL"])
+sum_SOL <- sum(dat_use$Landings[dat_use$Species=="SOL"])
+sum_WHG <- sum(dat_use$Landings[dat_use$Species=="WHG"])
+sum_MEG <- sum(dat_use$Landings[dat_use$Species=="MEG"])
+sum_MON <- sum(dat_use$Landings[dat_use$Species=="MON"])
+sum_OTH <- sum(dat_use$Landings[dat_use$Species=="OTH"])
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Species=="COD"] <- dat_use$Landings[dat_use$Species=="COD"]/sum_COD
+dat_use$prop_per_spp[dat_use$Species=="HAD"] <- dat_use$Landings[dat_use$Species=="HAD"]/sum_HAD
+dat_use$prop_per_spp[dat_use$Species=="HKE"] <- dat_use$Landings[dat_use$Species=="HKE"]/sum_HKE
+dat_use$prop_per_spp[dat_use$Species=="NEP"] <- dat_use$Landings[dat_use$Species=="NEP"]/sum_NEP
+dat_use$prop_per_spp[dat_use$Species=="PLE"] <- dat_use$Landings[dat_use$Species=="PLE"]/sum_PLE
+dat_use$prop_per_spp[dat_use$Species=="POK"] <- dat_use$Landings[dat_use$Species=="POK"]/sum_POK
+dat_use$prop_per_spp[dat_use$Species=="POL"] <- dat_use$Landings[dat_use$Species=="POL"]/sum_POL
+dat_use$prop_per_spp[dat_use$Species=="SOL"] <- dat_use$Landings[dat_use$Species=="SOL"]/sum_SOL
+dat_use$prop_per_spp[dat_use$Species=="WHG"] <- dat_use$Landings[dat_use$Species=="WHG"]/sum_WHG
+dat_use$prop_per_spp[dat_use$Species=="MEG"] <- dat_use$Landings[dat_use$Species=="MEG"]/sum_MEG
+dat_use$prop_per_spp[dat_use$Species=="MON"] <- dat_use$Landings[dat_use$Species=="MON"]/sum_MON
+dat_use$prop_per_spp[dat_use$Species=="OTH"] <- dat_use$Landings[dat_use$Species=="OTH"]/sum_OTH
+dat_use$prop_per_spp[dat_use$Species=="LIN"] <- dat_use$Landings[dat_use$Species=="LIN"]/sum_LIN
+
+
+# here I need to identify métiers with low landings and aggregate them as others
+test_dat <- dat_use %>% select(Metier, Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings, na.rm = T)) %>% data.frame()
+# any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+low_met <- unique(test_dat$Metier[test_dat$Landings<100])
+#rename the low landings into the "others" category 
+dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+#Saftey check - make sure tehere are no odd outliers
+x <-  ggplot(dat_use, aes(Species, Landings)) +geom_bar(stat="identity") # keep this plot!
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(Metier,Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$Metier)
+dat_use$Metier <- factor(dat_use$Metier, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Species,Landings) %>% group_by(Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Species)
+dat_use$Species <- factor(dat_use$Species, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$Metier, dat_use$Species), ]
+```
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+el <- as.matrix(dat_use) 
+rownames(el) <- dat_use$Metier
+colnames(el) <- colnames(dat_use)
+
+g_West_of_Scotland <- graph.data.frame(el, directed = T) 
+V(g_West_of_Scotland)$type <- V(g_West_of_Scotland)$name %in% el[,1] #the second column of edges is TRUE type
+E(g_West_of_Scotland)$weight <- as.numeric(el[,3])/10000
+E(g_West_of_Scotland)$color <- paste0('#000000',sprintf('%02X',round(255*(E(g_West_of_Scotland)$weight / max(E(g_West_of_Scotland)$weight)))))
+V(g_West_of_Scotland)$color <- "white"
+V(g_West_of_Scotland)$size <- 70
+V(g_West_of_Scotland)$weight <- 1
+layout <- layout.bipartite(g_West_of_Scotland)[, 2:1]
+layout[1:12,2] <- 1:12 #filler to hold x and y  # you see the required structre by using layout.bipartite(g)[, 2:1]
+layout[13:25,2] <- 1:13 # shifts it up by 3 
+# plot(layout) # this will show you wher eteh x and y points are
+
+plot(g_West_of_Scotland,layout=layout,edge.arrow.size = 0.3, vertex.label.cex=0.8 ,vertex.label.color= "black", vertex.shape= "vrectangle", asp=1, edge.color= E(g_West_of_Scotland)$color,  vertex.color= V(g_West_of_Scotland)$color)
+```
+
+West of Scotland - Proportions of species landed per metier, and total gross tonnage. 
+```{r, fig.width=7,fig.height=7, fig.align="center", echo=FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- West_of_Scotland_dat[West_of_Scotland_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use <- dat_use %>% select(Country, Metier, Species, Landings) %>% group_by(Country,Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+dat_use <- dat_use[dat_use$Landings>0,]
+
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_COD <- sum(dat_use$Landings[dat_use$Species=="COD"])
+sum_HAD <- sum(dat_use$Landings[dat_use$Species=="HAD"])
+sum_HKE <- sum(dat_use$Landings[dat_use$Species=="HKE"])
+sum_NEP <- sum(dat_use$Landings[dat_use$Species=="NEP"])
+sum_PLE <- sum(dat_use$Landings[dat_use$Species=="PLE"])
+sum_LIN <- sum(dat_use$Landings[dat_use$Species=="LIN"])
+sum_POK <- sum(dat_use$Landings[dat_use$Species=="POK"])
+sum_POL <- sum(dat_use$Landings[dat_use$Species=="POL"])
+sum_SOL <- sum(dat_use$Landings[dat_use$Species=="SOL"])
+sum_WHG <- sum(dat_use$Landings[dat_use$Species=="WHG"])
+sum_MEG <- sum(dat_use$Landings[dat_use$Species=="MEG"])
+sum_MON <- sum(dat_use$Landings[dat_use$Species=="MON"])
+sum_OTH <- sum(dat_use$Landings[dat_use$Species=="OTH"])
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Species=="COD"] <- dat_use$Landings[dat_use$Species=="COD"]/sum_COD
+dat_use$prop_per_spp[dat_use$Species=="HAD"] <- dat_use$Landings[dat_use$Species=="HAD"]/sum_HAD
+dat_use$prop_per_spp[dat_use$Species=="HKE"] <- dat_use$Landings[dat_use$Species=="HKE"]/sum_HKE
+dat_use$prop_per_spp[dat_use$Species=="NEP"] <- dat_use$Landings[dat_use$Species=="NEP"]/sum_NEP
+dat_use$prop_per_spp[dat_use$Species=="PLE"] <- dat_use$Landings[dat_use$Species=="PLE"]/sum_PLE
+dat_use$prop_per_spp[dat_use$Species=="POK"] <- dat_use$Landings[dat_use$Species=="POK"]/sum_POK
+dat_use$prop_per_spp[dat_use$Species=="POL"] <- dat_use$Landings[dat_use$Species=="POL"]/sum_POL
+dat_use$prop_per_spp[dat_use$Species=="SOL"] <- dat_use$Landings[dat_use$Species=="SOL"]/sum_SOL
+dat_use$prop_per_spp[dat_use$Species=="WHG"] <- dat_use$Landings[dat_use$Species=="WHG"]/sum_WHG
+dat_use$prop_per_spp[dat_use$Species=="MEG"] <- dat_use$Landings[dat_use$Species=="MEG"]/sum_MEG
+dat_use$prop_per_spp[dat_use$Species=="MON"] <- dat_use$Landings[dat_use$Species=="MON"]/sum_MON
+dat_use$prop_per_spp[dat_use$Species=="OTH"] <- dat_use$Landings[dat_use$Species=="OTH"]/sum_OTH
+dat_use$prop_per_spp[dat_use$Species=="LIN"] <- dat_use$Landings[dat_use$Species=="LIN"]/sum_LIN
+
+
+# # here I need to identify métiers with low landings and aggregate them as others
+# test_dat <- dat_use %>% select(Country, Metier, Landings) %>% group_by(Country, Metier) %>% summarise("Landings" = sum(Landings))
+# # any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+# low_met <- unique(test_dat$Metier[test_dat$Landings<10])
+# #rename the low landings into the "others" category 
+# dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+dat_use$tag <- paste0(dat_use$Country , "_", dat_use$Metier)
+
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(tag,Landings) %>% group_by(tag) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) %>% data.frame() 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$tag)
+#dat_use$tag <- factor(dat_use$tag, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Species,Landings) %>% group_by(Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=T)) %>% data.frame() 
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Species)
+dat_use$Species <- factor(dat_use$Species, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$tag, dat_use$Species), ]
+
+
+All_years_summary <-  dat_use %>% group_by(Country, tag, Species) %>% dplyr::summarise(sum(Landings, na.rm=T)) %>% data.frame()
+names(All_years_summary) <- c('Country','tag', 'faocode','landings')
+## Landings catch profiles 
+All_years_spread_landings<- tidyr::spread(All_years_summary, # to id the number of columes
+                          fill = 0, faocode, value = landings) # Create table to species breakdown
+
+All_years_spread_landings$Total_tonnage<-rowSums(All_years_spread_landings[,3:16]) # sum all the rows 
+
+# Create the proportions for tonnage
+All_years_spread_landings$COD <- round(All_years_spread_landings$COD/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$HAD <- round(All_years_spread_landings$HAD/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$HKE <- round(All_years_spread_landings$HKE/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$MEG <- round(All_years_spread_landings$MEG/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$MON <- round(All_years_spread_landings$MON/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$NEP <- round(All_years_spread_landings$NEP/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$PLE <- round(All_years_spread_landings$PLE/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$POK <- round(All_years_spread_landings$POK/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$POL <- round(All_years_spread_landings$POL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$SOL <- round(All_years_spread_landings$SOL/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$WHG <- round(All_years_spread_landings$WHG/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$LIN <- round(All_years_spread_landings$LIN/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$OTH <- round(All_years_spread_landings$OTH/All_years_spread_landings$Total_tonnage,3)
+All_years_spread_landings$BLI <- round(All_years_spread_landings$BLI/All_years_spread_landings$Total_tonnage,3)
+
+All_years_spread_landings <- All_years_spread_landings[order(-All_years_spread_landings$Total_tonnage),] 
+
+All_years_spread_landings <- All_years_spread_landings[!All_years_spread_landings$Total_tonnage<100,]
+
+kable(All_years_spread_landings)%>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+
+```{r, include= FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+data_test <- tidyr::gather(data=as.data.frame(All_years_spread_landings), key = species, value = proportion, BLI:NEP)
+
+data_test<- data_test[order(data_test$Total_tonnage),] 
+
+data_test$tag1 <- data_test$tag
+data_test <- tidyr::separate(data_test, col=tag1, c("Country", "Gear", "Target"))
+data_test %>% mutate(ord = as.numeric(as.factor(Gear))*100+
+                           as.numeric(as.factor(Target)) +
+                           as.numeric(as.factor(Country))/10) -> data_test
+
+data_test$tag_tonnage<- with(data_test,paste(tag,round(Total_tonnage,2),"t",sep="   "))
+  
+west_scot_1<- ggplot(data=data_test, aes(x=reorder(tag_tonnage, ord), y=proportion, fill=species)) +
+       geom_bar(stat="identity") + coord_flip() + scale_y_continuous(expand = c(0,0)) +
+       xlab("") + scale_fill_manual(values=c("Black","#A6CEE3","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F", "#FF7F00","#CAB2D6","#6A3D9A", "aquamarine", "#888888", "violet", "orange")) +
+       theme(panel.background = element_rect(fill = 'white'),axis.text.x = element_text(size = 6))
+west_scot_1
+
+```
+
+
+```{r, fig.width=7,fig.height=7, fig.align="center", echo=FALSE, warning=FALSE, message=FALSE}
+
+include_spp <- c(demersal, rays_skates, deepwater) #user input
+#subset the data
+dat_use <- West_of_Scotland_dat[West_of_Scotland_dat$Species %in% include_spp,]
+
+dat_use$Species[dat_use$Species %in%  c("DGS", "DGZ" , "DGH", "GFB", "SKA", 'RJC' , "RJA" , 'RJH'   ,'RJM', "RAJ" ,  "RJE", "RJB", "RJN", "RJR", "SKH", "RNG", "BSF", "USK", "RHG", "RNG" )] <-   "OTH"
+
+#aggregate data
+dat_use <- dat_use %>% select(Metier, Species, Landings) %>% group_by(Metier, Species) %>% dplyr::summarise("Landings" = sum(Landings, na.rm=TRUE)) %>% data.frame()
+dat_use <- dat_use[dat_use$Landings>0,]
+
+#dat_use$Species <- as.character(dat_use$Species)
+dat_use$Landings <- round(dat_use$Landings,0) 
+dat_use$Landings <- as.integer(dat_use$Landings)
+dat_use <- dat_use[! is.na(dat_use$Metier),]
+
+#now calculate proportions
+sum_FPO_CRU <- sum(dat_use$Landings[dat_use$Metier=="FPO_CRU"])
+sum_GNS_DEF <- sum(dat_use$Landings[dat_use$Metier=="GNS_DEF"])
+sum_LHP_DEF <- sum(dat_use$Landings[dat_use$Metier=="LHP_DEF"])
+sum_LLS_DEF <- sum(dat_use$Landings[dat_use$Metier=="LLS_DEF"])
+sum_LLS_FIF <- sum(dat_use$Landings[dat_use$Metier=="LLS_FIF"])
+sum_MIS_MIS <- sum(dat_use$Landings[dat_use$Metier=="MIS_MIS"])
+sum_OTB_CRU <- sum(dat_use$Landings[dat_use$Metier=="OTB_CRU"])
+sum_OTB_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTB_DEF"])
+sum_OTB_DWS <- sum(dat_use$Landings[dat_use$Metier=="OTB_DWS"])
+sum_OTB_MCF <- sum(dat_use$Landings[dat_use$Metier=="OTB_MCF"])
+sum_OTB_SPF <- sum(dat_use$Landings[dat_use$Metier=="OTB_SPF"])
+sum_OTM_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTM_DEF"])
+sum_OTM_SPF <- sum(dat_use$Landings[dat_use$Metier=="OTM_SPF"])
+sum_OTT_DEF <- sum(dat_use$Landings[dat_use$Metier=="OTT_DEF"])
+sum_PTM_SPF <- sum(dat_use$Landings[dat_use$Metier=="PTM_SPF"])
+sum_SSC_DEF <- sum(dat_use$Landings[dat_use$Metier=="SSC_DEF"])
+sum_SSC_SPF <- sum(dat_use$Landings[dat_use$Metier=="SSC_SPF"])
+sum_TBB_DEF <- sum(dat_use$Landings[dat_use$Metier=="TBB_DEF"])
+
+
+dat_use$prop_per_spp <- NaN
+dat_use$prop_per_spp[dat_use$Metier=="FPO_CRU"] <- dat_use$Landings[dat_use$Metier=="FPO_CRU"]/sum_FPO_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="GNS_DEF"] <- dat_use$Landings[dat_use$Metier=="GNS_DEF"]/sum_GNS_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="LHP_DEF"] <- dat_use$Landings[dat_use$Metier=="LHP_DEF"]/sum_LHP_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="LLS_DEF"] <- dat_use$Landings[dat_use$Metier=="LLS_DEF"]/sum_LLS_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="LLS_FIF"] <- dat_use$Landings[dat_use$Metier=="LLS_FIF"]/sum_LLS_FIF#
+dat_use$prop_per_spp[dat_use$Metier=="MIS_MIS"] <- dat_use$Landings[dat_use$Metier=="MIS_MIS"]/sum_MIS_MIS#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_CRU"] <- dat_use$Landings[dat_use$Metier=="OTB_CRU"]/sum_OTB_CRU#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_DEF"] <- dat_use$Landings[dat_use$Metier=="OTB_DEF"]/sum_OTB_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_DWS"] <- dat_use$Landings[dat_use$Metier=="OTB_DWS"]/sum_OTB_DWS#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_MCF"] <- dat_use$Landings[dat_use$Metier=="OTB_MCF"]/sum_OTB_MCF#
+dat_use$prop_per_spp[dat_use$Metier=="OTB_SPF"] <- dat_use$Landings[dat_use$Metier=="OTB_SPF"]/sum_OTB_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="OTM_DEF"] <- dat_use$Landings[dat_use$Metier=="OTM_DEF"]/sum_OTM_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="OTM_SPF"] <- dat_use$Landings[dat_use$Metier=="OTM_SPF"]/sum_OTM_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="OTT_DEF"] <- dat_use$Landings[dat_use$Metier=="OTT_DEF"]/sum_OTT_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="PTM_SPF"] <- dat_use$Landings[dat_use$Metier=="PTM_SPF"]/sum_PTM_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="SSC_DEF"] <- dat_use$Landings[dat_use$Metier=="SSC_DEF"]/sum_SSC_DEF#
+dat_use$prop_per_spp[dat_use$Metier=="SSC_SPF"] <- dat_use$Landings[dat_use$Metier=="SSC_SPF"]/sum_SSC_SPF#
+dat_use$prop_per_spp[dat_use$Metier=="TBB_DEF"] <- dat_use$Landings[dat_use$Metier=="TBB_DEF"]/sum_TBB_DEF#
+
+# # here I need to identify métiers with low landings and aggregate them as others
+# test_dat <- dat_use %>% select(Country, Metier, Landings) %>% group_by(Country, Metier) %>% summarise("Landings" = sum(Landings))
+# # any metier with an average tonnage of lower then 100 tonnes was moved into the others category
+# low_met <- unique(test_dat$Metier[test_dat$Landings<10])
+# #rename the low landings into the "others" category 
+# dat_use$Metier[dat_use$Metier %in% low_met] <- "OTHERS"
+
+dat_use$tag <- dat_use$Metier
+
+
+# Creating the network plot
+# Define the order of the metires by tonnage
+dat_order <- dat_use %>% select(tag,Landings) %>% group_by(tag) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_met_importance <- unique(dat_order$tag)
+dat_use$tag <- factor(dat_use$tag, levels =list_met_importance, ordered=TRUE)
+#dat_use <- dat_use[order(dat_use$Metier), ]
+
+# Define the order of the species by tonnage
+dat_order <- dat_use %>% select(Metier,Landings) %>% group_by(Metier) %>% dplyr::summarise("Landings" = sum(Landings)) %>% data.frame()
+dat_order <- dat_order[order(dat_order$Landings),] 
+list_spp_importance <- unique(dat_order$Metier)
+dat_use$Metier <- factor(dat_use$Metier, levels =list_spp_importance, ordered=TRUE)
+
+dat_use <- dat_use[order(dat_use$tag, dat_use$Metier), ]
+
+
+All_years_summary <-  dat_use %>% group_by(tag, Species) %>% 
+dplyr::summarise(sum(Landings, na.rm=T)) %>% data.frame()
+names(All_years_summary) <- c('tag', 'faocode','landings')
+## Landings catch profiles 
+All_years_spread_landings<- tidyr::spread(All_years_summary, # to id the number of columes
+                          fill = 0, tag, value = landings) # Create table to species breakdown
+
+All_years_spread_landings$Total_tonnage<-rowSums(All_years_spread_landings[,2:18]) # sum all the rows 
+
+# Create the proportions for tonnage
+
+All_years_spread_landings$FPO_CRU <- round(All_years_spread_landings$FPO_CRU/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$GNS_DEF <- round(All_years_spread_landings$GNS_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$LHP_DEF <- round(All_years_spread_landings$LHP_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$LLS_DEF <- round(All_years_spread_landings$LLS_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$LLS_FIF <- round(All_years_spread_landings$LLS_FIF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$MIS_MIS <- round(All_years_spread_landings$MIS_MIS/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_CRU <- round(All_years_spread_landings$OTB_CRU/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_DEF <- round(All_years_spread_landings$OTB_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_DWS <- round(All_years_spread_landings$OTB_DWS/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_MCF <- round(All_years_spread_landings$OTB_MCF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTB_SPF <- round(All_years_spread_landings$OTB_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTM_DEF <- round(All_years_spread_landings$OTM_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTM_SPF <- round(All_years_spread_landings$OTM_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$OTT_DEF <- round(All_years_spread_landings$OTT_DEF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$PTM_SPF <- round(All_years_spread_landings$PTM_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$SSC_DEF <- round(All_years_spread_landings$SSC_DEF/All_years_spread_landings$Total_tonnage,3)#
+#All_years_spread_landings$SSC_SPF <- round(All_years_spread_landings$SSC_SPF/All_years_spread_landings$Total_tonnage,3)#
+All_years_spread_landings$TBB_DEF <- round(All_years_spread_landings$TBB_DEF/All_years_spread_landings$Total_tonnage,3)#
+
+All_years_spread_landings <- All_years_spread_landings[order(-All_years_spread_landings$Total_tonnage),] 
+
+All_years_spread_landings <- All_years_spread_landings[!All_years_spread_landings$Total_tonnage<100,]
+
+All_years_spread_landings <- All_years_spread_landings[,-c(2:5)]	
+kable(All_years_spread_landings)%>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+```{r, include= FALSE, warning=FALSE, message=FALSE, tidy=TRUE}
+
+data_test <- tidyr::gather(data=as.data.frame(All_years_spread_landings), key = Metier, value = proportion, OTB_SPF:OTB_DEF)
+
+data_test<- data_test[order(data_test$Total_tonnage),]
+data_test$tag_tonnage<- with(data_test,paste(faocode,round(Total_tonnage,2),"t",sep="   "))
+
+west_scot_2<- ggplot(data=data_test, aes(x=reorder(tag_tonnage, Total_tonnage), y=proportion, fill=Metier)) +
+       geom_bar(stat="identity") + coord_flip() + scale_y_continuous(expand = c(0,0)) +
+       xlab("") + scale_fill_manual(values=c("Black","#A6CEE3","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F", "#FF7F00","#CAB2D6","#6A3D9A", "aquamarine", "#888888", "chartreuse")) +
+       theme(panel.background = element_rect(fill = 'white'),axis.text.x = element_text(size = 6))
+west_scot_2
+
+```
+
+\newpage
+\blandscape
+```{r, echo = FALSE, message=FALSE, warning=FALSE, tidy = TRUE, fig.width = 12, fig.height = 6}
+grid.arrange(west_scot_1, west_scot_2, nrow=1)
+```
+\elandscape

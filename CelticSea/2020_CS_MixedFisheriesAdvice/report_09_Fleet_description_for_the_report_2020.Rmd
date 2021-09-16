@@ -1,0 +1,111 @@
+---
+title: "Fleet summary for report"
+author: Paul J. Dolder, Marieke Desender, Claire Moore, Lionel Pawlowski
+output:
+  pdf_document:
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+geometry: margin=1in
+---
+
+
+```{r version control, message = FALSE, echo = FALSE}
+ver <- "01_Reproduce_the_advice_Celtic_Sea_2018"
+ver.datetime   <- date()
+t<-Sys.time()
+Run.name <- ver
+```
+
+Version:   *`r ver`*
+
+Runtime: *`r format(Sys.time(), '%d %B %Y %H:%M')`*
+
+User settings: *See Section 2*
+
+**Overview**
+This script is for making some of the tables and figures used to desribe the fleet and metier breakdown in the report.
+
+**1. Setup and load packages**
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+gc()
+
+library(FLCore)
+library(FLFleet)
+library(tidyverse)
+
+```
+
+```{r}
+source("bootstrap/software/functions/FLFcube_FLCore_R31.R")
+source("bootstrap/software/functions/funcs.R")
+
+
+load("results/02_Making_Fleets_Celtic_Sea_2020tier1LO_KW.RData" )
+
+```
+
+
+**2. Produce Report table 3.4.2.b:**
+Mixed fisheries m�tiers are further dissageragted into ares: 7.b, 7.c, 7.e, 7.f, 7.g, 7.h & 7.k. Final fleet and m�tier catogories used in the mixed fishery analysis.
+
+```{r}
+nms <- fleets@names
+
+effort_per_fleet <- do.call(rbind,lapply(fleets, function(x) as.data.frame(unclass(x@effort))))
+colnames(effort_per_fleet) <- c("2017", "2018", "2019")
+effort_per_fleet$fleet <- nms
+effort_per_fleet <- effort_per_fleet  %>% gather(effort_per_fleet, "year", 1:3)
+names(effort_per_fleet) <- c("fleet", "year", "effort_per_fleet")
+effort_per_fleet$year <- as.numeric(effort_per_fleet$year)
+
+
+
+eff_share_summary <- NULL
+
+
+for(i in seq_along(fleets@names)){
+  print(i)
+  data_subset <- fleets[[i]]
+  final.dat <- data.frame("fleet" = data_subset@name, "metier"= data_subset@metiers@names )
+  final.dat$metier <- as.character(final.dat$metier)
+  met <- data_subset@metiers@names
+          for (j in met){
+        print(j)
+        met_eff <- do.call(rbind,lapply(data_subset@metiers, function(j) as.data.frame(j@effshare)))
+        met_eff <-  add_rownames(met_eff, var="metier")
+        met_eff$metier <-  str_sub(met_eff$metier, 1, str_length(met_eff$metier)-2)
+        temp <- left_join(final.dat,met_eff,  by = "metier") #this creates a temporary holder so you dont write over everything else!
+
+          }
+
+eff_share_summary <- rbind(eff_share_summary,temp)
+eff_share_summary$fleet <- as.character(eff_share_summary$fleet)
+
+  }
+
+effort_table<- left_join(eff_share_summary,effort_per_fleet,  by = c("fleet" ,"year"))
+effort_table$effort <- effort_table$data*effort_table$effort_per_fleet
+
+
+
+effort_table<- effort_table%>% select(fleet, metier, year, effort)%>% group_by(year, fleet, metier) %>% summarise("Effort" = sum(effort))%>% filter(year %in% c( 2017, 2018, 2019)) %>% spread(year, Effort) %>% select(fleet, metier, '2017', '2018', '2019') %>% rename("Effort 2017" = "2017","Effort 2018" = "2018","Effort 2019" = "2019")
+
+
+catch_table <- slot.fleet(fleets, "catches")
+catch_table <- catch_table %>% filter(slot == c("landings", "discards"))%>% select(year, catches,fleet, metier)%>% group_by(year, fleet, metier) %>% summarise("Catches" = sum(catches, na.rm=TRUE)) %>%spread(year, Catches) %>% select(fleet, metier, '2017', '2018', '2019') %>% rename("Catch 2017" = "2017","Catch 2018" = "2018","Catch 2019" = "2019")
+
+```
+
+
+```{r}
+
+
+summary_table <- cbind(catch_table,effort_table)%>% select(fleet, metier, 'Catch 2017' , 'Effort 2017', 'Catch 2018' , 'Effort 2018', 'Catch 2019' , 'Effort 2019')  
+
+summary_table[,c('Catch 2017' , 'Effort 2017', 'Catch 2018' , 'Effort 2018', 'Catch 2019' , 'Effort 2019')] <- round( summary_table[,c('Catch 2017' , 'Effort 2017', 'Catch 2018' , 'Effort 2018', 'Catch 2019' , 'Effort 2019')], 2) #rounding for presneation
+
+write.csv(summary_table, "results/disagregated_fleet_metier_info.csv")
+```
