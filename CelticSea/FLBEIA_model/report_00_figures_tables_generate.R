@@ -79,6 +79,14 @@ scenarioVector <- unique(summary_advice$scenario)
 pal_all_region <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99',
                     '#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99')
 
+write.csv(summary_advice,"results/summary_advice.csv")
+write.csv(summary_biological,"results/summary_biological.csv")
+write.csv(summary_fleet,"results/summary_fleet.csv")
+write.csv(summary_fleetstock,"results/summary_fleetstock.csv")
+write.csv(summary_metier,"results/summary_metier.csv")
+write.csv(summary_metierstock,"results/summary_metierstock.csv")
+write.csv(summary_ssa,"results/summary_ssa.csv")
+
 #' Generate figures
 #' ----------------
 #' 
