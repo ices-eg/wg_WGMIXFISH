@@ -7,7 +7,9 @@ List condition_flcatches(List fl,
                          NumericVector SDwt,
                             NumericVector B, 
                             CharacterVector st, 
-                            IntegerVector mean_yrs, 
+                            IntegerVector mean_yrs_q,
+			    IntegerVector mean_yrs_wts,
+			    IntegerVector mean_yrs_sel,
                             IntegerVector sim_yrs,
 			    bool LO,
 			    bool UseLWt)
@@ -93,29 +95,41 @@ List condition_flcatches(List fl,
          for(int a=0;a<na; a++) { // loop over ages
                 
               // Calculate the mean for the year/age combination
-              NumericVector hist_yrs_q(mean_yrs.size());
-              NumericVector hist_yrs_s(mean_yrs.size());
-              NumericVector hist_yrs_lw(mean_yrs.size());
-              NumericVector hist_yrs_dw(mean_yrs.size());
-              NumericVector hist_yrs_Slw(mean_yrs.size());
-              NumericVector hist_yrs_Sdw(mean_yrs.size()); // stock discard weights
-              NumericVector hist_yrs_p(mean_yrs.size());
-              NumericVector hist_yrs_a(mean_yrs.size());
-              NumericVector hist_yrs_b(mean_yrs.size());
-              
-              for(int i=mean_yrs[0];i<=mean_yrs[mean_yrs.size()-1]; i++) { // loop over the years to fill the vector
-                hist_yrs_q[i-mean_yrs[0]] = q[na*i + a];
-                if(!R_finite(hist_yrs_q[i-mean_yrs[0]])) hist_yrs_q[i-mean_yrs[0]] = 0; // remove infintes, but keep good values
-                hist_yrs_s[i-mean_yrs[0]] = Lsel[na*i + a];
-                hist_yrs_lw[i-mean_yrs[0]] = Lwt_dat[na*i + a];
-                hist_yrs_dw[i-mean_yrs[0]] = Dwt_dat[na*i + a];
-                hist_yrs_Slw[i-mean_yrs[0]] = SLwt[na*i + a];
-                hist_yrs_Sdw[i-mean_yrs[0]] = SDwt[na*i + a];
-                hist_yrs_p[i-mean_yrs[0]] = pr_dat[na*i + a];
-                hist_yrs_a[i-mean_yrs[0]] = alpha_dat[na*i + a];
-                hist_yrs_b[i-mean_yrs[0]] = beta_dat[na*i + a];
+              NumericVector hist_yrs_q(mean_yrs_q.size());
+              NumericVector hist_yrs_s(mean_yrs_sel.size());
+              NumericVector hist_yrs_lw(mean_yrs_wts.size());
+              NumericVector hist_yrs_dw(mean_yrs_wts.size());
+              NumericVector hist_yrs_Slw(mean_yrs_wts.size());
+              NumericVector hist_yrs_Sdw(mean_yrs_wts.size()); // stock discard weights
+              NumericVector hist_yrs_p(mean_yrs_wts.size());
+              NumericVector hist_yrs_a(mean_yrs_q.size());
+              NumericVector hist_yrs_b(mean_yrs_q.size());
+
+
+	      // catchability related
+              for(int i=mean_yrs_q[0];i<=mean_yrs_q[mean_yrs_q.size()-1]; i++) { // loop over the years to fill the vector
+                hist_yrs_q[i-mean_yrs_q[0]] = q[na*i + a];
+                if(!R_finite(hist_yrs_q[i-mean_yrs_q[0]])) hist_yrs_q[i-mean_yrs_q[0]] = 0; // remove infintes, but keep good values
+                hist_yrs_a[i-mean_yrs_q[0]] = alpha_dat[na*i + a];
+                hist_yrs_b[i-mean_yrs_q[0]] = beta_dat[na*i + a];
               }
-              
+
+
+	      //weight related
+ for(int i=mean_yrs_wts[0];i<=mean_yrs_wts[mean_yrs_wts.size()-1]; i++) { // loop over the years to fill the vector
+                hist_yrs_lw[i-mean_yrs_wts[0]] = Lwt_dat[na*i + a];
+                hist_yrs_dw[i-mean_yrs_wts[0]] = Dwt_dat[na*i + a];
+                hist_yrs_Slw[i-mean_yrs_wts[0]] = SLwt[na*i + a];
+                hist_yrs_Sdw[i-mean_yrs_wts[0]] = SDwt[na*i + a];
+                hist_yrs_p[i-mean_yrs_wts[0]] = pr_dat[na*i + a];
+              }
+
+ 		// selectivity related
+ for(int i=mean_yrs_sel[0];i<=mean_yrs_sel[mean_yrs_sel.size()-1]; i++) { // loop over the years to fill the vector
+                hist_yrs_s[i-mean_yrs_sel[0]] = Lsel[na*i + a];
+              }
+             
+		 // compute means
               double meanval_q = mean(na_omit((hist_yrs_q))); // calculate the mean
               double meanval_s = mean(na_omit((hist_yrs_s))); 
               double meanval_lw = mean(na_omit((hist_yrs_lw))); 
@@ -139,6 +153,7 @@ List condition_flcatches(List fl,
               if(R_IsNaN(meanval_dw)) meanval_dw = 0;     
               if(meanval_dw==0) meanval_dw = meanval_Sdw;  // need a value where missing, use stock value
 	      if(meanval_dw==0) meanval_dw = meanval_Slw;  // If it's still zero, use the landings weight
+	      if(R_IsNA(meanval_dw)) {meanval_dw = meanval_Slw;} // If its NA, use the landings weight
               if(R_IsNA(meanval_p)) meanval_p = 0; 
               if(R_IsNaN(meanval_p)) meanval_p = 0; 
               if(R_IsNA(meanval_a)) meanval_a = 1; 
