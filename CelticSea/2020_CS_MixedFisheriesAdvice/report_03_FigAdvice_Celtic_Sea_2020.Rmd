@@ -79,7 +79,7 @@ source("bootstrap/software/functions/funcs.R")
 
 load(file.path('results',"01_Reproduce_the_advice_Celtic_Sea_2020tier12nepnewLOUsingSAM.Rdata"))
 
-load(file.path('results',"04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSkipIntYr_Catch_EffortByScenario.Rdata"))
+load(file.path('results',"04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSQ_E_Catch_EffortByScenario.Rdata"))
 
 
 ## advice year
@@ -212,7 +212,7 @@ results$stock[results$stock %in% nep.names] <- "nep.27.7bk"
 results <- results %>% group_by(sc, year, stock, value) %>%
 	summarise(data = sum(data)) %>% as.data.frame()
 
-
+write.csv(results,"results/data4advicefig.csv")
 
 stocksToBePlotted <- unique(results$stock)
 stocksToBePlotted <- c(stocksToBePlotted[-which(stocksToBePlotted == "nep.27.7bk")], "nep.27.7bk") ## put nephrops at end

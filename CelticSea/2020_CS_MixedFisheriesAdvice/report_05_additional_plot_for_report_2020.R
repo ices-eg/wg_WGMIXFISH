@@ -132,7 +132,7 @@ dev.off()
 
 ## Plots of effort by scenario
 
-load("results/04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSkipIntYr_FcubeAllObjects.Rdata")
+load("results/04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSQ_E_FcubeAllObjects.Rdata")
 res.effort$effort[res.effort$effort == Inf] <- 0 # 2019 fix
 
 print(ggplot(res.effort[(res.effort$year==2021 & res.effort$fleet !="OTH_OTH"),],aes(x=scenario,y=effort)) +
