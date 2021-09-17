@@ -9,7 +9,7 @@
 #################################################################################
 
 rm(list=ls())
-
+library(FLBEIA)
 library(ggplot2) ; library(dplyr)
 
 load("results/01_Reproduce_the_advice_Celtic_Sea_2020tier12nepnewLOUsingSAM.Rdata")
@@ -17,7 +17,7 @@ load("results/01_Reproduce_the_advice_Celtic_Sea_2020tier12nepnewLOUsingSAM.Rdat
 #################################################################################
 # Read from all outputs for the effort.stock fule
 
-res <- "results/04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSkipIntYr_FcubeAllObjects.Rdata"
+res <- "results/04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSQ_E_FcubeAllObjects.Rdata"
 yearNow <- 2020
 ##################################################################################
 
@@ -140,7 +140,7 @@ plotRose(res, yearNow)
 ##
 ##################################
 
-load("results/04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSkipIntYr_FcubeAllObjects.Rdata")
+load("results/04_FCube_Forecasts_Celtic_Sea_2020tier12nepnewLOUsingSAMSQ_E_FcubeAllObjects.Rdata")
 
 
 is.choke <- function(x){
@@ -173,7 +173,7 @@ sqE <- sapply(fleets, function(x) mean(x@effort[,ac(2017:2019)]))
 
 ## merge
 eff$sqE <- sqE[match(eff$fleet, names(sqE))]
-
+write.csv(eff,"results/report_effort_all_table.csv")
 
 pal <- pals::brewer.paired(12)
 

@@ -47,9 +47,9 @@ wg.stocks <- FLStocks(lapply(stock.list, function(s) {
 
 ##############################################################################
 
-fl.proj.avg.yrs <- 2017:2019 ## weights including landings.wt, discards.wt
-sel.yrs         <- 2017:2019 ## the selection pattern including effort, effshare, catch.q, landings.sel, discards.sel
-
+wts_yrs     <- 2017:2019 ## weights including landings.wt, discards.wts
+fleet_q_yrs <- 2019 ## the effort, effshare, catch.q
+sel_yrs     <- 2017:2019 ## landings.sel, discards.sel
 
 ##########################
 # Expand the FLFleetsExt
@@ -70,8 +70,8 @@ if(Cond) {
  yrs  <- as.numeric(dimnames(fleets[[1]]@effort)$year)
  first_yr_sim <- which(yrs == sim_yrs[1]) - 1
  last_yr_sim  <- which(yrs == sim_yrs[length(sim_yrs)]) - 1
- first_avg_yr <- which(yrs == fl.proj.avg.yrs[1]) - 1
- last_avg_yr  <- which(yrs == fl.proj.avg.yrs[length(fl.proj.avg.yrs)]) - 1
+ first_avg_yr <- which(yrs == fleet_q_yrs[1]) - 1
+ last_avg_yr  <- which(yrs == fleet_q_yrs[length(fleet_q_yrs)]) - 1
  
  fleets <-  condition_fleet_effort(fleets, 
                                    dim = dim(fleets[[1]]@effort),
@@ -171,9 +171,36 @@ for(n in nep) {
 
 if(Cond) {
 
-fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, mean.yrs = sel.yrs, sim.yrs = sim_yrs, LO = FALSE, UseLWt = FALSE)
+fleets <- calculate.q.sel.flrObjs.cpp(biols, stocks = wg.stocks, fleets = fleets, BDs = NULL, fleets.ctrl, 
+				      mean.yrs.q = fleet_q_yrs, 
+				      mean.yrs.wts = wts_yrs,
+				      mean.yrs.sel = sel_yrs,
+				      sim.yrs = sim_yrs, LO = TRUE, UseLWt = TRUE)
 
 }
+
+
+#for(f in names(fleets)) {
+#
+#	if(! "cod.27.7e-k" %in% catchNames(fleets[[f]])) next
+#
+#	for(mt in fleets[[f]]@metiers@names) {
+#	
+#		if(! "cod.27.7e-k" %in% catchNames(fleets[[f]]@metiers[[mt]])) next
+#
+#		if(any(is.na(fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2020)]))) {
+#
+#		print(fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2020)])
+#		fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@discards.wt[ac(4:7),ac(2020:2022)] <- 
+#			fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@landings.wt[ac(4:7),ac(2020:2022)] 
+#		## NEED TO FIX THIS IS IN THE CPP CODE -NOT SURE WHY IT'S NOT
+#		## WORKING THERE...
+#		print(fleets[[f]]@metiers[[mt]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2020)])
+#
+#		}
+#	}
+#
+#}
 
 
 ## Original function

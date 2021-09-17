@@ -119,7 +119,7 @@ ver <- "04_FCube_Forecasts_Celtic_Sea_2020"
 
 Run.nameFC <- ver
 
-SkipIntermedYr  <- TRUE # If we want to skip the intermediate year due to different F assumption
+SkipIntermedYr  <- FALSE # If we want to skip the intermediate year due to different F assumption
                          # From single-stock
 
 ## Add this to options for saving outputs

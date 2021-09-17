@@ -36,6 +36,11 @@ for(f in names(fleets)) {
   fleets.ctrl[[f]]$restriction  <- "catch"
  }
 
+## Advice should not be limiting in case of fixed effort leading to more catch
+## than the intermediate year catch advice
+
+advice$TAC[,"2020"] <- advice$TAC[,"2020"] * 5
+
 hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = covars,
                indices = NULL, advice = advice, main.ctrl = main.ctrl, biols.ctrl = biols.ctrl, fleets.ctrl = fleets.ctrl,
                covars.ctrl = NULL, obs.ctrl = obs.ctrl, assess.ctrl = assess.ctrl, advice.ctrl = advice.ctrl)
@@ -58,7 +63,7 @@ for(st in names(biols)) biols[[st]]@n[1, '2022'] <-  biols[[st]]@n[1, '2021']
 ## Define scenarios
 ##########################
 
-sc_list <- c("fixedEffort", "min", "max", "prev", "had.27.7b-k") ## name some
+sc_list <- c("fixedEffort", "min", "max", "had.27.7b-k") ## name some
 
 fleets.ctrl.list <- vector(mode = "list", length = length(sc_list))
 
@@ -78,11 +83,6 @@ for(f in flt_list) {
 fleets.ctrl.list[["max"]] <- fleets.ctrl.list[["min"]]
 for(f in flt_list) {
   fleets.ctrl.list[["max"]][[f]]$effort.restr <- "max"
-}
-
-fleets.ctrl.list[["prev"]] <- fleets.ctrl.list[["min"]]
-for(f in flt_list) {
-  fleets.ctrl.list[["prev"]][[f]]$effort.restr <- "prev"
 }
 
 fleets.ctrl.list[["had.27.7b-k"]] <- fleets.ctrl.list[["min"]]
