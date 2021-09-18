@@ -94,10 +94,11 @@ hist <- FLBEIA(biols = biols, SRs = SRs, BDs = NULL, fleets = fleets, covars = c
 
 out <- bioSum(hist)
 
+filter(out, stock == "cod.27.7e-k", year %in% 2017:2020) %>% as.data.frame() %>% print()
+
 for(i in grep("nep",unique(out$stock), invert = TRUE, value = TRUE)){
    filter(out, stock == i, year %in% 2017:2020) %>% as.data.frame() %>% print()
    }
-
 
 ## Compare the catch weight to the stock weight
 for(i in grep("nep",unique(names(hist$biols)), invert=TRUE, value = TRUE)) {
@@ -109,9 +110,8 @@ for(i in grep("nep",unique(names(hist$biols)), invert=TRUE, value = TRUE)) {
 
 ## Plot the intermediate year
 theme_set(theme_bw())
-ggplot(filter(out, year < 2021), aes(x = year, y = f)) + geom_point(colour = rep(c(rep("black", 8),rep("blue", 3), "red"), each= length(unique(out$stock)))) +facet_wrap(~stock, scale = "free_y") + theme(legend.position = "none") + 
-	expand_limits(y = 0)
-
+ggplot(filter(out, year < 2021), aes(x = year, y = f)) + geom_point(colour = rep(c(rep("black", 8),rep("blue", 3), "red"), each= length(unique(out$stock)))) +facet_wrap(~stock, scale = "free_y") + theme(legend.position = "none") + 	expand_limits(y = 0) + geom_line()
+ggsave(file.path("figures", "Intermediate_yr_FINAL.png"))
 
 
 flt <- fltStkSum(hist)
@@ -154,13 +154,21 @@ for(s in cod_flmt){
    (print(s))
    cc <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]
    
-   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.wt <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.wt <- biols[["cod.27.7e-k"]]@wt
+#   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.wt <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.wt <- biols[["cod.27.7e-k"]]@wt
+
+## FLEET CATCH WEIGHTS
+
+fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.wt[,ac(2020:2022)] <- fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2020:2022)] <- 
+	(fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.wt[,ac(2020:2022)] * fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@landings.sel[,ac(2020:2022)]) + (fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.wt[,ac(2020:2022)] * fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@discards.sel[,ac(2020:2022)]) 
+
+
+
 #   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q <- (cc@landings.n+ cc@discards.n)/sweep(biols[["cod.27.7e-k"]]@n * exp(-biols[["cod.27.7e-k"]]@m/2), 1, fleetsw[[s[1]]]@metiers[[s[2]]]@effshare*fleetsw[[s[1]]]@effort,"*")
    
-   if(!(s[1] %in% c("FRA_Otter_10<40m","IE_Otter_10<24m","IE_Otter_24<40m"))){
+#   if(!(s[1] %in% c("FRA_Otter_10<40m","IE_Otter_10<24m","IE_Otter_24<40m"))){
 	   
 #	   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- yearMeans(fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2017:2019)], na.rm = TRUE)}
-   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- 0}
+#   fleetsw[[s[1]]]@metiers[[s[2]]]@catches[["cod.27.7e-k"]]@catch.q[, ac(2020:2022)] <- 0}
    
 }
 
@@ -197,10 +205,18 @@ outfw <- fltSum(histw)
 outfsw <- fltStkSum(histw)
 outmsw <- mtStkSum(histw)
 
-filter(outw, stock == "cod.27.7e-k", year == 2020)
+filter(outw, stock == "cod.27.7e-k", year %in% 2019:2020)
+
+## Plot the intermediate year
+theme_set(theme_bw())
+ggplot(filter(outw, year < 2021), aes(x = year, y = f)) + geom_point(colour = rep(c(rep("black", 8),rep("blue", 3), "red"), each= length(unique(out$stock)))) +facet_wrap(~stock, scale = "free_y") + theme(legend.position = "none") + 	expand_limits(y = 0) + geom_line()
 
 
+
+
+############################################
 ## Some runs looking at fractions of effort
+############################################
 
 eff_frac <- seq(0.1,1.5,0.2)
 
@@ -233,7 +249,7 @@ stopImplicitCluster()
 
 ## Plot the cod F
 
-results <- expand.grid(effort_mult = eff_frac, stock = unique(runs[[1]]$stock, value = NA)
+results <- expand.grid(effort_mult = eff_frac, stock = unique(runs[[1]]$stock, value = NA))
 
 for(i in 1:length(eff_frac)) {
 	for(s in unique(results$stock)) {
@@ -244,13 +260,13 @@ results$value[results$stock==s & results$effort_mult== eff_frac[i]] <- c(filter(
 mean_f <- data.frame(stock = unique(runs[[1]]$stock), value = NA)
 
 for(s in unique(runs[[1]]$stock)) {
-mean_f$value[mean_f$stock == s] <- mean(c(filter(runs[[1]], stock == s, year %in% 2017:2019)$f))
-
+mean_f$value[mean_f$stock == s] <- mean(c(filter(runs[[1]], stock == s, year %in% 2019)$f))
 }
 
 theme_set(theme_bw())
 ggplot(results, aes(x = effort_mult, y = value)) + 
 	geom_point() + geom_line() + 
 	geom_point(data = mean_f, aes(x = 1, y = value), colour = "red") + 
-	facet_wrap(~stock, scale = "free_y")
-ggsave(file.path("figures", "effort_f_relationships.png"))
+	facet_wrap(~stock, scale = "free_y") + ylab("Fishing mortality (F year^-1)")+
+	xlab("Effort multiplier (x 2019 effort)")
+ggsave(file.path("figures", "effort_f_relationships_FINAL.png"))

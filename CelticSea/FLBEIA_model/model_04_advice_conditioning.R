@@ -30,6 +30,10 @@ load(file.path(flbeia_precon, "FLFleets.RData"))
 ## Load in the reference years
 load(file.path(flbeia_in, "year_references.RData"))
 
+## Years over which to average the quota shares.
+sel_yrs <- 2017:2019
+
+
 ################
 ## advice ctrl
 ################
@@ -88,7 +92,7 @@ TACs["nep7",]            <- c(16815 * 0.48, rep(20557,2) * 0.48)
 ###################
 
 ## Get the mean share over the data years
-nep7.land.shares <- lapply(nep7, function(x)  {landStock(fleets, x)[,ac(2017:2019)]})
+nep7.land.shares <- lapply(nep7, function(x)  {landStock(fleets, x)[,ac(sel_yrs)]})
 nep7.land.shares <- lapply(nep7.land.shares, function(x) mean(x/Reduce("+", nep7.land.shares)))
 names(nep7.land.shares) <- nep7
 
@@ -133,9 +137,6 @@ landWStock.f <- function (obj, stock)
 }
 
 ## Based on observed landings split
-
-## Years over which to average the quota shares.
-sel_yrs <- 2017:2019
 
 names(advice$quota.share) <- stks
 
